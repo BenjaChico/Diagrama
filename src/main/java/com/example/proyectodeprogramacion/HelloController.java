@@ -4,13 +4,15 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.text.Font;
+import javafx.scene.paint.Color;
+import javafx.scene.layout.AnchorPane;
 
 import java.util.Scanner;
 
 public class HelloController {
-
     @FXML
-    private Canvas DibujoCanvas;
+    public Canvas DibujoCanvas;
+
     private String figura = "";
 
     private double inicioX = -1;
@@ -21,27 +23,35 @@ public class HelloController {
         DibujoCanvas.setOnMouseClicked(event ->{
             double x = event.getX();
             double y = event.getY();
-
-            switch (figura){
-                case "boton1":
+            if(x <= 688)
+                switch (figura){
+                    case "boton1":
                     //Proximamente
-                case "boton2":
+                    case "boton2":
                     //Proximamente
-                case "boton3":
+                    case "boton3":
                     DibujarProceso(x,y);
                     break;
-                case "boton4":
+                 case "boton4":
                     DibujarDecision(x, y);
                     break;
-                case "boton5":
+                 case "boton5":
                     Dibujar_Entrada_Salida(x, y);
                     break;
-                case "boton6":
+                 case "boton6":
                     //Proximamente
+                     break;
+            }
+            if(x>=688){
+                System.out.println("No se puede colocar aqui");
             }
 
             if (inicioX != -1 && inicioY != -1) {
-                DibujarFlecha(inicioX, inicioY, x, y);
+                if(x<=688)
+                 DibujarFlecha(inicioX, inicioY, x, y);
+                if(x>=688){
+                    System.out.println("No se puede colocar aqui");
+                }
             }
 
             inicioX = x;
@@ -126,7 +136,6 @@ public class HelloController {
 
         gc.stroke();
     }
-
 
 
     @FXML
