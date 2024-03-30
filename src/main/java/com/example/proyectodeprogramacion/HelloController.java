@@ -65,12 +65,11 @@ public class HelloController {
         double arrowSize = 10;
         double angle = Math.atan2(finalY - inicioY, finalX - inicioX);
 
-        // Dibujar la línea
-        gc.strokeLine(inicioX, inicioY, finalX, finalY);
-
-        // Dibujar la punta de flecha
-        gc.strokeLine(finalX, finalY, finalX - arrowSize * Math.cos(angle - Math.PI / 6), finalY - arrowSize * Math.sin(angle - Math.PI / 6));
-        gc.strokeLine(finalX, finalY, finalX - arrowSize * Math.cos(angle + Math.PI / 6), finalY - arrowSize * Math.sin(angle + Math.PI / 6));
+        if(inicioX < 688) {
+            gc.strokeLine(inicioX, inicioY, finalX, finalY);
+            gc.strokeLine(finalX, finalY, finalX - arrowSize * Math.cos(angle - Math.PI / 6), finalY - arrowSize * Math.sin(angle - Math.PI / 6));
+            gc.strokeLine(finalX, finalY, finalX - arrowSize * Math.cos(angle + Math.PI / 6), finalY - arrowSize * Math.sin(angle + Math.PI / 6));
+        }
     }
 
 
