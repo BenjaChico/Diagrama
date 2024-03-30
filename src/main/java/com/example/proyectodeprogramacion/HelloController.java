@@ -20,10 +20,11 @@ public class HelloController {
 
 
     public void initialize() {
+        DibujarLineaLimite(660, 0);
         DibujoCanvas.setOnMouseClicked(event ->{
             double x = event.getX();
             double y = event.getY();
-            if(x <= 688){
+            if(x <= 660){
                 switch (figura){
                     case "boton1":
                         //Proximamente
@@ -59,7 +60,7 @@ public class HelloController {
         double arrowSize = 10;
         double angle = Math.atan2(finalY - inicioY, finalX - inicioX);
 
-        if(inicioX < 688) {
+        if(inicioX < 660) {
             gc.strokeLine(inicioX, inicioY, finalX, finalY);
             gc.strokeLine(finalX, finalY, finalX - arrowSize * Math.cos(angle - Math.PI / 6), finalY - arrowSize * Math.sin(angle - Math.PI / 6));
             gc.strokeLine(finalX, finalY, finalX - arrowSize * Math.cos(angle + Math.PI / 6), finalY - arrowSize * Math.sin(angle + Math.PI / 6));
@@ -129,6 +130,14 @@ public class HelloController {
 
         gc.stroke();
     }
+
+    private void DibujarLineaLimite(double x, double y) {
+        GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
+        gc.setStroke(javafx.scene.paint.Color.BLACK);
+        gc.setLineWidth(2.0);
+        gc.strokeLine(x, y, x, y+ 800);
+    }
+
 
 
     @FXML
