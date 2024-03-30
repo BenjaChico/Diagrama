@@ -23,40 +23,34 @@ public class HelloController {
         DibujoCanvas.setOnMouseClicked(event ->{
             double x = event.getX();
             double y = event.getY();
-            if(x <= 688)
+            if(x <= 688){
                 switch (figura){
                     case "boton1":
-                    //Proximamente
+                        //Proximamente
                     case "boton2":
-                    //Proximamente
+                        //Proximamente
                     case "boton3":
-                    DibujarProceso(x,y);
-                    break;
-                 case "boton4":
-                    DibujarDecision(x, y);
-                    break;
-                 case "boton5":
-                    Dibujar_Entrada_Salida(x, y);
-                    break;
-                 case "boton6":
-                    //Proximamente
-                     break;
+                        DibujarProceso(x,y);
+                        break;
+                    case "boton4":
+                        DibujarDecision(x, y);
+                        break;
+                    case "boton5":
+                        Dibujar_Entrada_Salida(x, y);
+                        break;
+                    case "boton6":
+                        //Proximamente
+                        break;
+                }
+                if (inicioX != -1 && inicioY != -1) {
+                    DibujarFlecha(inicioX, inicioY, x, y);
+                }
+                inicioX = x;
+                inicioY = y;
             }
-            if(x>=688){
+            else{
                 System.out.println("No se puede colocar aqui");
             }
-
-            if (inicioX != -1 && inicioY != -1) {
-                if(x<=688)
-                 DibujarFlecha(inicioX, inicioY, x, y);
-                if(x>=688){
-                    System.out.println("No se puede colocar aqui");
-                }
-            }
-
-            inicioX = x;
-            inicioY = y;
-
         });
     }
 
