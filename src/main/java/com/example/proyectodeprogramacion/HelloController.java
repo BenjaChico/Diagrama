@@ -32,22 +32,32 @@ public class HelloController {
                         //Proximamente
                     case "boton3":
                         DibujarProceso(x,y);
+                        if (inicioX != -1 && inicioY != -1) {
+                            DibujarFlecha(inicioX, inicioY, x + 50, y);
+                        }
+                        inicioX = x + 50;
+                        inicioY = y + 50;
                         break;
                     case "boton4":
                         DibujarDecision(x, y);
+                        if (inicioX != -1 && inicioY != -1) {
+                            DibujarFlecha(inicioX, inicioY, x, y);
+                        }
+                        inicioX = x;
+                        inicioY = y + 100;
                         break;
                     case "boton5":
                         Dibujar_Entrada_Salida(x, y);
+                        if (inicioX != -1 && inicioY != -1) {
+                            DibujarFlecha(inicioX, inicioY, x + 50, y);
+                        }
+                        inicioX = x + 50;
+                        inicioY = y + 50;
                         break;
                     case "boton6":
                         //Proximamente
                         break;
                 }
-                if (inicioX != -1 && inicioY != -1) {
-                    DibujarFlecha(inicioX, inicioY, x, y);
-                }
-                inicioX = x;
-                inicioY = y;
             }
             else{
                 System.out.println("No se puede colocar aqui");
@@ -57,13 +67,13 @@ public class HelloController {
 
     private void DibujarFlecha(double inicioX, double inicioY, double finalX, double finalY) {
         GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
-        double arrowSize = 10;
-        double angle = Math.atan2(finalY - inicioY, finalX - inicioX);
+        double TamañoFlecha = 10;
+        double angulo = Math.atan2(finalY - inicioY, finalX - inicioX);
 
         if(inicioX < 660) {
             gc.strokeLine(inicioX, inicioY, finalX, finalY);
-            gc.strokeLine(finalX, finalY, finalX - arrowSize * Math.cos(angle - Math.PI / 6), finalY - arrowSize * Math.sin(angle - Math.PI / 6));
-            gc.strokeLine(finalX, finalY, finalX - arrowSize * Math.cos(angle + Math.PI / 6), finalY - arrowSize * Math.sin(angle + Math.PI / 6));
+            gc.strokeLine(finalX, finalY, finalX - TamañoFlecha * Math.cos(angulo - Math.PI / 6), finalY - TamañoFlecha * Math.sin(angulo - Math.PI / 6));
+            gc.strokeLine(finalX, finalY, finalX - TamañoFlecha * Math.cos(angulo + Math.PI / 6), finalY - TamañoFlecha * Math.sin(angulo + Math.PI / 6));
         }
     }
 
@@ -118,6 +128,7 @@ public class HelloController {
         System.out.print("Texto Decisión: ");
         String texto = scanner.nextLine();
 
+        //Dibuja figura Decisión
         gc.beginPath();
         gc.moveTo(x, y);
         gc.lineTo(x + 70, y + 50);
@@ -125,8 +136,16 @@ public class HelloController {
         gc.lineTo(x - 70, y + 50);
         gc.closePath();
 
-        gc.setFont(new Font(20)); // Tamaño de fuente 20
-        gc.strokeText(texto, x - 35, y + 55); //escribir texto
+        //Dibuja Lineas Horizontales de figura Decisión
+        gc.moveTo(x - 70, y + 50);
+        gc.lineTo(x - 150, y + 50);
+        gc.moveTo(x + 70, y + 50);
+        gc.lineTo(x + 150, y + 50);
+        gc.strokeText("V", x - 130, y + 45);
+        gc.strokeText("F", x + 120, y + 45);
+
+        gc.setFont(new Font(20));
+        gc.strokeText(texto, x - 35, y + 55);
 
         gc.stroke();
     }
@@ -137,7 +156,6 @@ public class HelloController {
         gc.setLineWidth(2.0);
         gc.strokeLine(x, y, x, y+ 800);
     }
-
 
 
     @FXML
