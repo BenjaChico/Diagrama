@@ -55,7 +55,12 @@ public class HelloController {
                         inicioY = y + 50;
                         break;
                     case "boton6":
-                        //Proximamente
+                        Dibujar_Documento(x, y);
+                        if (inicioX != -1 && inicioY != -1) {
+                            DibujarFlecha(inicioX, inicioY, x + 50, y);
+                        }
+                        inicioX = x + 50;
+                        inicioY = y + 50;
                         break;
                 }
             }
@@ -79,6 +84,7 @@ public class HelloController {
 
 
 
+
     private void Dibujar_Entrada_Salida(double x, double y) {
         GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
         Scanner scanner = new Scanner(System.in);
@@ -91,6 +97,26 @@ public class HelloController {
         gc.lineTo(x + 100, y);
         gc.lineTo(x + 100 - (50) / 4, y + 50);
         gc.lineTo(x - (50) / 4, y + 50);
+        gc.closePath();
+
+        gc.setFont(new Font(20)); // Tamaño de fuente 20
+        gc.strokeText(texto, x + 15, y + 30); //escribir texto
+
+        gc.stroke();
+    }
+    private void Dibujar_Documento(double x, double y) {
+        GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Texto Entrada/Salida: ");
+        String texto = scanner.nextLine();
+
+
+        gc.beginPath();
+        gc.moveTo(x, y);
+        gc.lineTo(x + 100, y);
+        gc.lineTo(x + 100, y + 50);
+        gc.closePath();
+        gc.quadraticCurveTo(x+100,y+50,x+150,y+200);
         gc.closePath();
 
         gc.setFont(new Font(20)); // Tamaño de fuente 20
