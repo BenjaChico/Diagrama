@@ -18,7 +18,6 @@ public class HelloController {
     private double inicioX = -1;
     private double inicioY = -1;
 
-
     public void initialize() {
         DibujarLineaLimite(660, 0);
         DibujoCanvas.setOnMouseClicked(event ->{
@@ -84,7 +83,7 @@ public class HelloController {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Texto Entrada/Salida: ");
         String texto = scanner.nextLine();
-
+        int tamañoFuente = 20;
 
         gc.beginPath();
         gc.moveTo(x, y);
@@ -93,8 +92,8 @@ public class HelloController {
         gc.lineTo(x - (50) / 4, y + 50);
         gc.closePath();
 
-        gc.setFont(new Font(20)); // Tamaño de fuente 20
-        gc.strokeText(texto, x + 15, y + 30); //escribir texto
+        gc.setFont(new Font(tamañoFuente));
+        gc.strokeText(texto, x + 15, y + 30);
 
         gc.stroke();
     }
@@ -114,8 +113,8 @@ public class HelloController {
         gc.lineTo(x, y + 50);
         gc.closePath();
 
-        gc.setFont(new Font(20)); // Tamaño de fuente 20
-        gc.strokeText(texto, x + 20, y + 30); //escribir texto
+        gc.setFont(new Font(20));
+        gc.strokeText(texto, x + 20, y + 30);
 
         gc.stroke();
     }
@@ -123,10 +122,16 @@ public class HelloController {
 
     private void DibujarDecision(double x, double y) {
         GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
+        GraphicsContext gc2 = DibujoCanvas.getGraphicsContext2D();
 
         Scanner scanner = new Scanner(System.in);
         System.out.print("Texto Decisión: ");
         String texto = scanner.nextLine();
+
+        double tamanotexto = gc.getFont().getSize();
+        while(tamanotexto * texto.length() > 140){
+            tamanotexto -= 1;
+        }
 
         //Dibuja figura Decisión
         gc.beginPath();
@@ -141,11 +146,13 @@ public class HelloController {
         gc.lineTo(x - 150, y + 50);
         gc.moveTo(x + 70, y + 50);
         gc.lineTo(x + 150, y + 50);
-        gc.strokeText("V", x - 130, y + 45);
-        gc.strokeText("F", x + 120, y + 45);
 
-        gc.setFont(new Font(20));
-        gc.strokeText(texto, x - 35, y + 55);
+        gc2.setFont(new Font(15));
+        gc2.strokeText("V", x - 130, y + 45);
+        gc2.strokeText("F", x + 120, y + 45);
+
+        gc.setFont(new Font(tamanotexto + 5));
+        gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) - 10, y + 55);
 
         gc.stroke();
     }
