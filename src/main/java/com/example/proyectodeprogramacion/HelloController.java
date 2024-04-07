@@ -10,6 +10,7 @@ import javafx.scene.layout.AnchorPane;
 import java.util.Scanner;
 
 public class HelloController {
+
     @FXML
     public Canvas DibujoCanvas;
 
@@ -23,6 +24,9 @@ public class HelloController {
         DibujoCanvas.setOnMouseClicked(event ->{
             double x = event.getX();
             double y = event.getY();
+
+            GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
+            GraphicsContext gc2 = DibujoCanvas.getGraphicsContext2D();
             if(x <= 660){
                 switch (figura){
                     case "boton1":
@@ -30,7 +34,8 @@ public class HelloController {
                     case "boton2":
                         //Proximamente
                     case "boton3":
-                        DibujarProceso(x,y);
+                        Proceso proceso = new Proceso();
+                        proceso.DibujarProceso(gc, x,y);
                         if (inicioX != -1 && inicioY != -1) {
                             DibujarFlecha(inicioX, inicioY, x + 50, y);
                         }
@@ -38,7 +43,8 @@ public class HelloController {
                         inicioY = y + 50;
                         break;
                     case "boton4":
-                        DibujarDecision(x, y);
+                        Decision decision = new Decision();
+                        decision.DibujarDecision(gc, gc2, x, y);
                         if (inicioX != -1 && inicioY != -1) {
                             DibujarFlecha(inicioX, inicioY, x, y);
                         }
@@ -46,7 +52,8 @@ public class HelloController {
                         inicioY = y + 100;
                         break;
                     case "boton5":
-                        Dibujar_Entrada_Salida(x, y);
+                        EntradaSalida entradasalida = new EntradaSalida();
+                        entradasalida.Dibujar_Entrada_Salida(gc, x, y);
                         if (inicioX != -1 && inicioY != -1) {
                             DibujarFlecha(inicioX, inicioY, x + 50, y);
                         }
@@ -76,86 +83,6 @@ public class HelloController {
         }
     }
 
-
-
-    private void Dibujar_Entrada_Salida(double x, double y) {
-        GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Texto Entrada/Salida: ");
-        String texto = scanner.nextLine();
-        int tamañoFuente = 20;
-
-        gc.beginPath();
-        gc.moveTo(x, y);
-        gc.lineTo(x + 100, y);
-        gc.lineTo(x + 100 - (50) / 4, y + 50);
-        gc.lineTo(x - (50) / 4, y + 50);
-        gc.closePath();
-
-        gc.setFont(new Font(tamañoFuente));
-        gc.strokeText(texto, x + 15, y + 30);
-
-        gc.stroke();
-    }
-
-
-    private void DibujarProceso(double x, double y) {
-        GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
-
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Texto Proceso: ");
-        String texto = scanner.nextLine();
-
-        gc.beginPath();
-        gc.moveTo(x, y);
-        gc.lineTo(x + 100, y);
-        gc.lineTo(x + 100, y + 50);
-        gc.lineTo(x, y + 50);
-        gc.closePath();
-
-        gc.setFont(new Font(20));
-        gc.strokeText(texto, x + 20, y + 30);
-
-        gc.stroke();
-    }
-
-
-    private void DibujarDecision(double x, double y) {
-        GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
-        GraphicsContext gc2 = DibujoCanvas.getGraphicsContext2D();
-
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Texto Decisión: ");
-        String texto = scanner.nextLine();
-
-        double tamanotexto = gc.getFont().getSize();
-        while(tamanotexto * texto.length() > 140){
-            tamanotexto -= 1;
-        }
-
-        //Dibuja figura Decisión
-        gc.beginPath();
-        gc.moveTo(x, y);
-        gc.lineTo(x + 70, y + 50);
-        gc.lineTo(x, y + 100);
-        gc.lineTo(x - 70, y + 50);
-        gc.closePath();
-
-        //Dibuja Lineas Horizontales de figura Decisión
-        gc.moveTo(x - 70, y + 50);
-        gc.lineTo(x - 150, y + 50);
-        gc.moveTo(x + 70, y + 50);
-        gc.lineTo(x + 150, y + 50);
-
-        gc2.setFont(new Font(15));
-        gc2.strokeText("V", x - 130, y + 45);
-        gc2.strokeText("F", x + 120, y + 45);
-
-        gc.setFont(new Font(tamanotexto + 5));
-        gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) - 10, y + 55);
-
-        gc.stroke();
-    }
 
     private void DibujarLineaLimite(double x, double y) {
         GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
