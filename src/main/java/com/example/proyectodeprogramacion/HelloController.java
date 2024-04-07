@@ -3,10 +3,11 @@ package com.example.proyectodeprogramacion;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.text.Font;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.layout.AnchorPane;
-
+import javafx.scene.text.Font;
+import javafx.scene.control.Button;
 import java.util.Scanner;
 
 public class HelloController {
@@ -18,54 +19,40 @@ public class HelloController {
     private double inicioX = -1;
     private double inicioY = -1;
 
+    @FXML
+    private VBox botonesVBox;
+
+    @FXML
+    private TextField textoTextField;
 
     public void initialize() {
         DibujarLineaLimite(660, 0);
-        DibujoCanvas.setOnMouseClicked(event ->{
+        Button boton = new Button("Mi Botón");
+        botonesVBox.getChildren().add(boton);
+        DibujoCanvas.setOnMouseClicked(event -> {
             double x = event.getX();
             double y = event.getY();
-            if(x <= 660){
-                switch (figura){
+            if (x <= 660) {
+                String texto = textoTextField.getText(); // Obtener el texto del TextField
+                switch (figura) {
                     case "boton1":
-                        //Proximamente
-                    case "boton2":
-                        //Proximamente
-                    case "boton3":
-                        DibujarProceso(x,y);
-                        if (inicioX != -1 && inicioY != -1) {
-                            DibujarFlecha(inicioX, inicioY, x + 50, y);
-                        }
-                        inicioX = x + 50;
-                        inicioY = y + 50;
+                        // Proximamente
                         break;
-                    case "boton4":
-                        DibujarDecision(x, y);
+                    case "boton2":
+                        // Proximamente
+                        break;
+                    case "boton3":
+                        DibujarProceso(x, y, texto);
                         if (inicioX != -1 && inicioY != -1) {
                             DibujarFlecha(inicioX, inicioY, x, y);
                         }
                         inicioX = x;
-                        inicioY = y + 100;
+                        inicioY = y;
                         break;
-                    case "boton5":
-                        Dibujar_Entrada_Salida(x, y);
-                        if (inicioX != -1 && inicioY != -1) {
-                            DibujarFlecha(inicioX, inicioY, x + 50, y);
-                        }
-                        inicioX = x + 50;
-                        inicioY = y + 50;
-                        break;
-                    case "boton6":
-                        Dibujar_Documento(x, y);
-                        if (inicioX != -1 && inicioY != -1) {
-                            DibujarFlecha(inicioX, inicioY, x + 50, y);
-                        }
-                        inicioX = x + 50;
-                        inicioY = y + 50;
-                        break;
+                    // Otros casos aquí
                 }
-            }
-            else{
-                System.out.println("No se puede colocar aqui");
+            } else {
+                System.out.println("No se puede colocar aquí");
             }
         });
     }

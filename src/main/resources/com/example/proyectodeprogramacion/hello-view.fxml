@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.canvas.Canvas?>
@@ -12,10 +13,7 @@
     <!-- Botones en el Lado Derecho -->
     <VBox alignment="CENTER_RIGHT" layoutX="500.0" layoutY="50.0" spacing="10" />
     <Button layoutX="678.0" layoutY="41.0" onAction="#handleButton1Click" prefHeight="52.0" prefWidth="102.0" text="Linea de Flujo" />
-    <Button layoutX="689.0" layoutY="120.0" onAction="#handleButton2Click" prefHeight="52.0" prefWidth="78.0" text="Inicio/Fin" />
-    <Button layoutX="670.0" layoutY="198.0" onAction="#handleButton3Click" prefHeight="52.0" prefWidth="118.0" text="Etapa del Proceso" />
-    <Button layoutX="685.0" layoutY="274.0" onAction="#handleButton4Click" prefHeight="52.0" prefWidth="85.0" text="Decisión" />
-    <Button layoutX="678.0" layoutY="354.0" onAction="#handleButton5Click" prefHeight="52.0" prefWidth="102.0" text="Entrada/Salida" />
-    <Button layoutX="676.0" layoutY="435.0" onAction="#handleButton6Click" prefHeight="52.0" prefWidth="102.0" text="Documento" />
+    <!-- Otros botones aquí -->
+    <TextField fx:id="textoTextField" layoutX="678.0" layoutY="100.0" prefHeight="26.0" prefWidth="102.0" promptText="Ingrese el texto" />
 
 </AnchorPane>
