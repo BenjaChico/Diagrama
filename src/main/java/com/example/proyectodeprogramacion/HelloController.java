@@ -7,6 +7,7 @@ import javafx.scene.text.Font;
 import javafx.scene.paint.Color;
 import javafx.scene.layout.AnchorPane;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class HelloController {
@@ -48,8 +49,16 @@ public class HelloController {
                         if (inicioX != -1 && inicioY != -1) {
                             DibujarFlecha(inicioX, inicioY, x, y);
                         }
-                        inicioX = x;
-                        inicioY = y + 100;
+                        //Lado Verdadero
+                        if(x > inicioX){
+                            inicioX = x - 150;
+                            inicioY = y + 50;
+                        }
+                        //Lado Falso
+                        else{
+                            inicioX = x + 150;
+                            inicioY = y + 50;
+                        }
                         break;
                     case "boton5":
                         EntradaSalida entradasalida = new EntradaSalida();
