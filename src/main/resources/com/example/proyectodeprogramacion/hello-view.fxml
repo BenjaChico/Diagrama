@@ -17,5 +17,6 @@
     <Button layoutX="685.0" layoutY="274.0" onAction="#handleButton4Click" prefHeight="52.0" prefWidth="85.0" text="Decisión" />
     <Button layoutX="678.0" layoutY="354.0" onAction="#handleButton5Click" prefHeight="52.0" prefWidth="102.0" text="Entrada/Salida" />
     <Button layoutX="676.0" layoutY="435.0" onAction="#handleButton6Click" prefHeight="52.0" prefWidth="102.0" text="Documento" />
+    <Button text="Borrar Figuras" onAction="#borrarFigurasClick"/>
 
 </AnchorPane>

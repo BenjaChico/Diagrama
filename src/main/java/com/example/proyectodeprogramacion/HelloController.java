@@ -13,6 +13,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
 public class HelloController {
+
     @FXML
     public Canvas DibujoCanvas;
 
@@ -237,6 +238,11 @@ public class HelloController {
     }
 
 
+    @FXML
+    private void borrarFigurasClick() {
+        GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
+        gc.clearRect(0, 0, DibujoCanvas.getWidth(), DibujoCanvas.getHeight());
+    }
 
 
     @FXML
