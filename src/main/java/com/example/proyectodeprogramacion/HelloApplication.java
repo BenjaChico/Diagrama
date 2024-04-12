@@ -6,6 +6,9 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 
 public class HelloApplication extends Application {
     @Override
@@ -22,3 +25,11 @@ public class HelloApplication extends Application {
         launch(args);
     }
 }
+
+
+
+
+
+
+
+

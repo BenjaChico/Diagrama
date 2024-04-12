@@ -3,12 +3,14 @@ package com.example.proyectodeprogramacion;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.control.Button;
+import javafx.scene.paint.Color;
+import javafx.scene.layout.AnchorPane;
+
 import java.util.Scanner;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 
 public class HelloController {
     @FXML
@@ -19,40 +21,69 @@ public class HelloController {
     private double inicioX = -1;
     private double inicioY = -1;
 
-    @FXML
-    private VBox botonesVBox;
-
-    @FXML
-    private TextField textoTextField;
 
     public void initialize() {
         DibujarLineaLimite(660, 0);
-        Button boton = new Button("Mi Botón");
-        botonesVBox.getChildren().add(boton);
-        DibujoCanvas.setOnMouseClicked(event -> {
+        DibujoCanvas.setOnMouseClicked(event ->{
             double x = event.getX();
             double y = event.getY();
-            if (x <= 660) {
-                String texto = textoTextField.getText(); // Obtener el texto del TextField
-                switch (figura) {
+
+            GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
+            GraphicsContext gc2 = DibujoCanvas.getGraphicsContext2D();
+            if(x <= 660){
+                switch (figura){
                     case "boton1":
-                        // Proximamente
-                        break;
+                        //Proximamente
                     case "boton2":
-                        // Proximamente
-                        break;
+                        //Proximamente
                     case "boton3":
-                        DibujarProceso(x, y, texto);
+                        Proceso proceso = new Proceso();
+                        proceso.DibujarProceso(gc, x,y);
+                        if (inicioX != -1 && inicioY != -1) {
+                            DibujarFlecha(inicioX, inicioY, x + 50, y);
+                        }
+                        inicioX = x + 50;
+                        inicioY = y + 50;
+                        break;
+                    case "boton4":
+                        Decision decision = new Decision();
+                        decision.DibujarDecision(gc, gc2, x, y);
                         if (inicioX != -1 && inicioY != -1) {
                             DibujarFlecha(inicioX, inicioY, x, y);
                         }
-                        inicioX = x;
-                        inicioY = y;
+                        //Lado Verdadero
+                        if(x > inicioX){
+                            inicioX = x - 150;
+                            inicioY = y + 50;
+                        }
+                        //Lado Falso
+                        else{
+                            inicioX = x + 150;
+                            inicioY = y + 50;
+                        }
                         break;
-                    // Otros casos aquí
+                    case "boton5":
+                        EntradaSalida entradaSalida = new EntradaSalida();
+                        entradaSalida.Dibujar_Entrada_Salida(gc, x, y);
+                        if (inicioX != -1 && inicioY != -1) {
+                            DibujarFlecha(inicioX, inicioY, x + 50, y);
+                        }
+                        inicioX = x + 50;
+                        inicioY = y + 50;
+                        break;
+                    case "boton6":
+                        Documento documento = new Documento();
+                        documento.Dibujar_Documento(gc, x, y);
+                        if (inicioX != -1 && inicioY != -1) {
+                            DibujarFlecha(inicioX, inicioY, x + 50, y);
+                        }
+                        inicioX = x + 50;
+                        inicioY = y + 50;
+                        break;
                 }
-            } else {
-                System.out.println("No se puede colocar aquí");
+            }
+            else{
+                System.out.println("No se puede colocar aqui");
             }
         });
     }
@@ -70,98 +101,133 @@ public class HelloController {
     }
 
 
+    public class Decision{
+
+        public void DibujarDecision(GraphicsContext gc, GraphicsContext gc2, double x, double y) {
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Texto Decisión");
+            dialog.setHeaderText(null);
+            dialog.setContentText("Texto Decisión:");
+
+            dialog.showAndWait().ifPresent(texto -> {
+                double tamanotexto = gc.getFont().getSize();
+                while (tamanotexto * texto.length() > 140) {
+                    tamanotexto -= 1;
+                }
+
+                //Dibuja figura Decisión
+                gc.beginPath();
+                gc.moveTo(x, y);
+                gc.lineTo(x + 70, y + 50);
+                gc.lineTo(x, y + 100);
+                gc.lineTo(x - 70, y + 50);
+                gc.closePath();
+
+                //Dibuja Lineas Verdadero y Falso de figura Decisión
+                gc.moveTo(x - 70, y + 50);
+                gc.lineTo(x - 150, y + 50);
+                gc.moveTo(x + 70, y + 50);
+                gc.lineTo(x + 150, y + 50);
+
+                gc2.setFont(new Font(15));
+                gc2.strokeText("V", x - 130, y + 45);
+                gc2.strokeText("F", x + 120, y + 45);
 
 
-    private void Dibujar_Entrada_Salida(double x, double y) {
-        GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Texto Entrada/Salida: ");
-        String texto = scanner.nextLine();
-
-
-        gc.beginPath();
-        gc.moveTo(x, y);
-        gc.lineTo(x + 100, y);
-        gc.lineTo(x + 100 - (50) / 4, y + 50);
-        gc.lineTo(x - (50) / 4, y + 50);
-        gc.closePath();
-
-        gc.setFont(new Font(20)); // Tamaño de fuente 20
-        gc.strokeText(texto, x + 15, y + 30); //escribir texto
-
-        gc.stroke();
-    }
-    private void Dibujar_Documento(double x, double y) {
-        GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Texto Entrada/Salida: ");
-        String texto = scanner.nextLine();
-
-
-        gc.beginPath();
-        gc.moveTo(x, y);
-        gc.lineTo(x + 100, y);
-        gc.lineTo(x + 100, y + 50);
-        gc.closePath();
-        gc.quadraticCurveTo(x+100,y+50,x+150,y+200);
-        gc.closePath();
-
-        gc.setFont(new Font(20)); // Tamaño de fuente 20
-        gc.strokeText(texto, x + 15, y + 30); //escribir texto
-
-        gc.stroke();
+                gc.setFont(new Font(tamanotexto + 5));
+                gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) - 10, y + 55);
+                gc.stroke();
+            });
+        }
     }
 
 
-    private void DibujarProceso(double x, double y) {
-        GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
 
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Texto Proceso: ");
-        String texto = scanner.nextLine();
 
-        gc.beginPath();
-        gc.moveTo(x, y);
-        gc.lineTo(x + 100, y);
-        gc.lineTo(x + 100, y + 50);
-        gc.lineTo(x, y + 50);
-        gc.closePath();
+    public class Documento {
 
-        gc.setFont(new Font(20)); // Tamaño de fuente 20
-        gc.strokeText(texto, x + 20, y + 30); //escribir texto
+        public void Dibujar_Documento(GraphicsContext gc, double x, double y) {
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Texto Decisión");
+            dialog.setHeaderText(null);
+            dialog.setContentText("Texto Decisión:");
 
-        gc.stroke();
+            dialog.showAndWait().ifPresent(texto -> {
+                double tamanotexto = gc.getFont().getSize();
+                while (tamanotexto * texto.length() > 140) {
+                    tamanotexto -=1;
+                }
+                gc.beginPath();
+                gc.moveTo(x, y);
+                gc.lineTo(x + 100, y);
+                gc.lineTo(x + 100, y + 50);
+                gc.closePath();
+                gc.quadraticCurveTo(x+100,y+50,x+150,y+200);
+                gc.closePath();
+                gc.setFont(new Font(20)); // Tamaño de fuente 20
+                gc.strokeText(texto, x + 15, y + 30); //escribir texto
+                gc.stroke();
+            });
+        }
+
+    }
+    public class EntradaSalida {
+
+        public void Dibujar_Entrada_Salida(GraphicsContext gc, double x, double y) {
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Texto Decisión");
+            dialog.setHeaderText(null);
+            dialog.setContentText("Texto Decisión:");
+            dialog.showAndWait().ifPresent(texto -> {
+                double tamanotexto = gc.getFont().getSize();
+                while (tamanotexto * texto.length() > 140) {
+                    tamanotexto -= 1;
+                }
+                gc.beginPath();
+                gc.moveTo(x, y);
+                gc.lineTo(x + 100, y);
+                gc.lineTo(x + 100, y + 50);
+                gc.lineTo(x, y + 50);
+                gc.closePath();
+                gc.setFont(new Font(20));
+                gc.strokeText(texto, x + 20, y + 30);
+                gc.stroke();
+            });
+        }
+
+    }
+    public class Proceso{
+
+        public void DibujarProceso(GraphicsContext gc, double x, double y) {
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Texto Decisión");
+            dialog.setHeaderText(null);
+            dialog.setContentText("Texto Decisión:");
+
+            gc.beginPath();
+            gc.moveTo(x, y);
+            gc.lineTo(x + 100, y);
+            gc.lineTo(x + 100, y + 50);
+            gc.lineTo(x, y + 50);
+            gc.closePath();
+
+            dialog.showAndWait().ifPresent(texto -> {
+                double tamanotexto = gc.getFont().getSize();
+                while (tamanotexto * texto.length() > 140) {
+                    tamanotexto -= 1;
+                }
+                gc.beginPath();
+                gc.moveTo(x, y);
+                gc.lineTo(x + 100, y);
+                gc.lineTo(x + 100 - (50) / 4, y + 50);
+                gc.lineTo(x - (50) / 4, y + 50);
+                gc.closePath();
+
+            });
+        }
+
     }
 
-
-    private void DibujarDecision(double x, double y) {
-        GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
-
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Texto Decisión: ");
-        String texto = scanner.nextLine();
-
-        //Dibuja figura Decisión
-        gc.beginPath();
-        gc.moveTo(x, y);
-        gc.lineTo(x + 70, y + 50);
-        gc.lineTo(x, y + 100);
-        gc.lineTo(x - 70, y + 50);
-        gc.closePath();
-
-        //Dibuja Lineas Horizontales de figura Decisión
-        gc.moveTo(x - 70, y + 50);
-        gc.lineTo(x - 150, y + 50);
-        gc.moveTo(x + 70, y + 50);
-        gc.lineTo(x + 150, y + 50);
-        gc.strokeText("V", x - 130, y + 45);
-        gc.strokeText("F", x + 120, y + 45);
-
-        gc.setFont(new Font(20));
-        gc.strokeText(texto, x - 35, y + 55);
-
-        gc.stroke();
-    }
 
     private void DibujarLineaLimite(double x, double y) {
         GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
@@ -169,6 +235,8 @@ public class HelloController {
         gc.setLineWidth(2.0);
         gc.strokeLine(x, y, x, y+ 800);
     }
+
+
 
 
     @FXML
