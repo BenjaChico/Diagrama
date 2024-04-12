@@ -104,6 +104,11 @@ public class HelloController {
         gc.strokeLine(x, y, x, y+ 800);
     }
 
+    @FXML
+    private void borrarFigurasClick() {
+        GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
+        gc.clearRect(0, 0,660, DibujoCanvas.getHeight());
+    }
 
     @FXML
     private void handleButton1Click() {
