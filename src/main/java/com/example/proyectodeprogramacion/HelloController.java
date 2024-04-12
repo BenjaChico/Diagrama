@@ -103,6 +103,14 @@ public class HelloController {
 
 
     public class Decision{
+        public String texto;
+        public String getTexto() {
+            return texto;
+        }
+
+        public void setTexto(String texto) {
+            this.texto = texto;
+        }
 
         public void DibujarDecision(GraphicsContext gc, GraphicsContext gc2, double x, double y) {
             TextInputDialog dialog = new TextInputDialog();
@@ -114,8 +122,10 @@ public class HelloController {
                 double tamanotexto = gc.getFont().getSize();
                 while (tamanotexto * texto.length() > 140) {
                     tamanotexto -= 1;
-                }
 
+                }
+                this.texto = texto;
+                System.out.println(texto);
                 //Dibuja figura Decisión
                 gc.beginPath();
                 gc.moveTo(x, y);
@@ -138,6 +148,7 @@ public class HelloController {
                 gc.setFont(new Font(tamanotexto + 5));
                 gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) - 10, y + 55);
                 gc.stroke();
+
             });
         }
     }
@@ -197,7 +208,18 @@ public class HelloController {
         }
 
     }
-    public class Proceso{
+    public class Proceso {
+
+        public String getTextoo() {
+            return textoo;
+        }
+
+        public void setTextoo(String textoo) {
+            this.textoo = textoo;
+        }
+
+        private String textoo;
+
 
         public void DibujarProceso(GraphicsContext gc, double x, double y) {
             TextInputDialog dialog = new TextInputDialog();
@@ -226,8 +248,8 @@ public class HelloController {
 
             });
         }
-
     }
+
 
 
     private void DibujarLineaLimite(double x, double y) {
@@ -241,7 +263,7 @@ public class HelloController {
     @FXML
     private void borrarFigurasClick() {
         GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
-        gc.clearRect(0, 0, DibujoCanvas.getWidth(), DibujoCanvas.getHeight());
+        gc.clearRect(0, 0,660, DibujoCanvas.getHeight());
     }
 
 
