@@ -1,6 +1,7 @@
 package com.example.proyectodeprogramacion;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.text.Font;
@@ -16,6 +17,23 @@ public class HelloController {
     private ArrayList<Figura> figurasarreglo = new ArrayList<>();
 
     public abstract class Figura {
+        public abstract boolean contienePunto(double x, double y);
+        public double getX() {
+            return x;
+        }
+
+        public void setX(double x) {
+            this.x = x;
+        }
+
+        public double getY() {
+            return y;
+        }
+
+        public void setY(double y) {
+            this.y = y;
+        }
+
         private double x;
         private double y;
 
@@ -30,6 +48,12 @@ public class HelloController {
     @FXML
     public Canvas DibujoCanvas;
 
+    @FXML
+    private Button okButton;
+    @FXML
+    private void handleOKButtonClick() {
+        figura = null; // Deselecciona todos los casos
+    }
     private String figura = "";
 
     private double inicioX = -1;
@@ -174,6 +198,19 @@ public class HelloController {
                 gc.stroke();
 
             });
+
+        }
+        @Override
+        public boolean contienePunto(double x, double y) {
+            double ancho = 140; // Ancho de la figura de decisión
+            double alto = 100; // Alto de la figura de decisión
+
+            double x1 = this.getX();
+            double y1 = this.getY();
+            double x2 = x1 + ancho;
+            double y2 = y1 + alto;
+
+            return x >= x1 && x <= x2 && y >= y1 && y <= y2;
         }
     }
 
@@ -222,6 +259,18 @@ public class HelloController {
                 gc.stroke();
             });
         }
+        @Override
+        public boolean contienePunto(double x, double y) {
+            double ancho = 100;
+            double alto = 50;
+
+            double x1 = this.getX();
+            double y1 = this.getY();
+            double x2 = x1 + ancho;
+            double y2 = y1 + alto;
+
+            return x >= x1 && x <= x2 && y >= y1 && y <= y2;
+        }
 
     }
     public class EntradaSalida extends Figura{
@@ -263,6 +312,20 @@ public class HelloController {
                 gc.stroke();
             });
         }
+        @Override
+        public boolean contienePunto(double x, double y) {
+            double ancho = 100;
+            double alto = 50;
+
+
+            double x1 = this.getX();
+            double y1 = this.getY();
+            double x2 = x1 + ancho;
+            double y2 = y1 + alto;
+
+
+            return x >= x1 && x <= x2 && y >= y1 && y <= y2;
+        }
 
     }
     public class Proceso extends Figura{
@@ -281,7 +344,6 @@ public class HelloController {
         public void setTexto(String texto) {
             this.textoo = texto;
         }
-
 
 
         public void DibujarProceso(GraphicsContext gc, double x, double y) {
@@ -312,7 +374,19 @@ public class HelloController {
 
             });
         }
+        public boolean contienePunto(double x, double y) {
+            double ancho = 100;
+            double alto = 50;
+
+            double x1 = this.getX();
+            double y1 = this.getY();
+            double x2 = x1 + ancho;
+            double y2 = y1 + alto;
+
+            return x >= x1 && x <= x2 && y >= y1 && y <= y2;
+        }
     }
+
 
 
     private void DibujarLineaLimite(double x, double y) {
