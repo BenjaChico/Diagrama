@@ -6,13 +6,26 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.text.Font;
 import javafx.scene.paint.Color;
 import javafx.scene.layout.AnchorPane;
-
+import java.util.ArrayList;
 import java.util.Scanner;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
 public class HelloController {
+    private ArrayList<Figura> figurasarreglo = new ArrayList<>();
+
+    public abstract class Figura {
+        private double x;
+        private double y;
+
+        public Figura(double x, double y) {
+            this.x = x;
+            this.y = y;
+        }
+        public Figura() {
+        }
+    }
 
     @FXML
     public Canvas DibujoCanvas;
@@ -40,6 +53,7 @@ public class HelloController {
                     case "boton3":
                         Proceso proceso = new Proceso();
                         proceso.DibujarProceso(gc, x,y);
+                        figurasarreglo.add(proceso);
                         if (inicioX != -1 && inicioY != -1) {
                             DibujarFlecha(inicioX, inicioY, x + 50, y);
                         }
@@ -49,6 +63,7 @@ public class HelloController {
                     case "boton4":
                         Decision decision = new Decision();
                         decision.DibujarDecision(gc, gc2, x, y);
+                        figurasarreglo.add(decision);
                         if (inicioX != -1 && inicioY != -1) {
                             DibujarFlecha(inicioX, inicioY, x, y);
                         }
@@ -66,6 +81,7 @@ public class HelloController {
                     case "boton5":
                         EntradaSalida entradaSalida = new EntradaSalida();
                         entradaSalida.Dibujar_Entrada_Salida(gc, x, y);
+                        figurasarreglo.add(entradaSalida);
                         if (inicioX != -1 && inicioY != -1) {
                             DibujarFlecha(inicioX, inicioY, x + 50, y);
                         }
@@ -74,6 +90,7 @@ public class HelloController {
                         break;
                     case "boton6":
                         Documento documento = new Documento();
+                        figurasarreglo.add(documento);
                         documento.Dibujar_Documento(gc, x, y);
                         if (inicioX != -1 && inicioY != -1) {
                             DibujarFlecha(inicioX, inicioY, x + 50, y);
@@ -102,8 +119,16 @@ public class HelloController {
     }
 
 
-    public class Decision{
+    public class Decision extends Figura{
         public String textoo;
+
+        public Decision(double x, double y) {
+            super(x, y);
+        }
+        public Decision() {
+            super();
+        }
+
         public String getTexto() {
             return textoo;
         }
@@ -155,7 +180,15 @@ public class HelloController {
 
 
 
-    public class Documento {
+    public class Documento extends Figura{
+
+        public Documento(double x, double y) {
+            super(x, y);
+        }
+        public Documento() {
+            super();
+        }
+
         public String textoo;
         public String getTexto() {
             return textoo;
@@ -191,7 +224,14 @@ public class HelloController {
         }
 
     }
-    public class EntradaSalida {
+    public class EntradaSalida extends Figura{
+        public EntradaSalida(double x, double y) {
+            super(x, y);
+        }
+        public EntradaSalida() {
+            super();
+        }
+
         public String textoo;
         public String getTexto() {
             return textoo;
@@ -225,7 +265,14 @@ public class HelloController {
         }
 
     }
-    public class Proceso {
+    public class Proceso extends Figura{
+        public Proceso(double x, double y) {
+            super(x, y);
+        }
+        public Proceso() {
+            super();
+        }
+
         public String textoo;
         public String getTexto() {
             return textoo;
@@ -266,7 +313,6 @@ public class HelloController {
             });
         }
     }
-
 
 
     private void DibujarLineaLimite(double x, double y) {
