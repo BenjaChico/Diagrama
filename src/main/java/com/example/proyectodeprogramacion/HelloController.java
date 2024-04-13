@@ -103,13 +103,13 @@ public class HelloController {
 
 
     public class Decision{
-        public String texto;
+        public String textoo;
         public String getTexto() {
-            return texto;
+            return textoo;
         }
 
         public void setTexto(String texto) {
-            this.texto = texto;
+            this.textoo = texto;
         }
 
         public void DibujarDecision(GraphicsContext gc, GraphicsContext gc2, double x, double y) {
@@ -124,8 +124,7 @@ public class HelloController {
                     tamanotexto -= 1;
 
                 }
-                this.texto = texto;
-                System.out.println(texto);
+                setTexto(texto);
                 //Dibuja figura Decisión
                 gc.beginPath();
                 gc.moveTo(x, y);
@@ -157,6 +156,14 @@ public class HelloController {
 
 
     public class Documento {
+        public String textoo;
+        public String getTexto() {
+            return textoo;
+        }
+
+        public void setTexto(String texto) {
+            this.textoo = texto;
+        }
 
         public void Dibujar_Documento(GraphicsContext gc, double x, double y) {
             TextInputDialog dialog = new TextInputDialog();
@@ -169,6 +176,7 @@ public class HelloController {
                 while (tamanotexto * texto.length() > 140) {
                     tamanotexto -=1;
                 }
+                setTexto(texto);
                 gc.beginPath();
                 gc.moveTo(x, y);
                 gc.lineTo(x + 100, y);
@@ -184,6 +192,14 @@ public class HelloController {
 
     }
     public class EntradaSalida {
+        public String textoo;
+        public String getTexto() {
+            return textoo;
+        }
+
+        public void setTexto(String texto) {
+            this.textoo = texto;
+        }
 
         public void Dibujar_Entrada_Salida(GraphicsContext gc, double x, double y) {
             TextInputDialog dialog = new TextInputDialog();
@@ -195,6 +211,7 @@ public class HelloController {
                 while (tamanotexto * texto.length() > 140) {
                     tamanotexto -= 1;
                 }
+                setTexto(texto);
                 gc.beginPath();
                 gc.moveTo(x, y);
                 gc.lineTo(x + 100, y);
@@ -209,16 +226,15 @@ public class HelloController {
 
     }
     public class Proceso {
-
-        public String getTextoo() {
+        public String textoo;
+        public String getTexto() {
             return textoo;
         }
 
-        public void setTextoo(String textoo) {
-            this.textoo = textoo;
+        public void setTexto(String texto) {
+            this.textoo = texto;
         }
 
-        private String textoo;
 
 
         public void DibujarProceso(GraphicsContext gc, double x, double y) {
@@ -239,6 +255,7 @@ public class HelloController {
                 while (tamanotexto * texto.length() > 140) {
                     tamanotexto -= 1;
                 }
+                setTexto(texto);
                 gc.beginPath();
                 gc.moveTo(x, y);
                 gc.lineTo(x + 100, y);
