@@ -42,7 +42,6 @@ public class HelloController {
     }
     @FXML
     public Canvas DibujoCanvas;
-
     private String figura = "";
 
     private double inicioX = -1;
@@ -359,13 +358,6 @@ public class HelloController {
             dialog.setHeaderText(null);
             dialog.setContentText("Texto Proceso:");
 
-            gc.beginPath();
-            gc.moveTo(x, y);
-            gc.lineTo(x + 100, y);
-            gc.lineTo(x + 100, y + 50);
-            gc.lineTo(x, y + 50);
-            gc.closePath();
-
             dialog.showAndWait().ifPresent(texto -> {
                 double tamanotexto = gc.getFont().getSize();
                 while (tamanotexto * texto.length() > 140) {
@@ -430,15 +422,6 @@ public class HelloController {
                 Documento documento = (Documento) figura;
                 documento.Dibujar_Documento(gc, figura.getX(), figura.getY());
             }
-        }
-    }
-
-
-    @FXML
-    private void imprimirFiguras() {
-        System.out.println("Contenido del arreglo de figuras:");
-        for (Figura figura : figurasarreglo) {
-            System.out.println(figura.getX()); //
         }
     }
 
