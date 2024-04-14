@@ -433,15 +433,6 @@ public class HelloController {
         }
     }
 
-
-    @FXML
-    private void imprimirFiguras() {
-        System.out.println("Contenido del arreglo de figuras:");
-        for (Figura figura : figurasarreglo) {
-            System.out.println(figura.getX()); //
-        }
-    }
-
     @FXML
     private void handleButton1Click() {
         figura = "boton1";
