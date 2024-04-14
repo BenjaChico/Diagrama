@@ -42,7 +42,6 @@ public class HelloController {
     }
     @FXML
     public Canvas DibujoCanvas;
-
     private String figura = "";
 
     private double inicioX = -1;
@@ -358,13 +357,6 @@ public class HelloController {
             dialog.setTitle("Texto Proceso");
             dialog.setHeaderText(null);
             dialog.setContentText("Texto Proceso:");
-
-            gc.beginPath();
-            gc.moveTo(x, y);
-            gc.lineTo(x + 100, y);
-            gc.lineTo(x + 100, y + 50);
-            gc.lineTo(x, y + 50);
-            gc.closePath();
 
             dialog.showAndWait().ifPresent(texto -> {
                 double tamanotexto = gc.getFont().getSize();
