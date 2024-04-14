@@ -3,6 +3,8 @@ package com.example.proyectodeprogramacion;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.ArcType;
 import javafx.scene.text.Font;
 import java.util.ArrayList;
 import javafx.scene.control.TextInputDialog;
@@ -73,7 +75,15 @@ public class HelloController {
                     case "boton1":
                         //Proximamente
                     case "boton2":
-                        //Proximamente
+                        InicioFin inicioFin = new InicioFin(x, y);
+                        inicioFin.DibujarInicioFin(gc, x, y + 25);
+                        figurasarreglo.add(inicioFin);
+                        if(inicioX != -1 && inicioY != -1){
+                            DibujarFlecha(inicioX, inicioY, x + 50, y);
+                        }
+                        inicioX = x + 50;
+                        inicioY = y + 50;
+                        break;
                     case "boton3":
                         Proceso proceso = new Proceso(x, y);
                         proceso.DibujarProceso(gc, x,y);
@@ -120,7 +130,7 @@ public class HelloController {
                             DibujarFlecha(inicioX, inicioY, x + 50, y);
                         }
                         inicioX = x + 50;
-                        inicioY = y + 50;
+                        inicioY = y + 55;
                         break;
                 }
             }
@@ -140,6 +150,94 @@ public class HelloController {
             gc.strokeLine(inicioX, inicioY, finalX, finalY);
             gc.strokeLine(finalX, finalY, finalX - TamañoFlecha * Math.cos(angulo - Math.PI / 6), finalY - TamañoFlecha * Math.sin(angulo - Math.PI / 6));
             gc.strokeLine(finalX, finalY, finalX - TamañoFlecha * Math.cos(angulo + Math.PI / 6), finalY - TamañoFlecha * Math.sin(angulo + Math.PI / 6));
+        }
+    }
+
+    public class InicioFin extends Figura {
+        public String textoo;
+
+        public InicioFin(double x, double y) {
+            super(x, y);
+        }
+
+        public InicioFin() {
+            super();
+        }
+
+        public String getTexto() {
+            return textoo;
+        }
+
+        public void setTexto(String texto) {
+            this.textoo = texto;
+        }
+
+        public void DibujarInicioFin(GraphicsContext gc, double x, double y) {
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Texto InicioFin");
+            dialog.setHeaderText(null);
+            dialog.setContentText("Texto InicioFin:");
+
+            dialog.showAndWait().ifPresent(texto -> {
+                double tamanotexto = gc.getFont().getSize();
+                while (tamanotexto * texto.length() > 140) {
+                    tamanotexto -= 1;
+
+                }
+            setTexto(texto);
+            //Dibuja figura Decisión
+            double radius = 25;
+            double startAngle = 90;
+            double extentAngle = 180;
+
+            // Dibujar el semicírculo
+            gc.strokeArc(x - radius, y - radius, radius * 2, radius * 2, startAngle, extentAngle, javafx.scene.shape.ArcType.OPEN);
+
+            // Calcular las coordenadas finales del arco
+            double cirx = x + radius * Math.cos(Math.toRadians(90)); // Coordenada x del punto final del arco
+            double ciry = y + radius * Math.sin(Math.toRadians(90)); // Coordenada y del punto final del arco
+
+            // Dibujar una línea desde el punto final del arco
+            gc.beginPath();
+            gc.moveTo(cirx, ciry);
+            gc.lineTo(cirx + 100, ciry); // Dibujar una línea horizontal de 100 píxeles
+            gc.stroke();
+
+            double x2 = cirx + 100;
+            double y2 = ciry - 25;
+            double startAngle2 = 270; // Ángulo de inicio para el segundo semicírculo (mirando hacia la izquierda)
+
+            // Dibujar el segundo semicírculo
+            gc.strokeArc(x2 - radius, y2 - radius, radius * 2, radius * 2, startAngle2, extentAngle, javafx.scene.shape.ArcType.OPEN);
+
+            // Calcular las coordenadas finales del segundo arco
+            double cirx2 = x2 + radius * Math.cos(Math.toRadians(270)); // Coordenada x del punto final del arco
+            double ciry2 = y2 + radius * Math.sin(Math.toRadians(270)); // Coordenada y del punto final del arco
+
+            // Dibujar una línea desde el punto final del segundo arco
+            gc.beginPath();
+            gc.moveTo(cirx, ciry - 50);
+            gc.lineTo(cirx2, ciry2); // Dibujar una línea horizontal de 100 píxeles hacia la izquierda
+            gc.stroke();
+            gc.closePath();
+
+
+            gc.setFont(new Font(tamanotexto + 5));
+            gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) + 10, y);
+            gc.stroke();
+            });
+        }
+        @Override
+        public boolean contienePunto(double x, double y) {
+            double ancho = 140; // Ancho de la figura de decisión
+            double alto = 100; // Alto de la figura de decisión
+
+            double x1 = this.getX();
+            double y1 = this.getY();
+            double x2 = x1 + ancho;
+            double y2 = y1 + alto;
+
+            return x >= x1 && x <= x2 && y >= y1 && y <= y2;
         }
     }
 
@@ -249,13 +347,13 @@ public class HelloController {
                     tamanotexto -= 1;
                 }
                 setTexto(texto);
+                gc.strokeLine(x, y, x + 100, y); // Línea Superior
+                gc.strokeLine(x, y, x, y + 50); // Línea Izquierda
+                gc.strokeLine(x + 100, y, x + 100, y + 40); // Línea Derecha
                 gc.beginPath();
-                gc.moveTo(x, y);
-                gc.lineTo(x + 100, y);
-                gc.lineTo(x + 100, y + 50);
-                gc.bezierCurveTo(x + 100, y + 50, x + 150, y + 200, x + 150, y + 200);
-                gc.lineTo(x, y + 50);
-                gc.closePath();
+                gc.moveTo(x, y+50); // Mover al punto de inicio de la curva
+                gc.bezierCurveTo(x + 40, y + 80, x + 50, y + 35, x + 100, y+40);
+                gc.stroke(); // Trazar la curva
                 gc.setFont(new Font(20)); // Tamaño de fuente 20
                 gc.strokeText(texto, x + 15, y + 30); //escribir texto
                 gc.stroke();
@@ -304,12 +402,11 @@ public class HelloController {
                 while (tamanotexto * texto.length() > 140) {
                     tamanotexto -= 1;
                 }
-                setTexto(texto);
                 gc.beginPath();
                 gc.moveTo(x, y);
                 gc.lineTo(x + 100, y);
-                gc.lineTo(x + 100, y + 50);
-                gc.lineTo(x, y + 50);
+                gc.lineTo(x + 100 - (50) / 4, y + 50);
+                gc.lineTo(x - (50) / 4, y + 50);
                 gc.closePath();
                 gc.setFont(new Font(20));
                 gc.strokeText(texto, x + 20, y + 30);
@@ -367,10 +464,12 @@ public class HelloController {
                 gc.beginPath();
                 gc.moveTo(x, y);
                 gc.lineTo(x + 100, y);
-                gc.lineTo(x + 100 - (50) / 4, y + 50);
-                gc.lineTo(x - (50) / 4, y + 50);
+                gc.lineTo(x + 100, y + 50);
+                gc.lineTo(x, y + 50);
                 gc.closePath();
-
+                gc.setFont(new Font(20));
+                gc.strokeText(texto, x + 20, y + 30);
+                gc.stroke();
             });
         }
         public boolean contienePunto(double x, double y) {
