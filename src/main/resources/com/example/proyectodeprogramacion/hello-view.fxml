@@ -18,7 +18,6 @@
     <Button layoutX="678.0" layoutY="354.0" onAction="#handleButton5Click" prefHeight="52.0" prefWidth="102.0" text="Entrada/Salida" />
     <Button layoutX="676.0" layoutY="435.0" onAction="#handleButton6Click" prefHeight="52.0" prefWidth="102.0" text="Documento" />
     <Button layoutX="0.0" layoutY="0.0" text="Borrar Figuras" onAction="#borrarFigurasClick"/>
-    <Button fx:id="okButton" layoutX="678.0" layoutY="550.0" text="OK" onAction="#handleOKButtonClick" />
 
 
 
