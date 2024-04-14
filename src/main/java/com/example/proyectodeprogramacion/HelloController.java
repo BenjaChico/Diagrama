@@ -1,6 +1,8 @@
 package com.example.proyectodeprogramacion;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.text.Font;
@@ -17,17 +19,16 @@ public class HelloController {
 
     private double inicioX = -1;
     private double inicioY = -1;
-
+    private boolean ListoPresionado = false;
 
     public void initialize() {
-        DibujarLineaLimite(660, 0);
         DibujoCanvas.setOnMouseClicked(event ->{
             double x = event.getX();
             double y = event.getY();
 
             GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
             GraphicsContext gc2 = DibujoCanvas.getGraphicsContext2D();
-            if(x <= 660){
+            if(x <= DibujoCanvas.getWidth() - 140.0){
                 switch (figura){
                     case "boton1":
                         //Proximamente
@@ -49,7 +50,7 @@ public class HelloController {
                             DibujarFlecha(inicioX, inicioY, x, y);
                         }
                         //Lado Verdadero
-                        if(x > inicioX){
+                        if(!ListoPresionado){
                             inicioX = x - 150;
                             inicioY = y + 50;
                         }
@@ -90,24 +91,17 @@ public class HelloController {
         double TamañoFlecha = 10;
         double angulo = Math.atan2(finalY - inicioY, finalX - inicioX);
 
-        if(inicioX < 660) {
+        if(inicioX < DibujoCanvas.getWidth() - 140.0) {
             gc.strokeLine(inicioX, inicioY, finalX, finalY);
             gc.strokeLine(finalX, finalY, finalX - TamañoFlecha * Math.cos(angulo - Math.PI / 6), finalY - TamañoFlecha * Math.sin(angulo - Math.PI / 6));
             gc.strokeLine(finalX, finalY, finalX - TamañoFlecha * Math.cos(angulo + Math.PI / 6), finalY - TamañoFlecha * Math.sin(angulo + Math.PI / 6));
         }
     }
 
-    private void DibujarLineaLimite(double x, double y) {
-        GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
-        gc.setStroke(javafx.scene.paint.Color.BLACK);
-        gc.setLineWidth(2.0);
-        gc.strokeLine(x, y, x, y+ 800);
-    }
-
     @FXML
     private void borrarFigurasClick() {
         GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
-        gc.clearRect(0, 0,660, DibujoCanvas.getHeight());
+        gc.clearRect(0, 0,DibujoCanvas.getWidth(), DibujoCanvas.getHeight());
     }
 
     @FXML
@@ -138,5 +132,9 @@ public class HelloController {
     @FXML
     private void handleButton6Click() {
         figura = "boton6";
+    }
+
+    public void BotonListo() {
+        ListoPresionado = true;
     }
 }

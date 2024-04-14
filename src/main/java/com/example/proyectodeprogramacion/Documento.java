@@ -12,13 +12,12 @@ public class Documento {
         System.out.print("Texto Entrada/Salida: ");
         String texto = scanner.nextLine();
 
-
         gc.beginPath();
         gc.moveTo(x, y);
         gc.lineTo(x + 100, y);
         gc.lineTo(x + 100, y + 50);
-        gc.closePath();
-        gc.quadraticCurveTo(x+100,y+50,x+150,y+200);
+        gc.bezierCurveTo(x + 100, y + 50, x + 150, y + 200, x + 150, y + 200);
+        gc.lineTo(x, y + 50);
         gc.closePath();
 
         gc.setFont(new Font(20)); // Tamaño de fuente 20

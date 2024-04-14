@@ -36,7 +36,12 @@
          <font>
             <Font size="14.0" />
          </font></Button>
-        <Button text="Borrar Figuras" onAction="#borrarFigurasClick"/>
+        <Button onAction="#borrarFigurasClick" text="Borrar Figuras" />
+        <Button mnemonicParsing="false" onAction="#BotonListo" prefHeight="28.0" prefWidth="69.0" text="Listo">
+             <font>
+                <Font size="14.0" />
+            </font>
+        </Button>
     </VBox>
 
 </AnchorPane>
