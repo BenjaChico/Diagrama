@@ -17,6 +17,7 @@
         </content>
     </ScrollPane>
 
+
     <!-- Botones en el Lado Derecho -->
     <VBox alignment="CENTER_RIGHT" prefHeight="600.0" spacing="50" AnchorPane.bottomAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
         <Button onAction="#handleButton1Click" prefHeight="52.0" prefWidth="118.0" text="Linea de Flujo">

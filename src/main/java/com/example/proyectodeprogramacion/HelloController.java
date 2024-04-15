@@ -69,6 +69,7 @@ public class HelloController {
                     redibujarFiguras();
                 });
             }
+
             else{
                 if(x <= DibujoCanvas.getWidth() - 140.0){
                     switch (figura){
