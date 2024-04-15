@@ -11,14 +11,40 @@ import javafx.scene.control.TextInputDialog;
 
 public class HelloController {
     private final ArrayList<Figura> figurasarreglo = new ArrayList<>();
+    public class Flecha{
+        double x1;
+        double x2;
+        double y1;
+        double y2;
 
+        public Flecha(double x1, double x2, double y1, double y2) {
+            this.x1 = x1;
+            this.x2 = x2;
+            this.y1 = y1;
+            this.y2 = y2;
+        }
+        private void DibujarFlecha(double x1, double y1, double x2, double y2) {
+            GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
+            double TamañoFlecha = 10;
+            double angulo = Math.atan2(y2 - y1, x2 - x1);
+
+            if(inicioX < DibujoCanvas.getWidth() - 140.0) {
+                gc.strokeLine(inicioX, inicioY, x2, y2);
+                gc.strokeLine(x1, y1, x1 - TamañoFlecha * Math.cos(angulo - Math.PI / 6), y2 - TamañoFlecha * Math.sin(angulo - Math.PI / 6));
+                gc.strokeLine(x2, y2, x2 - TamañoFlecha * Math.cos(angulo + Math.PI / 6), x2 - TamañoFlecha * Math.sin(angulo + Math.PI / 6));
+            }
+        }
+    }
     public abstract class Figura {
+
+
         public abstract boolean contienePunto(double x, double y);
         public abstract String getTexto();
-        public abstract void setTexto(String texto);
-        public double getX() {
-            return x;
+        private Flecha flecha;
+        public Flecha getFlecha() {
+            return flecha;
         }
+
 
         public void setX(double x) {
             this.x = x;
@@ -50,6 +76,7 @@ public class HelloController {
     private double inicioY = -1;
     private boolean ListoPresionado = false;
 
+
     public void initialize() {
         DibujoCanvas.setOnMouseClicked(event ->{
             double x = event.getX();
@@ -80,7 +107,7 @@ public class HelloController {
                             inicioFin.DibujarInicioFin(gc, x, y + 25);
                             figurasarreglo.add(inicioFin);
                             if(inicioX != -1 && inicioY != -1){
-                                DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                inicioFin.getFlecha().DibujarFlecha(inicioX, inicioY, x + 50, y);
                             }
                             inicioX = x + 50;
                             inicioY = y + 50;
@@ -90,7 +117,7 @@ public class HelloController {
                             proceso.DibujarProceso(gc, x,y);
                             figurasarreglo.add(proceso);
                             if (inicioX != -1 && inicioY != -1) {
-                                DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                proceso.getFlecha().DibujarFlecha(inicioX, inicioY, x + 50, y);
                             }
                             inicioX = x + 50;
                             inicioY = y + 50;
@@ -100,7 +127,7 @@ public class HelloController {
                             decision.DibujarDecision(gc, gc2, x, y);
                             figurasarreglo.add(decision);
                             if (inicioX != -1 && inicioY != -1) {
-                                DibujarFlecha(inicioX, inicioY, x, y);
+                                decision.getFlecha().DibujarFlecha(inicioX, inicioY, x, y);
                             }
                             //Lado Verdadero
                             if(!ListoPresionado){
@@ -118,7 +145,8 @@ public class HelloController {
                             entradaSalida.Dibujar_Entrada_Salida(gc, x, y);
                             figurasarreglo.add(entradaSalida);
                             if (inicioX != -1 && inicioY != -1) {
-                                DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                entradaSalida.setFlecha();
+                                entradaSalida.getFlecha().DibujarFlecha(inicioX, inicioY, x + 50, y);
                             }
                             inicioX = x + 50;
                             inicioY = y + 50;
@@ -128,7 +156,7 @@ public class HelloController {
                             documento.Dibujar_Documento(gc, x, y);
                             figurasarreglo.add(documento);
                             if (inicioX != -1 && inicioY != -1) {
-                                DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                documento.getFlecha().DibujarFlecha(inicioX, inicioY, x + 50, y);
                             }
                             inicioX = x + 50;
                             inicioY = y + 55;
@@ -142,17 +170,7 @@ public class HelloController {
         });
     }
 
-    private void DibujarFlecha(double inicioX, double inicioY, double finalX, double finalY) {
-        GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
-        double TamañoFlecha = 10;
-        double angulo = Math.atan2(finalY - inicioY, finalX - inicioX);
 
-        if(inicioX < DibujoCanvas.getWidth() - 140.0) {
-            gc.strokeLine(inicioX, inicioY, finalX, finalY);
-            gc.strokeLine(finalX, finalY, finalX - TamañoFlecha * Math.cos(angulo - Math.PI / 6), finalY - TamañoFlecha * Math.sin(angulo - Math.PI / 6));
-            gc.strokeLine(finalX, finalY, finalX - TamañoFlecha * Math.cos(angulo + Math.PI / 6), finalY - TamañoFlecha * Math.sin(angulo + Math.PI / 6));
-        }
-    }
 
     public class InicioFin extends Figura {
         public String textoo;
