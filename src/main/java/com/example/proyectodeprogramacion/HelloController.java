@@ -82,16 +82,17 @@ public class HelloController {
                   case "boton2":
                     //Proximamente
                      case "boton3":
-                        Proceso proceso = new Proceso(x,y);
+                         Proceso proceso = new Proceso(x, y);
                          proceso.DibujarProceso(gc, x,y);
-                        figurasarreglo.add(proceso);
-                    if (inicioX != -1 && inicioY != -1) {
-                        DibujarFlecha(inicioX, inicioY, x + 50, y);
-                    }
-                        inicioX = x + 50;
-                        inicioY = y + 50;
-                        break;
+                         figurasarreglo.add(proceso);
+                         if (inicioX != -1 && inicioY != -1) {
+                             DibujarFlecha(inicioX, inicioY, x + 50, y);
+                         }
+                         inicioX = x + 50;
+                         inicioY = y + 50;
+                         break;
                   case "boton4":
+
                         Decision decision = new Decision(x,y);
                         decision.DibujarDecision(gc, gc2, x, y);
                         figurasarreglo.add(decision);
@@ -427,22 +428,42 @@ public class HelloController {
     }
     private void redibujarFiguras() {
         GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
+        gc.clearRect(0, 0, DibujoCanvas.getWidth(), DibujoCanvas.getHeight());
+
         for (Figura figura : figurasarreglo) {
             if (figura instanceof Proceso) {
                 Proceso proceso = (Proceso) figura;
-                proceso.DibujarProceso(gc, figura.getX(), figura.getY());
+                gc.beginPath();
+                gc.moveTo(proceso.getX(), proceso.getY());
+                gc.lineTo(proceso.getX() + 100,proceso.getY());
+                gc.lineTo(proceso.getX() + 100, proceso.getY() + 50);
+                gc.lineTo(proceso.getX(), proceso.getY() + 50);
+                gc.closePath();
+                gc.strokeText(proceso.getTexto(), figura.getX() + 10, figura.getY() + 30);
+                gc.beginPath();
+                gc.moveTo(proceso.getX(), proceso.getY());
+                gc.lineTo(proceso.getX() + 100, proceso.getY());
+                gc.lineTo(proceso.getX() + 100 - (50) / 4, proceso.getY() + 50);
+                gc.lineTo(proceso.getX() - (50) / 4, proceso.getY() + 50);
+                gc.closePath();
             } else if (figura instanceof Decision) {
                 Decision decision = (Decision) figura;
                 decision.DibujarDecision(gc, gc, figura.getX(), figura.getY());
+                gc.strokeText(decision.getTexto(), figura.getX() - 50, figura.getY() + 70);
             } else if (figura instanceof EntradaSalida) {
                 EntradaSalida entradaSalida = (EntradaSalida) figura;
                 entradaSalida.Dibujar_Entrada_Salida(gc, figura.getX(), figura.getY());
+                gc.strokeText(entradaSalida.getTexto(), figura.getX() + 10, figura.getY() + 30);
             } else if (figura instanceof Documento) {
                 Documento documento = (Documento) figura;
                 documento.Dibujar_Documento(gc, figura.getX(), figura.getY());
+                gc.strokeText(documento.getTexto(), figura.getX() + 20, figura.getY() + 30);
             }
         }
     }
+
+
+
 
 
     @FXML
