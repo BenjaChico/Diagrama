@@ -5,13 +5,8 @@ import javafx.scene.control.Button;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.text.Font;
-import javafx.scene.paint.Color;
-import javafx.scene.layout.AnchorPane;
 import java.util.ArrayList;
-import java.util.Scanner;
 import javafx.scene.control.TextInputDialog;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 
 public class HelloController {
     private final ArrayList<Figura> figurasarreglo = new ArrayList<>();
@@ -400,6 +395,7 @@ public class HelloController {
     private Figura obtenerFiguraClicada(double x, double y) {
         for (Figura figura : figurasarreglo) {
             if (figura.contienePunto(x, y)) {
+                System.out.println(figura.getTexto());
                 return figura;
             }
         }
