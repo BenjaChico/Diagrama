@@ -427,9 +427,6 @@ public class HelloController {
     }
     private void redibujarFiguras() {
         GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
-        // Limpiar el lienzo
-        gc.clearRect(0, 0, DibujoCanvas.getWidth(), DibujoCanvas.getHeight());
-        // Redibujar todas las figuras con el nuevo texto
         for (Figura figura : figurasarreglo) {
             if (figura instanceof Proceso) {
                 Proceso proceso = (Proceso) figura;
