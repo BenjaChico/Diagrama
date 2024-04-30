@@ -198,6 +198,7 @@ public class HelloController {
             dialog.setContentText("Texto InicioFin:");
 
             dialog.showAndWait().ifPresent(texto -> {
+                textoo = texto;
                 double tamanotexto = gc.getFont().getSize();
                 while (tamanotexto * texto.length() > 140) {
                     tamanotexto -= 1;
@@ -285,6 +286,7 @@ public class HelloController {
             dialog.setContentText("Texto Decisión:");
 
             dialog.showAndWait().ifPresent(texto -> {
+                textoo = texto;
                 double tamanotexto = gc.getFont().getSize();
                 while (tamanotexto * texto.length() > 140) {
                     tamanotexto -= 1;
@@ -361,6 +363,7 @@ public class HelloController {
             dialog.setContentText("Texto Documento:");
 
             dialog.showAndWait().ifPresent(texto -> {
+                textoo = texto;
                 double tamanotexto = gc.getFont().getSize();
                 while (tamanotexto * texto.length() > 140) {
                     tamanotexto -= 1;
@@ -410,6 +413,24 @@ public class HelloController {
         public void setTexto(String texto) {
             this.textoo = texto;
         }
+        public void Dibujar_Entrada_Salida_Denuevo(GraphicsContext gc, double x, double y) {
+            // Obtener el texto del objeto directamente
+            String texto = getTexto();
+
+            double tamanotexto = gc.getFont().getSize();
+            while (tamanotexto * texto.length() > 140) {
+                tamanotexto -= 1;
+            }
+            gc.beginPath();
+            gc.moveTo(x, y);
+            gc.lineTo(x + 100, y);
+            gc.lineTo(x + 100 - (50) / 4, y + 50);
+            gc.lineTo(x - (50) / 4, y + 50);
+            gc.closePath();
+            gc.setFont(new Font(20));
+            gc.strokeText(texto, x + 20, y + 30);
+            gc.stroke();
+        }
 
         public void Dibujar_Entrada_Salida(GraphicsContext gc, double x, double y) {
             TextInputDialog dialog = new TextInputDialog();
@@ -417,6 +438,7 @@ public class HelloController {
             dialog.setHeaderText(null);
             dialog.setContentText("Texto Entrada-Salida:");
             dialog.showAndWait().ifPresent(texto -> {
+                textoo = texto;
                 double tamanotexto = gc.getFont().getSize();
                 while (tamanotexto * texto.length() > 140) {
                     tamanotexto -= 1;
@@ -535,10 +557,11 @@ public class HelloController {
                 decision.DibujarDecision(gc, gc, figura.getX(), figura.getY());
             } else if (figura instanceof EntradaSalida) {
                 EntradaSalida entradaSalida = (EntradaSalida) figura;
-                entradaSalida.Dibujar_Entrada_Salida(gc, figura.getX(), figura.getY());
+                entradaSalida.Dibujar_Entrada_Salida_Denuevo(gc, figura.getX(), figura.getY());
             } else if (figura instanceof Documento) {
                 Documento documento = (Documento) figura;
-                documento.Dibujar_Documento(gc, figura.getX(), figura.getY());
+                System.out.println(figura.getTexto());
+                //**documento.Dibujar_Documento(gc, figura.getX(), figura.getY());**//
             }
         }
     }
