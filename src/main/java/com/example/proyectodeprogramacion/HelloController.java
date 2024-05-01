@@ -3,8 +3,6 @@ package com.example.proyectodeprogramacion;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.ArcType;
 import javafx.scene.text.Font;
 import java.util.ArrayList;
 import javafx.scene.control.TextInputDialog;
@@ -18,6 +16,43 @@ public class HelloController {
         public abstract void setTexto(String texto);
         public double getX() {
             return x;
+        }
+
+        private double inicioFlechaX;
+        private double inicioFlechaY;
+        private double finFlechaX;
+        private double finFlechaY;
+
+        public double getInicioFlechaX() {
+            return inicioFlechaX;
+        }
+
+        public void setInicioFlechaX(double inicioFlechaX) {
+            this.inicioFlechaX = inicioFlechaX;
+        }
+
+        public double getInicioFlechaY() {
+            return inicioFlechaY;
+        }
+
+        public void setInicioFlechaY(double inicioFlechaY) {
+            this.inicioFlechaY = inicioFlechaY;
+        }
+
+        public double getFinFlechaX() {
+            return finFlechaX;
+        }
+
+        public void setFinFlechaX(double finFlechaX) {
+            this.finFlechaX = finFlechaX;
+        }
+
+        public double getFinFlechaY() {
+            return finFlechaY;
+        }
+
+        public void setFinFlechaY(double finFlechaY) {
+            this.finFlechaY = finFlechaY;
         }
 
         public void setX(double x) {
@@ -81,6 +116,10 @@ public class HelloController {
                             figurasarreglo.add(inicioFin);
                             if(inicioX != -1 && inicioY != -1){
                                 DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                inicioFin.setInicioFlechaX(inicioX);
+                                inicioFin.setInicioFlechaY(inicioY);
+                                inicioFin.setFinFlechaX(x + 50);
+                                inicioFin.setFinFlechaY(y);
                             }
                             inicioX = x + 50;
                             inicioY = y + 50;
@@ -91,6 +130,10 @@ public class HelloController {
                             figurasarreglo.add(proceso);
                             if (inicioX != -1 && inicioY != -1) {
                                 DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                proceso.setInicioFlechaX(inicioX);
+                                proceso.setInicioFlechaY(inicioY);
+                                proceso.setFinFlechaX(x + 50);
+                                proceso.setFinFlechaY(y);
                             }
                             inicioX = x + 50;
                             inicioY = y + 50;
@@ -101,6 +144,10 @@ public class HelloController {
                             figurasarreglo.add(decision);
                             if (inicioX != -1 && inicioY != -1) {
                                 DibujarFlecha(inicioX, inicioY, x, y);
+                                decision.setInicioFlechaX(inicioX);
+                                decision.setInicioFlechaY(inicioY);
+                                decision.setFinFlechaX(x);
+                                decision.setFinFlechaX(y);
                             }
                             //Lado Verdadero
                             if(!ListoPresionado){
@@ -119,6 +166,10 @@ public class HelloController {
                             figurasarreglo.add(entradaSalida);
                             if (inicioX != -1 && inicioY != -1) {
                                 DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                entradaSalida.setInicioFlechaX(inicioX);
+                                entradaSalida.setInicioFlechaY(inicioY);
+                                entradaSalida.setFinFlechaX(x + 50);
+                                entradaSalida.setFinFlechaY(y);
                             }
                             inicioX = x + 50;
                             inicioY = y + 50;
@@ -129,6 +180,10 @@ public class HelloController {
                             figurasarreglo.add(documento);
                             if (inicioX != -1 && inicioY != -1) {
                                 DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                documento.setInicioFlechaX(inicioX);
+                                documento.setInicioFlechaY(inicioY);
+                                documento.setFinFlechaX(x + 50);
+                                documento.setFinFlechaY(y);
                             }
                             inicioX = x + 50;
                             inicioY = y + 55;
@@ -655,18 +710,23 @@ public class HelloController {
             if (figura instanceof Proceso) {
                 Proceso proceso = (Proceso) figura;
                 proceso.DibujarProceso_Denuevo(gc, figura.getX(), figura.getY());
+                DibujarFlecha(proceso.getInicioFlechaX(), proceso.getInicioFlechaY(), proceso.getFinFlechaX(), proceso.getFinFlechaY());
             } else if (figura instanceof Decision) {
                 Decision decision = (Decision) figura;
                 decision.DibujarDecision_Denuevo(gc, gc, figura.getX(), figura.getY());
+                DibujarFlecha(decision.getInicioFlechaX(), decision.getInicioFlechaY(), decision.getFinFlechaX(), decision.getFinFlechaY());
             } else if (figura instanceof EntradaSalida) {
                 EntradaSalida entradaSalida = (EntradaSalida) figura;
                 entradaSalida.Dibujar_Entrada_Salida_Denuevo(gc, figura.getX(), figura.getY());
+                DibujarFlecha(entradaSalida.getInicioFlechaX(), entradaSalida.getInicioFlechaY(), entradaSalida.getFinFlechaX(), entradaSalida.getFinFlechaY());
             } else if (figura instanceof Documento) {
                 Documento documento = (Documento) figura;
                 documento.Dibujar_Documento_Denuevo(gc,figura.getX(),figura.getY());
+                DibujarFlecha(documento.getInicioFlechaX(), documento.getInicioFlechaY(), documento.getFinFlechaX(), documento.getFinFlechaY());
             } else if (figura instanceof InicioFin){
                 InicioFin inicioFin = (InicioFin) figura;
                 inicioFin.DibujarInicioFin_Denuevo(gc,figura.getX(),figura.getY());
+                DibujarFlecha(inicioFin.getInicioFlechaX(), inicioFin.getInicioFlechaY(), inicioFin.getFinFlechaX(), inicioFin.getFinFlechaY());
             }
         }
     }
