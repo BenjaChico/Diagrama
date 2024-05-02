@@ -689,6 +689,9 @@ public class HelloController {
     private void borrarFigurasClick() {
         GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
         gc.clearRect(0, 0,DibujoCanvas.getWidth(), DibujoCanvas.getHeight());
+        inicioX = -1;
+        inicioY = -1;
+        figurasarreglo.clear();
     }
 
     private Figura obtenerFiguraClicada(double x, double y) {
