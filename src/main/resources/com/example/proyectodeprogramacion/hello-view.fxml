@@ -17,35 +17,36 @@
         </content>
     </ScrollPane>
 
+
     <!-- Botones en el Lado Derecho -->
     <VBox alignment="CENTER_RIGHT" prefHeight="600.0" spacing="50" AnchorPane.bottomAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
         <Button onAction="#handleButton1Click" prefHeight="52.0" prefWidth="118.0" text="Linea de Flujo">
-         <font>
-            <Font size="14.0" />
-         </font></Button>
+            <font>
+                <Font size="14.0" />
+            </font></Button>
         <Button onAction="#handleButton2Click" prefHeight="52.0" prefWidth="78.0" text="Inicio/Fin">
-         <font>
-            <Font size="14.0" />
-         </font></Button>
+            <font>
+                <Font size="14.0" />
+            </font></Button>
         <Button onAction="#handleButton3Click" prefHeight="52.0" prefWidth="130.0" text="Etapa del Proceso">
-         <font>
-            <Font size="14.0" />
-         </font></Button>
+            <font>
+                <Font size="14.0" />
+            </font></Button>
         <Button onAction="#handleButton4Click" prefHeight="52.0" prefWidth="107.0" text="Decisión">
-         <font>
-            <Font size="14.0" />
-         </font></Button>
+            <font>
+                <Font size="14.0" />
+            </font></Button>
         <Button onAction="#handleButton5Click" prefHeight="52.0" prefWidth="114.0" text="Entrada/Salida">
-         <font>
-            <Font size="14.0" />
-         </font></Button>
+            <font>
+                <Font size="14.0" />
+            </font></Button>
         <Button onAction="#handleButton6Click" prefHeight="52.0" prefWidth="102.0" text="Documento">
-         <font>
-            <Font size="14.0" />
-         </font></Button>
+            <font>
+                <Font size="14.0" />
+            </font></Button>
         <Button onAction="#borrarFigurasClick" text="Borrar Figuras" />
         <Button mnemonicParsing="false" onAction="#BotonListo" prefHeight="28.0" prefWidth="69.0" text="Listo">
-             <font>
+            <font>
                 <Font size="14.0" />
             </font>
         </Button>
