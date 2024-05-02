@@ -9,6 +9,17 @@ import javafx.scene.control.TextInputDialog;
 
 public class HelloController {
     private final ArrayList<Figura> figurasarreglo = new ArrayList<>();
+    private void DibujarFlechaDenuevo(double inicioX, double inicioY, double finalX, double finalY) {
+        GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
+        double TamañoFlecha = 10;
+        double angulo = Math.atan2(finalY - inicioY, finalX - inicioX);
+
+        if(inicioX < DibujoCanvas.getWidth() - 140.0) {
+            gc.strokeLine(inicioX, inicioY, finalX, finalY);
+            gc.strokeLine(finalX, finalY, finalX - TamañoFlecha * Math.cos(angulo - Math.PI / 6), finalY - TamañoFlecha * Math.sin(angulo - Math.PI / 6));
+            gc.strokeLine(finalX, finalY, finalX - TamañoFlecha * Math.cos(angulo + Math.PI / 6), finalY - TamañoFlecha * Math.sin(angulo + Math.PI / 6));
+        }
+    }
 
     public abstract class Figura {
         public abstract boolean contienePunto(double x, double y);
@@ -69,7 +80,6 @@ public class HelloController {
 
         private double x;
         private double y;
-
         public Figura(double x, double y) {
             this.x = x;
             this.y = y;
@@ -208,6 +218,7 @@ public class HelloController {
             gc.strokeLine(finalX, finalY, finalX - TamañoFlecha * Math.cos(angulo + Math.PI / 6), finalY - TamañoFlecha * Math.sin(angulo + Math.PI / 6));
         }
     }
+
 
     public class InicioFin extends Figura {
         public String textoo;
@@ -708,11 +719,10 @@ public class HelloController {
         GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
         // Limpiar el lienzo
         gc.clearRect(0, 0, DibujoCanvas.getWidth(), DibujoCanvas.getHeight());
-        // Redibujar todas las figuras con el nuevo texto
         for (Figura figura : figurasarreglo) {
             if (figura instanceof Proceso) {
                 Proceso proceso = (Proceso) figura;
-                proceso.DibujarProceso_Denuevo(gc, figura.getX(), figura.getY());
+                proceso.DibujarProceso_Denuevo(gc,figura.getX(), figura.getY());
                 DibujarFlecha(proceso.getInicioFlechaX(), proceso.getInicioFlechaY(), proceso.getFinFlechaX(), proceso.getFinFlechaY());
             } else if (figura instanceof Decision) {
                 Decision decision = (Decision) figura;
@@ -733,6 +743,7 @@ public class HelloController {
             }
         }
     }
+
 
     @FXML
     private void handleButton1Click() {
