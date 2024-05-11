@@ -1,9 +1,11 @@
 package com.example.proyectodeprogramacion;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.text.Font;
+import java.util.Optional;
 import java.util.ArrayList;
 import javafx.scene.control.TextInputDialog;
 
@@ -14,6 +16,7 @@ public class HelloController {
         public abstract boolean contienePunto(double x, double y);
         public abstract String getTexto();
         public abstract void setTexto(String texto);
+        public abstract String generarPseudocodigo();
         public double getX() {
             return x;
         }
@@ -69,7 +72,6 @@ public class HelloController {
 
         private double x;
         private double y;
-
         public Figura(double x, double y) {
             this.x = x;
             this.y = y;
@@ -84,6 +86,7 @@ public class HelloController {
     private double inicioX = -1;
     private double inicioY = -1;
     private boolean ListoPresionado = false;
+    private boolean MientrasPresionado = false;
 
     public void initialize() {
         DibujoCanvas.setOnMouseClicked(event ->{
@@ -108,9 +111,21 @@ public class HelloController {
             else{
                 if(x <= DibujoCanvas.getWidth() - 140.0){
                     switch (figura){
+                        case "boton6":
+                            Repetir repetir = new Repetir(x, y);
+                            repetir.DibujarRepetir(gc, x, y);
+                            figurasarreglo.add(repetir);
+                            if (inicioX != -1 && inicioY != -1){
+                                DibujarFlecha(inicioX, inicioY, x, y);
+                                repetir.setInicioFlechaX(inicioX);
+                                repetir.setInicioFlechaY(inicioY);
+                                repetir.setFinFlechaX(x);
+                                repetir.setFinFlechaY(y);
+                            }
+                            inicioX = x + 50;
+                            inicioY = y;
+                            break;
                         case "boton1":
-                            //Proximamente
-                        case "boton2":
                             InicioFin inicioFin = new InicioFin(x, y);
                             inicioFin.DibujarInicioFin(gc, x, y + 25);
                             figurasarreglo.add(inicioFin);
@@ -124,7 +139,7 @@ public class HelloController {
                             inicioX = x + 50;
                             inicioY = y + 50;
                             break;
-                        case "boton3":
+                        case "boton2":
                             Proceso proceso = new Proceso(x, y);
                             proceso.DibujarProceso(gc, x,y);
                             figurasarreglo.add(proceso);
@@ -138,16 +153,20 @@ public class HelloController {
                             inicioX = x + 50;
                             inicioY = y + 50;
                             break;
-                        case "boton4":
+                        case "boton3":
                             Decision decision = new Decision(x, y);
                             decision.DibujarDecision(gc, gc2, x, y);
                             figurasarreglo.add(decision);
+                            ArrayList<Figura> Verdadero = new ArrayList<>();
+                            ArrayList<Figura> Falso = new ArrayList<>();
                             if (inicioX != -1 && inicioY != -1) {
+                                for (Figura figura : figurasarreglo){
+                                }
                                 DibujarFlecha(inicioX, inicioY, x, y);
                                 decision.setInicioFlechaX(inicioX);
                                 decision.setInicioFlechaY(inicioY);
                                 decision.setFinFlechaX(x);
-                                decision.setFinFlechaX(y);
+                                decision.setFinFlechaY(y);
                             }
                             //Lado Verdadero
                             if(!ListoPresionado){
@@ -160,7 +179,7 @@ public class HelloController {
                                 inicioY = y + 50;
                             }
                             break;
-                        case "boton5":
+                        case "boton4":
                             EntradaSalida entradaSalida = new EntradaSalida(x, y);
                             entradaSalida.Dibujar_Entrada_Salida(gc, x, y);
                             figurasarreglo.add(entradaSalida);
@@ -174,7 +193,7 @@ public class HelloController {
                             inicioX = x + 50;
                             inicioY = y + 50;
                             break;
-                        case "boton6":
+                        case "boton5":
                             Documento documento = new Documento(x, y);
                             documento.Dibujar_Documento(gc, x, y);
                             figurasarreglo.add(documento);
@@ -187,6 +206,20 @@ public class HelloController {
                             }
                             inicioX = x + 50;
                             inicioY = y + 55;
+                            break;
+                        case "boton7":
+                            Mientras mientras = new Mientras(x, y);
+                            mientras.DibujarMientras(gc, x, y);
+                            figurasarreglo.add(mientras);
+                            if (inicioX != -1 && inicioY != -1){
+                                DibujarFlecha(inicioX, inicioY, x, y);
+                                mientras.setInicioFlechaX(inicioX);
+                                mientras.setInicioFlechaY(inicioY);
+                                mientras.setFinFlechaX(x);
+                                mientras.setFinFlechaY(y);
+                            }
+                            inicioX = x;
+                            inicioY = y + 100;
                             break;
                     }
                 }
@@ -227,6 +260,12 @@ public class HelloController {
         public void setTexto(String texto) {
             this.textoo = texto;
         }
+
+        @Override
+        public String generarPseudocodigo() {
+            return null;
+        }
+
         public void DibujarInicioFin_Denuevo(GraphicsContext gc, double x, double y) {
             // Obtener el texto del objeto directamente
             String texto = getTexto();
@@ -349,6 +388,9 @@ public class HelloController {
 
     public class Decision extends Figura{
         public String textoo;
+        private ArrayList Verdadero = new ArrayList();
+        private ArrayList Falso = new ArrayList();
+
 
         public Decision(double x, double y) {
             super(x, y);
@@ -365,6 +407,19 @@ public class HelloController {
             this.textoo = texto;
         }
 
+        @Override
+        public String generarPseudocodigo() {
+            return "si " + getTexto() + "entonces";
+        }
+
+
+        public void agregarVerdadero(Figura figura){
+            Verdadero.add(figura);
+        }
+
+        public void agregarFalso(Figura figura){
+            Falso.add(figura);
+        }
 
         public void DibujarDecision(GraphicsContext gc, GraphicsContext gc2, double x, double y) {
             TextInputDialog dialog = new TextInputDialog();
@@ -380,15 +435,12 @@ public class HelloController {
 
                 }
                 setTexto(texto);
-                //Dibuja figura Decisión
                 gc.beginPath();
                 gc.moveTo(x, y);
                 gc.lineTo(x + 70, y + 50);
                 gc.lineTo(x, y + 100);
                 gc.lineTo(x - 70, y + 50);
                 gc.closePath();
-
-                //Dibuja Lineas Verdadero y Falso de figura Decisión
                 gc.moveTo(x - 70, y + 50);
                 gc.lineTo(x - 150, y + 50);
                 gc.moveTo(x + 70, y + 50);
@@ -402,7 +454,6 @@ public class HelloController {
                 gc.setFont(new Font(tamanotexto + 5));
                 gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) - 10, y + 55);
                 gc.stroke();
-
             });
 
         }
@@ -472,6 +523,11 @@ public class HelloController {
 
         public void setTexto(String texto) {
             this.textoo = texto;
+        }
+
+        @Override
+        public String generarPseudocodigo() {
+            return null;
         }
 
         public void Dibujar_Documento_Denuevo(GraphicsContext gc, double x, double y) {
@@ -551,6 +607,12 @@ public class HelloController {
         public void setTexto(String texto) {
             this.textoo = texto;
         }
+
+        @Override
+        public String generarPseudocodigo() {
+            return "leer " + getTexto();
+        }
+
         public void Dibujar_Entrada_Salida_Denuevo(GraphicsContext gc, double x, double y) {
             String texto = getTexto();
 
@@ -608,6 +670,148 @@ public class HelloController {
 
     }
 
+    public class Mientras extends Figura{
+        public Mientras(double x, double y){
+            super(x, y);
+        }
+        public Mientras(){
+            super();
+        }
+        public String textoo;
+
+        @Override
+        public String getTexto() {
+            return textoo;
+        }
+
+        @Override
+        public boolean contienePunto(double x, double y) {
+            return false;
+        }
+
+        @Override
+        public void setTexto(String texto) {
+
+        }
+
+        public void DibujarMientras(GraphicsContext gc, double x, double y){
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Texto Mientras");
+            dialog.setHeaderText(null);
+            dialog.setContentText("Texto Mientras:");
+
+            dialog.showAndWait().ifPresent(texto -> {
+                textoo = texto;
+                double tamanotexto = gc.getFont().getSize();
+                while (tamanotexto * texto.length() > 140) {
+                    tamanotexto -= 1;
+
+                }
+                setTexto(texto);
+                gc.beginPath();
+                gc.moveTo(x, y);
+                gc.lineTo(x + 70, y + 50);
+                gc.lineTo(x, y + 100);
+                gc.lineTo(x - 70, y + 50);
+                gc.closePath();
+                //Flecha izquierda
+                //gc.moveTo(x - 70, y + 50);
+                //gc.lineTo(x - 150, y + 50);
+                //Flecha derecha
+                gc.moveTo(x + 70, y + 50);
+                gc.lineTo(x + 100, y + 50);
+
+                gc.setFont(new Font(tamanotexto + 5));
+                gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) - 10, y + 55);
+                gc.stroke();
+            });
+        }
+
+        public void DibujarCierre(GraphicsContext gc, double x, double y){
+            gc.beginPath();
+            gc.lineTo(x, y - 40);
+            gc.lineTo(x + 100, y);
+            gc.lineTo(x + 100, y - 100);
+            gc.lineTo(x, y + 40);
+            gc.closePath();
+            gc.stroke(); // Aquí se traza la figura
+        }
+        @Override
+        public String generarPseudocodigo() {
+            return null;
+        }
+    }
+
+    public class Repetir extends Figura{
+        public Repetir(double x, double y){
+            super(x, y);
+        }
+        public Repetir(){
+            super();
+        }
+        public String textoo;
+        @Override
+        public String getTexto() {
+            return textoo;
+        }
+
+        @Override
+        public void setTexto(String texto) {
+            this.textoo = texto;
+        }
+
+        @Override
+        public String generarPseudocodigo() {
+            return "Repetir" + "/n" + "Hasta Que" + getTexto();
+        }
+
+        public void DibujarRepetir(GraphicsContext gc, double x, double y){
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Texto Repetir");
+            dialog.setHeaderText(null);
+            dialog.setContentText("Texto Repetir:");
+
+            dialog.showAndWait().ifPresent(texto -> {
+                textoo = texto;
+                double tamanotexto = gc.getFont().getSize();
+                while (tamanotexto * texto.length() > 140) {
+                    tamanotexto -= 1;
+
+                }
+                setTexto(texto);
+                gc.beginPath();
+                gc.moveTo(x, y);
+                gc.lineTo(x + 70, y + 50);
+                gc.lineTo(x, y + 100);
+                gc.lineTo(x - 70, y + 50);
+                gc.closePath();
+                //Flecha izquierda
+                gc.moveTo(x - 70, y + 50);
+                gc.lineTo(x - 100, y + 50);
+                //Flecha Derecha
+                //gc.moveTo(x + 70, y + 50);
+                //gc.lineTo(x + 150, y + 50);
+
+                gc.setFont(new Font(tamanotexto + 5));
+                gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) - 10, y + 55);
+                gc.stroke();
+            });
+        }
+
+        @Override
+        public boolean contienePunto(double x, double y) {
+            double ancho = 140;
+            double alto = 100;
+
+            double x1 = this.getX();
+            double y1 = this.getY();
+            double x2 = x1 + ancho;
+            double y2 = y1 + alto;
+
+            return x >= x1 && x <= x2 && y >= y1 && y <= y2;
+        }
+
+    }
 
     public class Proceso extends Figura{
         public Proceso(double x, double y) {
@@ -624,6 +828,11 @@ public class HelloController {
 
         public void setTexto(String texto) {
             this.textoo = texto;
+        }
+
+        @Override
+        public String generarPseudocodigo() {
+            return "proceso " + getTexto();
         }
 
 
@@ -708,11 +917,10 @@ public class HelloController {
         GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
         // Limpiar el lienzo
         gc.clearRect(0, 0, DibujoCanvas.getWidth(), DibujoCanvas.getHeight());
-        // Redibujar todas las figuras con el nuevo texto
         for (Figura figura : figurasarreglo) {
             if (figura instanceof Proceso) {
                 Proceso proceso = (Proceso) figura;
-                proceso.DibujarProceso_Denuevo(gc, figura.getX(), figura.getY());
+                proceso.DibujarProceso_Denuevo(gc,figura.getX(), figura.getY());
                 DibujarFlecha(proceso.getInicioFlechaX(), proceso.getInicioFlechaY(), proceso.getFinFlechaX(), proceso.getFinFlechaY());
             } else if (figura instanceof Decision) {
                 Decision decision = (Decision) figura;
@@ -734,34 +942,82 @@ public class HelloController {
         }
     }
 
+
+    @FXML
+    public void MostrarPseudocodigo() {
+        for(Figura figura : figurasarreglo){
+            System.out.println(figura.generarPseudocodigo());
+        }
+    }
+
+
+    public void CerrarMientras() {
+        cerrar();
+    }
+
+    public void cerrar(){
+        GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
+        Figura ultimafigura = figurasarreglo.get(figurasarreglo.size() - 1);
+        double xUltima = ultimafigura.getX();
+        double yUltima = ultimafigura.getY();
+        gc.beginPath();
+        //FLECHA DE CICLO V
+        gc.moveTo(xUltima, yUltima + 100);
+        gc.lineTo(xUltima, yUltima + 140);
+        gc.moveTo(xUltima, yUltima + 140); // Mover el punto de inicio de la nueva línea
+        gc.lineTo(xUltima - 130, yUltima + 140); // Agregar línea hacia la izquierda
+        gc.moveTo(xUltima - 130, yUltima + 140);
+        gc.lineTo(xUltima - 130, yUltima - 50);
+        gc.moveTo(xUltima - 130, yUltima - 50);
+        gc.lineTo(xUltima, yUltima - 50);
+        //FLECHA DE CICLO F
+        gc.moveTo(xUltima + 100, yUltima + 50);
+        gc.lineTo(xUltima + 100, yUltima + 200);
+        gc.moveTo(xUltima + 100, yUltima + 200);
+        gc.lineTo(xUltima, yUltima + 200);
+        inicioX = xUltima;
+        inicioY = yUltima + 200;
+
+        gc.closePath();
+        gc.stroke(); // Aquí se traza la figura
+    }
+
+    public void CerrarRepetir() {
+    }
+
     @FXML
     private void handleButton1Click() {
-        figura = "boton1";
+        figura = "boton6";
     }
 
     @FXML
     private void handleButton2Click() {
-        figura = "boton2";
+        figura = "boton1";
     }
 
     @FXML
     private void handleButton3Click() {
-        figura = "boton3";
+        figura = "boton2";
     }
 
     @FXML
     private void handleButton4Click() {
-        figura = "boton4";
+        figura = "boton3";
     }
 
     @FXML
     private void handleButton5Click() {
-        figura = "boton5";
+        figura = "boton4";
     }
 
     @FXML
     private void handleButton6Click() {
-        figura = "boton6";
+        figura = "boton5";
+    }
+
+    @FXML
+    public void handleButton7Click() {
+        figura = "boton7";
     }
 
     public void BotonListo() {
