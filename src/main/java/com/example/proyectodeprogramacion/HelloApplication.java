@@ -9,6 +9,9 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+
+
+
 public class HelloApplication extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
@@ -36,6 +39,7 @@ public class HelloApplication extends Application {
         DibujarLineaLimite(dibujoCanvas);
 
     }
+
 /** ***/
     private void DibujarLineaLimite(Canvas canvas) {
         GraphicsContext gc = canvas.getGraphicsContext2D();
