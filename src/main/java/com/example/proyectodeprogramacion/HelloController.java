@@ -14,13 +14,9 @@ public class HelloController {
 
     public abstract class Figura {
         public abstract boolean contienePunto(double x, double y);
-
         public abstract String getTexto();
-
         public abstract void setTexto(String texto);
-
         public abstract String generarPseudocodigo();
-
         public double getX() {
             return x;
         }
@@ -76,16 +72,13 @@ public class HelloController {
 
         private double x;
         private double y;
-
         public Figura(double x, double y) {
             this.x = x;
             this.y = y;
         }
-
         public Figura() {
         }
     }
-
     @FXML
     public Canvas DibujoCanvas;
     private String figura = "";
@@ -96,14 +89,14 @@ public class HelloController {
     private boolean MientrasPresionado = false;
 
     public void initialize() {
-        DibujoCanvas.setOnMouseClicked(event -> {
+        DibujoCanvas.setOnMouseClicked(event ->{
             double x = event.getX();
             double y = event.getY();
 
             GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
             GraphicsContext gc2 = DibujoCanvas.getGraphicsContext2D();
-            Figura figuraSeleccionada = obtenerFiguraClicada(x, y);
-            if (figuraSeleccionada != null) {
+            Figura figuraSeleccionada = obtenerFiguraClicada(x,y);
+            if(figuraSeleccionada != null){
                 TextInputDialog dialog = new TextInputDialog(figuraSeleccionada.getTexto());
                 dialog.setTitle("Modificar Texto");
                 dialog.setHeaderText(null);
@@ -113,14 +106,16 @@ public class HelloController {
                     figuraSeleccionada.setTexto(newText);
                     redibujarFiguras();
                 });
-            } else {
-                if (x <= DibujoCanvas.getWidth() - 140.0) {
-                    switch (figura) {
+            }
+
+            else{
+                if(x <= DibujoCanvas.getWidth() - 140.0){
+                    switch (figura){
                         case "boton6":
                             Repetir repetir = new Repetir(x, y);
                             repetir.DibujarRepetir(gc, x, y);
                             figurasarreglo.add(repetir);
-                            if (inicioX != -1 && inicioY != -1) {
+                            if (inicioX != -1 && inicioY != -1){
                                 DibujarFlecha(inicioX, inicioY, x, y);
                                 repetir.setInicioFlechaX(inicioX);
                                 repetir.setInicioFlechaY(inicioY);
@@ -134,7 +129,7 @@ public class HelloController {
                             InicioFin inicioFin = new InicioFin(x, y);
                             inicioFin.DibujarInicioFin(gc, x, y + 25);
                             figurasarreglo.add(inicioFin);
-                            if (inicioX != -1 && inicioY != -1) {
+                            if(inicioX != -1 && inicioY != -1){
                                 DibujarFlecha(inicioX, inicioY, x + 50, y);
                                 inicioFin.setInicioFlechaX(inicioX);
                                 inicioFin.setInicioFlechaY(inicioY);
@@ -144,10 +139,9 @@ public class HelloController {
                             inicioX = x + 50;
                             inicioY = y + 50;
                             break;
-
                         case "boton2":
                             Proceso proceso = new Proceso(x, y);
-                            proceso.DibujarProceso(gc, x, y);
+                            proceso.DibujarProceso(gc, x,y);
                             figurasarreglo.add(proceso);
                             if (inicioX != -1 && inicioY != -1) {
                                 DibujarFlecha(inicioX, inicioY, x + 50, y);
@@ -163,7 +157,11 @@ public class HelloController {
                             Decision decision = new Decision(x, y);
                             decision.DibujarDecision(gc, gc2, x, y);
                             figurasarreglo.add(decision);
+                            ArrayList<Figura> Verdadero = new ArrayList<>();
+                            ArrayList<Figura> Falso = new ArrayList<>();
                             if (inicioX != -1 && inicioY != -1) {
+                                for (Figura figura : figurasarreglo){
+                                }
                                 DibujarFlecha(inicioX, inicioY, x, y);
                                 decision.setInicioFlechaX(inicioX);
                                 decision.setInicioFlechaY(inicioY);
@@ -171,17 +169,15 @@ public class HelloController {
                                 decision.setFinFlechaY(y);
                             }
                             //Lado Verdadero
-                            /*if(!ListoPresionado){
+                            if(!ListoPresionado){
                                 inicioX = x - 150;
                                 inicioY = y + 50;
-                            }*/
+                            }
                             //Lado Falso
-                            /*else{
+                            else{
                                 inicioX = x + 150;
                                 inicioY = y + 50;
-                            }*/
-                            inicioX = x - 150;
-                            inicioY = y + 50;
+                            }
                             break;
                         case "boton4":
                             EntradaSalida entradaSalida = new EntradaSalida(x, y);
@@ -215,7 +211,7 @@ public class HelloController {
                             Mientras mientras = new Mientras(x, y);
                             mientras.DibujarMientras(gc, x, y);
                             figurasarreglo.add(mientras);
-                            if (inicioX != -1 && inicioY != -1) {
+                            if (inicioX != -1 && inicioY != -1){
                                 DibujarFlecha(inicioX, inicioY, x, y);
                                 mientras.setInicioFlechaX(inicioX);
                                 mientras.setInicioFlechaY(inicioY);
@@ -225,10 +221,9 @@ public class HelloController {
                             inicioX = x;
                             inicioY = y + 100;
                             break;
-                        case "boton8":
-
                     }
-                } else {
+                }
+                else{
                     System.out.println("No se puede colocar aqui");
                 }
             }
@@ -240,7 +235,7 @@ public class HelloController {
         double TamañoFlecha = 10;
         double angulo = Math.atan2(finalY - inicioY, finalX - inicioX);
 
-        if (inicioX < DibujoCanvas.getWidth() - 140.0) {
+        if(inicioX < DibujoCanvas.getWidth() - 140.0) {
             gc.strokeLine(inicioX, inicioY, finalX, finalY);
             gc.strokeLine(finalX, finalY, finalX - TamañoFlecha * Math.cos(angulo - Math.PI / 6), finalY - TamañoFlecha * Math.sin(angulo - Math.PI / 6));
             gc.strokeLine(finalX, finalY, finalX - TamañoFlecha * Math.cos(angulo + Math.PI / 6), finalY - TamañoFlecha * Math.sin(angulo + Math.PI / 6));
@@ -377,7 +372,6 @@ public class HelloController {
                 gc.stroke();
             });
         }
-
         @Override
         public boolean contienePunto(double x, double y) {
             double ancho = 140; // Ancho de la figura de decisión
@@ -392,7 +386,7 @@ public class HelloController {
         }
     }
 
-    public class Decision extends Figura {
+    public class Decision extends Figura{
         public String textoo;
         private ArrayList Verdadero = new ArrayList();
         private ArrayList Falso = new ArrayList();
@@ -401,7 +395,6 @@ public class HelloController {
         public Decision(double x, double y) {
             super(x, y);
         }
-
         public Decision() {
             super();
         }
@@ -420,11 +413,11 @@ public class HelloController {
         }
 
 
-        public void agregarVerdadero(Figura figura) {
+        public void agregarVerdadero(Figura figura){
             Verdadero.add(figura);
         }
 
-        public void agregarFalso(Figura figura) {
+        public void agregarFalso(Figura figura){
             Falso.add(figura);
         }
 
@@ -464,7 +457,6 @@ public class HelloController {
             });
 
         }
-
         public void DibujarDecision_Denuevo(GraphicsContext gc, GraphicsContext gc2, double x, double y) {
             // Obtener el texto del objeto directamente
             String texto = getTexto();
@@ -496,7 +488,6 @@ public class HelloController {
             gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) - 10, y + 55);
             gc.stroke();
         }
-
         @Override
         public boolean contienePunto(double x, double y) {
             double ancho = 140; // Ancho de la figura de decisión
@@ -510,6 +501,8 @@ public class HelloController {
             return x >= x1 && x <= x2 && y >= y1 && y <= y2;
         }
     }
+
+
 
 
     public class Documento extends Figura {
@@ -574,8 +567,8 @@ public class HelloController {
                 gc.strokeLine(x, y, x, y + 50); // Línea Izquierda
                 gc.strokeLine(x + 100, y, x + 100, y + 40); // Línea Derecha
                 gc.beginPath();
-                gc.moveTo(x, y + 50); // Mover al punto de inicio de la curva
-                gc.bezierCurveTo(x + 40, y + 80, x + 50, y + 35, x + 100, y + 40);
+                gc.moveTo(x, y+50); // Mover al punto de inicio de la curva
+                gc.bezierCurveTo(x + 40, y + 80, x + 50, y + 35, x + 100, y+40);
                 gc.stroke(); // Trazar la curva
                 gc.setFont(new Font(20)); // Tamaño de fuente 20
                 gc.strokeText(texto, x + 15, y + 30); //escribir texto
@@ -598,17 +591,15 @@ public class HelloController {
     }
 
 
-    public class EntradaSalida extends Figura {
+    public class EntradaSalida extends Figura{
         public EntradaSalida(double x, double y) {
             super(x, y);
         }
-
         public EntradaSalida() {
             super();
         }
 
         public String textoo;
-
         public String getTexto() {
             return textoo;
         }
@@ -662,7 +653,6 @@ public class HelloController {
                 gc.stroke();
             });
         }
-
         @Override
         public boolean contienePunto(double x, double y) {
             double ancho = 100;
@@ -680,15 +670,13 @@ public class HelloController {
 
     }
 
-    public class Mientras extends Figura {
-        public Mientras(double x, double y) {
+    public class Mientras extends Figura{
+        public Mientras(double x, double y){
             super(x, y);
         }
-
-        public Mientras() {
+        public Mientras(){
             super();
         }
-
         public String textoo;
 
         @Override
@@ -706,7 +694,7 @@ public class HelloController {
 
         }
 
-        public void DibujarMientras(GraphicsContext gc, double x, double y) {
+        public void DibujarMientras(GraphicsContext gc, double x, double y){
             TextInputDialog dialog = new TextInputDialog();
             dialog.setTitle("Texto Mientras");
             dialog.setHeaderText(null);
@@ -739,7 +727,7 @@ public class HelloController {
             });
         }
 
-        public void DibujarCierre(GraphicsContext gc, double x, double y) {
+        public void DibujarCierre(GraphicsContext gc, double x, double y){
             gc.beginPath();
             gc.lineTo(x, y - 40);
             gc.lineTo(x + 100, y);
@@ -748,24 +736,20 @@ public class HelloController {
             gc.closePath();
             gc.stroke(); // Aquí se traza la figura
         }
-
         @Override
         public String generarPseudocodigo() {
             return null;
         }
     }
 
-    public class Repetir extends Figura {
-        public Repetir(double x, double y) {
+    public class Repetir extends Figura{
+        public Repetir(double x, double y){
             super(x, y);
         }
-
-        public Repetir() {
+        public Repetir(){
             super();
         }
-
         public String textoo;
-
         @Override
         public String getTexto() {
             return textoo;
@@ -781,7 +765,7 @@ public class HelloController {
             return "Repetir" + "/n" + "Hasta Que" + getTexto();
         }
 
-        public void DibujarRepetir(GraphicsContext gc, double x, double y) {
+        public void DibujarRepetir(GraphicsContext gc, double x, double y){
             TextInputDialog dialog = new TextInputDialog();
             dialog.setTitle("Texto Repetir");
             dialog.setHeaderText(null);
@@ -829,17 +813,15 @@ public class HelloController {
 
     }
 
-    public class Proceso extends Figura {
+    public class Proceso extends Figura{
         public Proceso(double x, double y) {
             super(x, y);
         }
-
         public Proceso() {
             super();
         }
 
         public String textoo;
-
         public String getTexto() {
             return textoo;
         }
@@ -878,7 +860,6 @@ public class HelloController {
                 gc.stroke();
             });
         }
-
         public void DibujarProceso_Denuevo(GraphicsContext gc, double x, double y) {
             // Obtener el texto del objeto directamente
             String texto = getTexto();
@@ -916,19 +897,12 @@ public class HelloController {
     @FXML
     private void borrarFigurasClick() {
         GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
-        gc.clearRect(0, 0, DibujoCanvas.getWidth(), DibujoCanvas.getHeight());
+        gc.clearRect(0, 0,DibujoCanvas.getWidth(), DibujoCanvas.getHeight());
         inicioX = -1;
         inicioY = -1;
         figurasarreglo.clear();
-        DibujarLineaLimite(DibujoCanvas);
     }
-    private void DibujarLineaLimite(Canvas canvas) {
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-        gc.clearRect(0,0, canvas.getWidth(), canvas.getHeight());
-        gc.setStroke(javafx.scene.paint.Color.BLACK);
-        gc.setLineWidth(2.0);
-        gc.strokeLine(canvas.getWidth() - 140.0, 0, canvas.getWidth() - 140.0, canvas.getHeight());
-    }
+
     private Figura obtenerFiguraClicada(double x, double y) {
         for (Figura figura : figurasarreglo) {
             if (figura.contienePunto(x, y)) {
@@ -946,7 +920,7 @@ public class HelloController {
         for (Figura figura : figurasarreglo) {
             if (figura instanceof Proceso) {
                 Proceso proceso = (Proceso) figura;
-                proceso.DibujarProceso_Denuevo(gc, figura.getX(), figura.getY());
+                proceso.DibujarProceso_Denuevo(gc,figura.getX(), figura.getY());
                 DibujarFlecha(proceso.getInicioFlechaX(), proceso.getInicioFlechaY(), proceso.getFinFlechaX(), proceso.getFinFlechaY());
             } else if (figura instanceof Decision) {
                 Decision decision = (Decision) figura;
@@ -958,11 +932,11 @@ public class HelloController {
                 DibujarFlecha(entradaSalida.getInicioFlechaX(), entradaSalida.getInicioFlechaY(), entradaSalida.getFinFlechaX(), entradaSalida.getFinFlechaY());
             } else if (figura instanceof Documento) {
                 Documento documento = (Documento) figura;
-                documento.Dibujar_Documento_Denuevo(gc, figura.getX(), figura.getY());
+                documento.Dibujar_Documento_Denuevo(gc,figura.getX(),figura.getY());
                 DibujarFlecha(documento.getInicioFlechaX(), documento.getInicioFlechaY(), documento.getFinFlechaX(), documento.getFinFlechaY());
-            } else if (figura instanceof InicioFin) {
+            } else if (figura instanceof InicioFin){
                 InicioFin inicioFin = (InicioFin) figura;
-                inicioFin.DibujarInicioFin_Denuevo(gc, figura.getX(), figura.getY());
+                inicioFin.DibujarInicioFin_Denuevo(gc,figura.getX(),figura.getY());
                 DibujarFlecha(inicioFin.getInicioFlechaX(), inicioFin.getInicioFlechaY(), inicioFin.getFinFlechaX(), inicioFin.getFinFlechaY());
             }
         }
@@ -971,29 +945,17 @@ public class HelloController {
 
     @FXML
     public void MostrarPseudocodigo() {
-        for (Figura figura : figurasarreglo) {
-            if (figura instanceof Proceso) {
-                Proceso proceso = (Proceso) figura;
-                System.out.println("Proceso:"+figura.getTexto());
-            } else if (figura instanceof Decision) {
-                Decision decision = (Decision) figura;
-                System.out.println("Sino"+figura.getTexto());
-            } else if (figura instanceof EntradaSalida) {
-                EntradaSalida entradaSalida = (EntradaSalida) figura;
-                System.out.println("Escribir:"+((EntradaSalida) figura).getTexto());
-            } else if (figura instanceof Documento) {
-                Documento documento = (Documento) figura;
-                System.out.println("Leer:"+((Documento) figura).getTexto());
-            } else if (figura instanceof InicioFin) {
-                InicioFin inicioFin = (InicioFin) figura;
-                System.out.println("Inicio"+((InicioFin) figura).getTexto());
-            }
+        for(Figura figura : figurasarreglo){
+            System.out.println(figura.generarPseudocodigo());
         }
     }
 
 
-
     public void CerrarMientras() {
+        cerrar();
+    }
+
+    public void cerrar(){
         GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
         Figura ultimafigura = figurasarreglo.get(figurasarreglo.size() - 1);
         double xUltima = ultimafigura.getX();
@@ -1020,7 +982,6 @@ public class HelloController {
         gc.stroke(); // Aquí se traza la figura
     }
 
-
     public void CerrarRepetir() {
     }
 
@@ -1031,7 +992,7 @@ public class HelloController {
 
     @FXML
     private void handleButton2Click() {
-        figura = "boton8";
+        figura = "boton1";
     }
 
     @FXML
@@ -1059,19 +1020,7 @@ public class HelloController {
         figura = "boton7";
     }
 
-    @FXML
-    private void handleButton8Click() {
-        figura = "boton1";
-    }
     public void BotonListo() {
-        for (Figura figura : figurasarreglo) {
-            if (figura instanceof Decision) {
-                Decision decision = (Decision) figura;
-                double xDecision = decision.getX();
-                double yDecision = decision.getY();
-                inicioX = xDecision + 150;
-                inicioY = yDecision + 50;
-            }
-        }
+        ListoPresionado = true;
     }
 }
