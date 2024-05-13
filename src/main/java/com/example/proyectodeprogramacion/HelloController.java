@@ -917,8 +917,15 @@ public class HelloController {
         inicioX = -1;
         inicioY = -1;
         figurasarreglo.clear();
+        DibujarLineaLimite(DibujoCanvas);
     }
-
+    private void DibujarLineaLimite(Canvas canvas) {
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.clearRect(0,0, canvas.getWidth(), canvas.getHeight());
+        gc.setStroke(javafx.scene.paint.Color.BLACK);
+        gc.setLineWidth(2.0);
+        gc.strokeLine(canvas.getWidth() - 140.0, 0, canvas.getWidth() - 140.0, canvas.getHeight());
+    }
     private Figura obtenerFiguraClicada(double x, double y) {
         for (Figura figura : figurasarreglo) {
             if (figura.contienePunto(x, y)) {
@@ -962,7 +969,22 @@ public class HelloController {
     @FXML
     public void MostrarPseudocodigo() {
         for (Figura figura : figurasarreglo) {
-            System.out.println(figura.generarPseudocodigo());
+            if (figura instanceof Proceso) {
+                Proceso proceso = (Proceso) figura;
+                System.out.println("Proceso:"+figura.getTexto());
+            } else if (figura instanceof Decision) {
+                Decision decision = (Decision) figura;
+                System.out.println("Sino"+figura.getTexto());
+            } else if (figura instanceof EntradaSalida) {
+                EntradaSalida entradaSalida = (EntradaSalida) figura;
+                System.out.println("Escribir:"+((EntradaSalida) figura).getTexto());
+            } else if (figura instanceof Documento) {
+                Documento documento = (Documento) figura;
+                System.out.println("Leer:"+((Documento) figura).getTexto());
+            } else if (figura instanceof InicioFin) {
+                InicioFin inicioFin = (InicioFin) figura;
+                System.out.println("Inicio"+((InicioFin) figura).getTexto());
+            }
         }
     }
 
@@ -1037,6 +1059,10 @@ public class HelloController {
         figura = "boton7";
     }
 
+    @FXML
+    private void handleButton8Click() {
+        figura = "boton1";
+    }
     public void BotonListo() {
         for (Figura figura : figurasarreglo) {
             if (figura instanceof Decision) {
