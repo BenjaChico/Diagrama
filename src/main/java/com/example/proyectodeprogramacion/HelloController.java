@@ -967,14 +967,16 @@ public class HelloController {
                 System.out.println("Proceso:"+figura.getTexto());
             } else if (figura instanceof Decision) {
                 Decision decision = (Decision) figura;
-                if(decision
+                System.out.println("Sino"+figura.getTexto());
             } else if (figura instanceof EntradaSalida) {
                 EntradaSalida entradaSalida = (EntradaSalida) figura;
                 System.out.println("Escribir:"+((EntradaSalida) figura).getTexto());
             } else if (figura instanceof Documento) {
                 Documento documento = (Documento) figura;
+                System.out.println("Leer:"+((Documento) figura).getTexto());
             } else if (figura instanceof InicioFin) {
                 InicioFin inicioFin = (InicioFin) figura;
+                System.out.println("Inicio"+((InicioFin) figura).getTexto());
             }
         }
     }
