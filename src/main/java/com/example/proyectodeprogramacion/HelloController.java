@@ -990,10 +990,6 @@ public class HelloController {
 
 
     public void CerrarMientras() {
-        cerrar();
-    }
-
-    public void cerrar() {
         GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
         Figura ultimafigura = figurasarreglo.get(figurasarreglo.size() - 1);
         double xUltima = ultimafigura.getX();
