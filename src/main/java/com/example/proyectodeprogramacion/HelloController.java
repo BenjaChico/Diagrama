@@ -144,6 +144,7 @@ public class HelloController {
                             inicioX = x + 50;
                             inicioY = y + 50;
                             break;
+
                         case "boton2":
                             Proceso proceso = new Proceso(x, y);
                             proceso.DibujarProceso(gc, x, y);
@@ -224,6 +225,8 @@ public class HelloController {
                             inicioX = x;
                             inicioY = y + 100;
                             break;
+                        case "boton8":
+
                     }
                 } else {
                     System.out.println("No se puede colocar aqui");
@@ -989,6 +992,7 @@ public class HelloController {
     }
 
 
+
     public void CerrarMientras() {
         GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
         Figura ultimafigura = figurasarreglo.get(figurasarreglo.size() - 1);
@@ -1027,7 +1031,7 @@ public class HelloController {
 
     @FXML
     private void handleButton2Click() {
-        figura = "boton1";
+        figura = "boton8";
     }
 
     @FXML
