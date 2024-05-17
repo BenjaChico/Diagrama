@@ -8,9 +8,11 @@ import javafx.scene.text.Font;
 import java.util.Optional;
 import java.util.ArrayList;
 import javafx.scene.control.TextInputDialog;
+import java.util.Stack;
 
 public class HelloController {
     private final ArrayList<Figura> figurasarreglo = new ArrayList<>();
+    private Stack<double[]> decisionStack = new Stack<>();
 
     public abstract class Figura {
         public abstract boolean contienePunto(double x, double y);
@@ -424,6 +426,21 @@ public class HelloController {
         public void agregarFalso(Figura figura) {
             Falso.add(figura);
         }
+
+        public void cerrarDecision() {
+            // Calcula las coordenadas de cierre de la figura
+            double xCierre = this.getX() - 150; // Ajusta según el ancho de la figura de decisión
+            double yCierre = this.getY() + 50; // Ajusta según el tamaño de la figura de decisión
+
+            // Agrega las líneas necesarias para cerrar la figura
+            GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
+            gc.beginPath();
+            gc.moveTo(this.getX(), this.getY() + 50); // Se mueve a la esquina inferior izquierda
+            gc.lineTo(xCierre, yCierre); // Línea diagonal hacia arriba y hacia la izquierda
+            gc.lineTo(xCierre, this.getY() - 50); // Línea vertical hacia arriba
+            gc.stroke(); // Dibuja las líneas
+        }
+
 
         public void DibujarDecision(GraphicsContext gc, GraphicsContext gc2, double x, double y) {
             TextInputDialog dialog = new TextInputDialog();
@@ -917,15 +934,8 @@ public class HelloController {
         inicioX = -1;
         inicioY = -1;
         figurasarreglo.clear();
-        DibujarLineaLimite(DibujoCanvas);
     }
-    private void DibujarLineaLimite(Canvas canvas) {
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-        gc.clearRect(0,0, canvas.getWidth(), canvas.getHeight());
-        gc.setStroke(javafx.scene.paint.Color.BLACK);
-        gc.setLineWidth(2.0);
-        gc.strokeLine(canvas.getWidth() - 140.0, 0, canvas.getWidth() - 140.0, canvas.getHeight());
-    }
+
     private Figura obtenerFiguraClicada(double x, double y) {
         for (Figura figura : figurasarreglo) {
             if (figura.contienePunto(x, y)) {
@@ -969,22 +979,7 @@ public class HelloController {
     @FXML
     public void MostrarPseudocodigo() {
         for (Figura figura : figurasarreglo) {
-            if (figura instanceof Proceso) {
-                Proceso proceso = (Proceso) figura;
-                System.out.println("Proceso:"+figura.getTexto());
-            } else if (figura instanceof Decision) {
-                Decision decision = (Decision) figura;
-                System.out.println("Sino"+figura.getTexto());
-            } else if (figura instanceof EntradaSalida) {
-                EntradaSalida entradaSalida = (EntradaSalida) figura;
-                System.out.println("Escribir:"+((EntradaSalida) figura).getTexto());
-            } else if (figura instanceof Documento) {
-                Documento documento = (Documento) figura;
-                System.out.println("Leer:"+((Documento) figura).getTexto());
-            } else if (figura instanceof InicioFin) {
-                InicioFin inicioFin = (InicioFin) figura;
-                System.out.println("Inicio"+((InicioFin) figura).getTexto());
-            }
+            System.out.println(figura.generarPseudocodigo());
         }
     }
 
@@ -1020,9 +1015,34 @@ public class HelloController {
         gc.stroke(); // Aquí se traza la figura
     }
 
+    public void BotonListo() {
+        for (Figura figura : figurasarreglo) {
+            if (figura instanceof Decision) {
+                Decision decision = (Decision) figura;
+                double xDecision = decision.getX();
+                double yDecision = decision.getY();
+
+                //Guarda en la pila las coordenadas de la figura antes de cambiar
+                decisionStack.push(new double[]{inicioX, inicioY});
+
+                inicioX = xDecision + 150;
+                inicioY = yDecision + 50;
+            }
+        }
+    }
 
     public void CerrarRepetir() {
     }
+
+
+    public void CerrarCondicional() {
+        if(!decisionStack.isEmpty()){
+            double[] coordenadaAnterior = decisionStack.pop();
+            inicioX = coordenadaAnterior[0];
+            inicioY = coordenadaAnterior[1];
+        }
+    }
+
 
     @FXML
     private void handleButton1Click() {
@@ -1059,19 +1079,4 @@ public class HelloController {
         figura = "boton7";
     }
 
-    @FXML
-    private void handleButton8Click() {
-        figura = "boton1";
-    }
-    public void BotonListo() {
-        for (Figura figura : figurasarreglo) {
-            if (figura instanceof Decision) {
-                Decision decision = (Decision) figura;
-                double xDecision = decision.getX();
-                double yDecision = decision.getY();
-                inicioX = xDecision + 150;
-                inicioY = yDecision + 50;
-            }
-        }
-    }
 }
