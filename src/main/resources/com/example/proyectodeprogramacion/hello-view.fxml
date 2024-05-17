@@ -14,10 +14,11 @@
             <AnchorPane>
                 <Canvas fx:id="DibujoCanvas" height="2000.0" width="800.0" />
             <Button layoutY="1.0" mnemonicParsing="false" onAction="#MostrarPseudocodigo" text="Pseudocodigo" />
-            <Button layoutX="92.0" layoutY="1.0" mnemonicParsing="false" onAction="#CerrarMientras" text="Mientras" />
-            <Button layoutX="155.0" layoutY="1.0" mnemonicParsing="false" onAction="#CerrarRepetir" text="Repetir" />
-              <Button layoutX="209.0" layoutY="1.0" mnemonicParsing="false" onAction="#BotonListo" prefHeight="26.0" prefWidth="86.0" text="Condicional" />
-              <Button layoutX="295.0" layoutY="1.0" onAction="#borrarFigurasClick" prefHeight="24.0" prefWidth="94.0" text="Borrar Figuras" />
+            <Button layoutX="92.0" layoutY="1.0" mnemonicParsing="false" onAction="#CerrarMientras" text="CerrarMientras" />
+            <Button layoutX="187.0" layoutY="1.0" mnemonicParsing="false" onAction="#CerrarRepetir" text="CerrarRepetir" />
+              <Button layoutX="273.0" layoutY="1.0" mnemonicParsing="false" onAction="#BotonListo" text="Cambio de Lado" />
+              <Button layoutX="487.0" layoutY="1.0" mnemonicParsing="false" onAction="#borrarFigurasClick" text="Borrar Figuras" />
+            <Button layoutX="376.0" layoutY="1.0" mnemonicParsing="false" onAction="#CerrarCondicional" text="CerrarCondicional" />
             </AnchorPane>
         </content>
     </ScrollPane>
