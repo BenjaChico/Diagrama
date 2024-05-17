@@ -1044,6 +1044,10 @@ public class HelloController {
     }
 
 
+    /*
+    ----
+    */
+
     @FXML
     private void handleButton1Click() {
         figura = "boton6";
