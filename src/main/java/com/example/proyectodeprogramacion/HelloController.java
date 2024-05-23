@@ -9,6 +9,8 @@ import java.util.Optional;
 import java.util.ArrayList;
 import javafx.scene.control.TextInputDialog;
 import java.util.Stack;
+import javafx.scene.control.Alert;
+
 
 public class HelloController {
     private final ArrayList<Figura> figurasarreglo = new ArrayList<>();
@@ -936,6 +938,66 @@ public class HelloController {
         figurasarreglo.clear();
     }
 
+    @FXML
+    private void borrarFiguraX() {
+        int size = figurasarreglo.size();
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Borrar última figura");
+        dialog.setHeaderText(null);
+        dialog.setContentText("Número de posición a borrar (hay " + size + " elementos en la lista):");
+
+        dialog.showAndWait().ifPresent(texto -> {
+            try {
+                int posicion = Integer.parseInt(texto);
+                if (posicion > 0 && posicion <= size) { // Ajuste para que sea de 1 a size
+                    // Ajuste de índice para que coincida con el índice de la lista (base 0)
+                    int index = posicion -1 ;
+
+                    // Guardar las coordenadas del objeto a eliminar
+                    Figura figuraAEliminar = figurasarreglo.get(index);
+                    double xEliminar = figuraAEliminar.getX();
+                    double yEliminar = figuraAEliminar.getY();
+
+                    // Eliminar el objeto en la posición especificada
+                    figurasarreglo.remove(index);
+
+                    // Desplazar los elementos hacia atrás y actualizar sus coordenadas
+                    for (int i = index; i < figurasarreglo.size(); i++) {
+                        Figura figuraActual = figurasarreglo.get(i);
+                        System.out.println(figurasarreglo.get(i).getTexto());
+                        // Guardar las coordenadas actuales de la figura
+                        double xActual = figuraActual.getX();
+                        double yActual = figuraActual.getY();
+
+                        // Asignar las coordenadas de la figura anterior a la actual
+                        figuraActual.setX(xEliminar);
+                        figuraActual.setY(yEliminar);
+
+                        // Actualizar las coordenadas para la siguiente iteración
+                        xEliminar = xActual;
+                        yEliminar = yActual;
+                    }
+
+                    // Redibujar las figuras después de la eliminación y desplazamiento
+                    redibujarFigurasBorradas();
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Por favor, ingresa un número que esté dentro del arreglo.");
+                    alert.showAndWait();
+                }
+            } catch (NumberFormatException e) {
+                // Maneja el caso en que el usuario no ingrese un número válido
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Por favor, ingresa un número válido.");
+                alert.showAndWait();
+            }
+        });
+        Figura ultimafigura = figurasarreglo.get(figurasarreglo.size() - 1);
+    }
     private Figura obtenerFiguraClicada(double x, double y) {
         for (Figura figura : figurasarreglo) {
             if (figura.contienePunto(x, y)) {
@@ -972,6 +1034,48 @@ public class HelloController {
                 inicioFin.DibujarInicioFin_Denuevo(gc, figura.getX(), figura.getY());
                 DibujarFlecha(inicioFin.getInicioFlechaX(), inicioFin.getInicioFlechaY(), inicioFin.getFinFlechaX(), inicioFin.getFinFlechaY());
             }
+        }
+    }
+
+    private void redibujarFigurasBorradas() {
+        GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
+        GraphicsContext gc2 = DibujoCanvas.getGraphicsContext2D();
+        // Limpiar el lienzo
+        gc.clearRect(0, 0, DibujoCanvas.getWidth(), DibujoCanvas.getHeight());
+
+        // Dibujar todas las figuras
+        for (Figura figura : figurasarreglo) {
+            if (figura instanceof Proceso) {
+                Proceso proceso = (Proceso) figura;
+                proceso.DibujarProceso_Denuevo(gc, figura.getX(), figura.getY());
+            } else if (figura instanceof Decision) {
+                Decision decision = (Decision) figura;
+                decision.DibujarDecision_Denuevo(gc,gc2,figura.getX(), figura.getY());
+            } else if (figura instanceof EntradaSalida) {
+                EntradaSalida entradaSalida = (EntradaSalida) figura;
+                entradaSalida.Dibujar_Entrada_Salida_Denuevo(gc, figura.getX(), figura.getY());
+            } else if (figura instanceof Documento) {
+                Documento documento = (Documento) figura;
+                documento.Dibujar_Documento_Denuevo(gc, figura.getX(), figura.getY());
+            } else if (figura instanceof InicioFin) {
+                InicioFin inicioFin = (InicioFin) figura;
+                inicioFin.DibujarInicioFin_Denuevo(gc, figura.getX(), figura.getY());
+            }
+        }
+
+        // Dibujar las flechas después de dibujar todas las figuras
+        for (int i = 0; i < figurasarreglo.size() - 1; i++) {
+            Figura figuraActual = figurasarreglo.get(i);
+            Figura figuraSiguiente = figurasarreglo.get(i + 1);
+
+            // Actualizar las coordenadas de la flecha de figuraActual a figuraSiguiente
+            figuraActual.setFinFlechaX(figuraSiguiente.getX());
+            figuraActual.setFinFlechaY(figuraSiguiente.getY());
+            figuraSiguiente.setInicioFlechaX(figuraActual.getX());
+            figuraSiguiente.setInicioFlechaY(figuraActual.getY());
+
+            DibujarFlecha(figuraActual.getInicioFlechaX(), figuraActual.getInicioFlechaY(),
+                    figuraActual.getFinFlechaX(), figuraActual.getFinFlechaY());
         }
     }
 

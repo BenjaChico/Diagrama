@@ -18,6 +18,7 @@
                 <Button layoutX="187.0" layoutY="1.0" mnemonicParsing="false" onAction="#CerrarRepetir" text="CerrarRepetir" />
                 <Button layoutX="273.0" layoutY="1.0" mnemonicParsing="false" onAction="#BotonListo" text="Cambio de Lado" />
                 <Button layoutX="487.0" layoutY="1.0" mnemonicParsing="false" onAction="#borrarFigurasClick" text="Borrar Figuras" />
+                <Button layoutX="577.0" layoutY="1.0" mnemonicParsing="false" onAction="#borrarFiguraX" text="borrarFiguraX" />
                 <Button layoutX="376.0" layoutY="1.0" mnemonicParsing="false" onAction="#CerrarCondicional" text="CerrarCondicional" />
             </AnchorPane>
         </content>
