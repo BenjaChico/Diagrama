@@ -1,11 +1,10 @@
 package com.example.proyectodeprogramacion;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.text.Font;
-import java.util.Optional;
+import java.util.List;
 import java.util.ArrayList;
 import javafx.scene.control.TextInputDialog;
 import java.util.Stack;
@@ -13,6 +12,8 @@ import java.util.Stack;
 public class HelloController {
     private final ArrayList<Figura> figurasarreglo = new ArrayList<>();
     private Stack<double[]> decisionStack = new Stack<>();
+    //private boolean cambio = true;
+
 
     public abstract class Figura {
         public abstract boolean contienePunto(double x, double y);
@@ -94,8 +95,6 @@ public class HelloController {
 
     private double inicioX = -1;
     private double inicioY = -1;
-    private boolean ListoPresionado = false;
-    private boolean MientrasPresionado = false;
 
     public void initialize() {
         DibujoCanvas.setOnMouseClicked(event -> {
@@ -164,6 +163,7 @@ public class HelloController {
                             Decision decision = new Decision(x, y);
                             decision.DibujarDecision(gc, gc2, x, y);
                             figurasarreglo.add(decision);
+                            decisionStack.push(new double[]{x,y});
                             if (inicioX != -1 && inicioY != -1) {
                                 DibujarFlecha(inicioX, inicioY, x, y);
                                 decision.setInicioFlechaX(inicioX);
@@ -171,18 +171,9 @@ public class HelloController {
                                 decision.setFinFlechaX(x);
                                 decision.setFinFlechaY(y);
                             }
-                            //Lado Verdadero
-                            /*if(!ListoPresionado){
-                                inicioX = x - 150;
-                                inicioY = y + 50;
-                            }*/
-                            //Lado Falso
-                            /*else{
-                                inicioX = x + 150;
-                                inicioY = y + 50;
-                            }*/
                             inicioX = x - 150;
                             inicioY = y + 50;
+                            //cambio = true;
                             break;
                         case "boton4":
                             EntradaSalida entradaSalida = new EntradaSalida(x, y);
@@ -233,6 +224,7 @@ public class HelloController {
             }
         });
     }
+
 
     private void DibujarFlecha(double inicioX, double inicioY, double finalX, double finalY) {
         GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
@@ -393,12 +385,14 @@ public class HelloController {
 
     public class Decision extends Figura {
         public String textoo;
-        private ArrayList Verdadero = new ArrayList();
-        private ArrayList Falso = new ArrayList();
+        private List<Figura> figurasVerdaderas;
+        private List<Figura> figurasFalsas;
 
 
         public Decision(double x, double y) {
             super(x, y);
+            figurasVerdaderas = new ArrayList<>();
+            figurasFalsas = new ArrayList<>();
         }
 
         public Decision() {
@@ -416,29 +410,6 @@ public class HelloController {
         @Override
         public String generarPseudocodigo() {
             return "si " + getTexto() + "entonces";
-        }
-
-
-        public void agregarVerdadero(Figura figura) {
-            Verdadero.add(figura);
-        }
-
-        public void agregarFalso(Figura figura) {
-            Falso.add(figura);
-        }
-
-        public void cerrarDecision() {
-            // Calcula las coordenadas de cierre de la figura
-            double xCierre = this.getX() - 150; // Ajusta según el ancho de la figura de decisión
-            double yCierre = this.getY() + 50; // Ajusta según el tamaño de la figura de decisión
-
-            // Agrega las líneas necesarias para cerrar la figura
-            GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
-            gc.beginPath();
-            gc.moveTo(this.getX(), this.getY() + 50); // Se mueve a la esquina inferior izquierda
-            gc.lineTo(xCierre, yCierre); // Línea diagonal hacia arriba y hacia la izquierda
-            gc.lineTo(xCierre, this.getY() - 50); // Línea vertical hacia arriba
-            gc.stroke(); // Dibuja las líneas
         }
 
 
@@ -740,12 +711,10 @@ public class HelloController {
                 gc.lineTo(x, y + 100);
                 gc.lineTo(x - 70, y + 50);
                 gc.closePath();
-                //Flecha izquierda
-                //gc.moveTo(x - 70, y + 50);
-                //gc.lineTo(x - 150, y + 50);
+
                 //Flecha derecha
                 gc.moveTo(x + 70, y + 50);
-                gc.lineTo(x + 100, y + 50);
+                gc.lineTo(x + 120, y + 50);
 
                 gc.setFont(new Font(tamanotexto + 5));
                 gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) - 10, y + 55);
@@ -989,31 +958,57 @@ public class HelloController {
     }
 
     public void cerrar() {
-        GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
-        Figura ultimafigura = figurasarreglo.get(figurasarreglo.size() - 1);
-        double xUltima = ultimafigura.getX();
-        double yUltima = ultimafigura.getY();
-        gc.beginPath();
-        //FLECHA DE CICLO V
-        gc.moveTo(xUltima, yUltima + 100);
-        gc.lineTo(xUltima, yUltima + 140);
-        gc.moveTo(xUltima, yUltima + 140); // Mover el punto de inicio de la nueva línea
-        gc.lineTo(xUltima - 130, yUltima + 140); // Agregar línea hacia la izquierda
-        gc.moveTo(xUltima - 130, yUltima + 140);
-        gc.lineTo(xUltima - 130, yUltima - 50);
-        gc.moveTo(xUltima - 130, yUltima - 50);
-        gc.lineTo(xUltima, yUltima - 50);
-        //FLECHA DE CICLO F
-        gc.moveTo(xUltima + 100, yUltima + 50);
-        gc.lineTo(xUltima + 100, yUltima + 200);
-        gc.moveTo(xUltima + 100, yUltima + 200);
-        gc.lineTo(xUltima, yUltima + 200);
-        inicioX = xUltima;
-        inicioY = yUltima + 200;
+        if (!figurasarreglo.isEmpty()) {
+            // Recorre el arreglo de figuras al revés para encontrar el "Mientras" más reciente
+            for (int i = figurasarreglo.size() - 1; i >= 0; i--) {
+                Figura figura = figurasarreglo.get(i);
+                if (figura instanceof Mientras) {
+                    Mientras mientras = (Mientras) figura;
+                    double xMientras = mientras.getX();
+                    double yMientras = mientras.getY();
 
-        gc.closePath();
-        gc.stroke(); // Aquí se traza la figura
+                    Figura ultimafigura = figurasarreglo.get(figurasarreglo.size() - 1);
+                    double xUltima = ultimafigura.getX();
+                    double yUltima = ultimafigura.getY();
+                    double tamanoFlecha = 10.0;
+
+                    GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
+                    gc.beginPath();
+
+                    // Dibuja la flecha de ciclo V
+                    gc.moveTo(xUltima + 50, yUltima + 50); // Ajusta las coordenadas según sea necesario
+                    gc.lineTo(xUltima + 50, yUltima + 100); // Ajusta las coordenadas según sea necesario
+                    gc.moveTo(xUltima + 50, yUltima + 100);
+                    gc.lineTo(xUltima - 120, yUltima + 100);
+                    gc.moveTo(xUltima - 120, yUltima + 100);
+                    gc.lineTo(xMientras - 120, yMientras - 50);
+                    gc.moveTo(xMientras - 120, yMientras - 50);
+                    gc.lineTo(xMientras, yMientras - 50);
+
+                    // Dibuja la punta de la flecha
+                    gc.stroke();
+                    gc.strokeLine(xMientras, yMientras - 50, xMientras - tamanoFlecha * Math.cos(Math.PI / 6), yMientras - 50 + tamanoFlecha * Math.sin(Math.PI / 6));
+                    gc.strokeLine(xMientras, yMientras - 50, xMientras - tamanoFlecha * Math.cos(Math.PI / 6), yMientras - 50 - tamanoFlecha * Math.sin(Math.PI / 6));
+
+                    // Dibuja la flecha de ciclo F
+                    gc.moveTo(xMientras + 120, yMientras + 50); // Ajusta las coordenadas según sea necesario
+                    gc.lineTo(xMientras + 120, yUltima + 170); // Ajusta las coordenadas según sea necesario
+                    gc.moveTo(xMientras + 120, yUltima + 170);
+                    gc.lineTo(xUltima, yUltima + 170);
+
+                    gc.closePath();
+                    gc.stroke();
+
+                    // Actualiza las coordenadas de inicio
+                    inicioX = xUltima;
+                    inicioY = yUltima + 170;
+
+                    break; // Solo queremos cerrar el primer "Mientras" encontrado desde el final
+                }
+            }
+        }
     }
+
 
     public void BotonListo() {
         for (Figura figura : figurasarreglo) {
@@ -1044,9 +1039,6 @@ public class HelloController {
     }
 
 
-    /*
-    ----
-    */
 
     @FXML
     private void handleButton1Click() {
