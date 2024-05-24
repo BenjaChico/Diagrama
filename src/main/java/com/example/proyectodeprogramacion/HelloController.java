@@ -3,6 +3,7 @@ package com.example.proyectodeprogramacion;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
 import javafx.scene.text.Font;
 import java.util.List;
 import java.util.ArrayList;
@@ -128,8 +129,8 @@ public class HelloController {
                                 repetir.setFinFlechaX(x);
                                 repetir.setFinFlechaY(y);
                             }
-                            inicioX = x + 50;
-                            inicioY = y;
+                            inicioX = x;
+                            inicioY = y + 100;
                             break;
                         case "boton1":
                             InicioFin inicioFin = new InicioFin(x, y);
@@ -205,7 +206,7 @@ public class HelloController {
                             break;
                         case "boton7":
                             Mientras mientras = new Mientras(x, y);
-                            mientras.DibujarMientras(gc, x, y);
+                            mientras.DibujarMientras(gc,gc2, x, y);
                             figurasarreglo.add(mientras);
                             if (inicioX != -1 && inicioY != -1) {
                                 DibujarFlecha(inicioX, inicioY, x, y);
@@ -688,10 +689,9 @@ public class HelloController {
 
         @Override
         public void setTexto(String texto) {
-
         }
 
-        public void DibujarMientras(GraphicsContext gc, double x, double y) {
+        public void DibujarMientras(GraphicsContext gc, GraphicsContext gc2, double x, double y) {
             TextInputDialog dialog = new TextInputDialog();
             dialog.setTitle("Texto Mientras");
             dialog.setHeaderText(null);
@@ -715,23 +715,13 @@ public class HelloController {
                 //Flecha derecha
                 gc.moveTo(x + 70, y + 50);
                 gc.lineTo(x + 120, y + 50);
+                gc2.strokeText("F", x + 100, y + 45);
 
                 gc.setFont(new Font(tamanotexto + 5));
                 gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) - 10, y + 55);
                 gc.stroke();
             });
         }
-
-        public void DibujarCierre(GraphicsContext gc, double x, double y) {
-            gc.beginPath();
-            gc.lineTo(x, y - 40);
-            gc.lineTo(x + 100, y);
-            gc.lineTo(x + 100, y - 100);
-            gc.lineTo(x, y + 40);
-            gc.closePath();
-            gc.stroke(); // Aquí se traza la figura
-        }
-
         @Override
         public String generarPseudocodigo() {
             return null;
@@ -787,9 +777,7 @@ public class HelloController {
                 //Flecha izquierda
                 gc.moveTo(x - 70, y + 50);
                 gc.lineTo(x - 100, y + 50);
-                //Flecha Derecha
-                //gc.moveTo(x + 70, y + 50);
-                //gc.lineTo(x + 150, y + 50);
+
 
                 gc.setFont(new Font(tamanotexto + 5));
                 gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) - 10, y + 55);
@@ -973,6 +961,7 @@ public class HelloController {
                     double tamanoFlecha = 10.0;
 
                     GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
+                    GraphicsContext gc2 = DibujoCanvas.getGraphicsContext2D();
                     gc.beginPath();
 
                     // Dibuja la flecha de ciclo V
@@ -984,6 +973,8 @@ public class HelloController {
                     gc.lineTo(xMientras - 120, yMientras - 50);
                     gc.moveTo(xMientras - 120, yMientras - 50);
                     gc.lineTo(xMientras, yMientras - 50);
+                    gc2.moveTo(xMientras + 15, yMientras + 110);
+                    gc2.strokeText("V", xMientras + 15, yMientras + 110);
 
                     // Dibuja la punta de la flecha
                     gc.stroke();
@@ -1027,6 +1018,63 @@ public class HelloController {
     }
 
     public void CerrarRepetir() {
+        int size = figurasarreglo.size();
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Posición de cierre");
+        dialog.setHeaderText(null);
+        dialog.setContentText("Número de posición(hay " + (size - 1) + " elementos en la lista):");
+
+        dialog.showAndWait().ifPresent(texto ->{
+          try {
+              int posicion = Integer.parseInt(texto);
+              if(posicion > 0 && posicion <= size){
+                  int index = posicion - 1;
+
+                  Figura figuraCierre = figurasarreglo.get(index);
+                  double xCerrar = figuraCierre.getX();
+                  double yCerrar = figuraCierre.getY();
+                  if(!figurasarreglo.isEmpty()){
+                      for(int i = figurasarreglo.size() - 1; i >= 0; i--){
+                          Figura figura = figurasarreglo.get(i);
+                          if(figura instanceof Repetir){
+                              Repetir repetir = (Repetir) figura;
+                              double xRepetir = repetir.getX();
+                              double yRepetir = repetir.getY();
+                              GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
+                              GraphicsContext gc2 = DibujoCanvas.getGraphicsContext2D();
+                              double tamanoFlecha = 10.0;
+
+                              gc.beginPath();
+
+                              //Dibujo Linea lado F de ciclo Mientras
+                              gc.moveTo(xRepetir - 100, yCerrar - 30);
+                              gc.lineTo(xRepetir - 100, yRepetir + 50);
+                              gc.moveTo(xRepetir - 100, yCerrar - 30);
+                              gc.lineTo(xRepetir, yCerrar - 30);
+
+                              //Dibujo punta de flecha
+                              gc.strokeLine(xRepetir, yCerrar - 30,
+                                      xRepetir - tamanoFlecha * Math.cos(Math.PI / 6),
+                                      yCerrar - 30 + tamanoFlecha * Math.sin(Math.PI / 6));
+                              gc.strokeLine(xRepetir, yCerrar - 30,
+                                      xRepetir - tamanoFlecha * Math.cos(Math.PI / 6),
+                                      yCerrar - 30 - tamanoFlecha * Math.sin(Math.PI / 6));
+
+
+                              gc.closePath();
+                              gc.stroke();
+                          }
+                      }
+                  }
+              }
+          } catch (NumberFormatException e) {
+              Alert alert = new Alert(Alert.AlertType.ERROR);
+              alert.setTitle("Error");
+              alert.setHeaderText(null);
+              alert.setContentText("Ingrese un número valido");
+              alert.showAndWait();
+          }
+        });
     }
 
 
