@@ -13,11 +13,13 @@
         <content>
             <AnchorPane>
                 <Canvas fx:id="DibujoCanvas" height="2000.0" width="800.0" />
-            <Button layoutY="1.0" mnemonicParsing="false" onAction="#MostrarPseudocodigo" text="Pseudocodigo" />
-            <Button layoutX="92.0" layoutY="1.0" mnemonicParsing="false" onAction="#CerrarMientras" text="Mientras" />
-            <Button layoutX="155.0" layoutY="1.0" mnemonicParsing="false" onAction="#CerrarRepetir" text="Repetir" />
-              <Button layoutX="209.0" layoutY="1.0" mnemonicParsing="false" onAction="#BotonListo" prefHeight="26.0" prefWidth="86.0" text="Condicional" />
-              <Button layoutX="295.0" layoutY="1.0" onAction="#borrarFigurasClick" prefHeight="24.0" prefWidth="94.0" text="Borrar Figuras" />
+                <Button layoutY="1.0" mnemonicParsing="false" onAction="#MostrarPseudocodigo" text="Pseudocodigo" />
+                <Button layoutX="92.0" layoutY="1.0" mnemonicParsing="false" onAction="#CerrarMientras" text="CerrarMientras" />
+                <Button layoutX="187.0" layoutY="1.0" mnemonicParsing="false" onAction="#CerrarRepetir" text="CerrarRepetir" />
+                <Button layoutX="273.0" layoutY="1.0" mnemonicParsing="false" onAction="#BotonListo" text="Cambio de Lado" />
+                <Button layoutX="487.0" layoutY="1.0" mnemonicParsing="false" onAction="#borrarFigurasClick" text="Borrar Figuras" />
+                <Button layoutX="577.0" layoutY="1.0" mnemonicParsing="false" onAction="#borrarFiguraX" text="borrarFiguraX" />
+                <Button layoutX="376.0" layoutY="1.0" mnemonicParsing="false" onAction="#CerrarCondicional" text="CerrarCondicional" />
             </AnchorPane>
         </content>
     </ScrollPane>
@@ -25,35 +27,35 @@
     <!-- Botones en el Lado Derecho -->
     <VBox alignment="CENTER_RIGHT" prefHeight="600.0" spacing="50" AnchorPane.bottomAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
         <Button onAction="#handleButton2Click" prefHeight="52.0" prefWidth="78.0" text="Inicio/Fin">
-         <font>
-            <Font size="14.0" />
-         </font></Button>
+            <font>
+                <Font size="14.0" />
+            </font></Button>
         <Button onAction="#handleButton3Click" prefHeight="52.0" prefWidth="130.0" text="Etapa del Proceso">
-         <font>
-            <Font size="14.0" />
-         </font></Button>
+            <font>
+                <Font size="14.0" />
+            </font></Button>
         <Button onAction="#handleButton4Click" prefHeight="52.0" prefWidth="107.0" text="Decisión">
-         <font>
-            <Font size="14.0" />
-         </font></Button>
+            <font>
+                <Font size="14.0" />
+            </font></Button>
         <Button onAction="#handleButton5Click" prefHeight="52.0" prefWidth="114.0" text="Entrada/Salida">
-         <font>
-            <Font size="14.0" />
-         </font></Button>
+            <font>
+                <Font size="14.0" />
+            </font></Button>
         <Button onAction="#handleButton6Click" prefHeight="52.0" prefWidth="102.0" text="Documento">
-         <font>
-            <Font size="14.0" />
-         </font></Button>
+            <font>
+                <Font size="14.0" />
+            </font></Button>
         <Button onAction="#handleButton1Click" prefHeight="52.0" prefWidth="118.0" text="Repetir">
-         <font>
-            <Font size="14.0" />
-         </font>
-      </Button>
-      <Button mnemonicParsing="false" onAction="#handleButton7Click" prefHeight="51.0" prefWidth="112.0" text="Mientras">
-         <font>
-            <Font size="14.0" />
-         </font>
-      </Button>
+            <font>
+                <Font size="14.0" />
+            </font>
+        </Button>
+        <Button mnemonicParsing="false" onAction="#handleButton7Click" prefHeight="51.0" prefWidth="112.0" text="Mientras">
+            <font>
+                <Font size="14.0" />
+            </font>
+        </Button>
     </VBox>
 
 </AnchorPane>
