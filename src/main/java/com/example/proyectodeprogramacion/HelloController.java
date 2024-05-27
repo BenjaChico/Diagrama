@@ -15,6 +15,8 @@ public class HelloController {
     private final ArrayList<Figura> figurasarreglo = new ArrayList<>();
     private Stack<double[]> decisionStack = new Stack<>();
 
+    private boolean cierre;
+
     public abstract class Figura {
         public abstract boolean contienePunto(double x, double y);
 
@@ -165,6 +167,10 @@ public class HelloController {
                             Decision decision = new Decision(x, y);
                             decision.DibujarDecision(gc, gc2, x, y);
                             figurasarreglo.add(decision);
+
+                            ArrayList<Figura> LadoVerdadero = new ArrayList<>();
+                            ArrayList<Figura> LadoFalso = new ArrayList<>();
+
                             if (inicioX != -1 && inicioY != -1) {
                                 DibujarFlecha(inicioX, inicioY, x, y);
                                 decision.setInicioFlechaX(inicioX);
@@ -384,8 +390,27 @@ public class HelloController {
 
     public class Decision extends Figura {
         public String textoo;
-        private ArrayList Verdadero = new ArrayList();
-        private ArrayList Falso = new ArrayList();
+
+        private Stack<double[]> coordenadasVerdadero = new Stack<>();
+        private Stack<double[]> coordenadasFalso = new Stack<>();
+
+        // Constructor y otros métodos...
+
+        public void agregarCoordenadaVerdadero(double x, double y) {
+            coordenadasVerdadero.push(new double[]{x, y});
+        }
+
+        public void agregarCoordenadaFalso(double x, double y) {
+            coordenadasFalso.push(new double[]{x, y});
+        }
+
+        public double[] obtenerUltimaCoordenadaVerdadero() {
+            return coordenadasVerdadero.isEmpty() ? new double[]{0, 0} : coordenadasVerdadero.peek();
+        }
+
+        public double[] obtenerUltimaCoordenadaFalso() {
+            return coordenadasFalso.isEmpty() ? new double[]{0, 0} : coordenadasFalso.peek();
+        }
 
 
         public Decision(double x, double y) {
@@ -408,30 +433,6 @@ public class HelloController {
         public String generarPseudocodigo() {
             return "si " + getTexto() + "entonces";
         }
-
-
-        public void agregarVerdadero(Figura figura) {
-            Verdadero.add(figura);
-        }
-
-        public void agregarFalso(Figura figura) {
-            Falso.add(figura);
-        }
-
-        public void cerrarDecision() {
-            // Calcula las coordenadas de cierre de la figura
-            double xCierre = this.getX() - 150; // Ajusta según el ancho de la figura de decisión
-            double yCierre = this.getY() + 50; // Ajusta según el tamaño de la figura de decisión
-
-            // Agrega las líneas necesarias para cerrar la figura
-            GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
-            gc.beginPath();
-            gc.moveTo(this.getX(), this.getY() + 50); // Se mueve a la esquina inferior izquierda
-            gc.lineTo(xCierre, yCierre); // Línea diagonal hacia arriba y hacia la izquierda
-            gc.lineTo(xCierre, this.getY() - 50); // Línea vertical hacia arriba
-            gc.stroke(); // Dibuja las líneas
-        }
-
 
         public void DibujarDecision(GraphicsContext gc, GraphicsContext gc2, double x, double y) {
             TextInputDialog dialog = new TextInputDialog();
@@ -1057,14 +1058,54 @@ public class HelloController {
         }
     }
 
-
-
-
     @FXML
     public void MostrarPseudocodigo() {
+        int nivelIndentacion = 0;
+        Stack<String> bloques = new Stack<>();
+        boolean enSi = false;
+
         for (Figura figura : figurasarreglo) {
-            System.out.println(figura.generarPseudocodigo());
+            if (figura instanceof Proceso) {
+                System.out.println(generarIndentacion(nivelIndentacion) + "Escribir: " + figura.getTexto());
+            } else if (figura instanceof Decision) {
+                if (enSi) {
+                    nivelIndentacion--;
+                    System.out.println(generarIndentacion(nivelIndentacion) + "SiNo");
+                    nivelIndentacion++;
+                    enSi = false;
+                } else {
+                    System.out.println(generarIndentacion(nivelIndentacion) + "Si " + figura.getTexto() + " Entonces");
+                    nivelIndentacion++;
+                    bloques.push("FinSi");
+                    enSi = true;
+                }
+            } else if (figura instanceof EntradaSalida) {
+                System.out.println(generarIndentacion(nivelIndentacion) + "Leer: " + ((EntradaSalida) figura).getTexto());
+            } else if (figura instanceof Documento) {
+                System.out.println(generarIndentacion(nivelIndentacion) + "Leer: " + ((Documento) figura).getTexto());
+            } else if (figura instanceof Mientras) {
+                System.out.println(generarIndentacion(nivelIndentacion) + "Mientras " + figura.getTexto() + " Hacer");
+                nivelIndentacion++;
+                bloques.push("FinMientras");
+            } else if (figura instanceof Repetir) {
+                System.out.println(generarIndentacion(nivelIndentacion) + "Repetir");
+                nivelIndentacion++;
+                bloques.push("Hasta Que " + figura.getTexto());
+            }
         }
+
+        while (!bloques.isEmpty()) {
+            nivelIndentacion--;
+            System.out.println(generarIndentacion(nivelIndentacion) + bloques.pop());
+        }
+    }
+
+    private String generarIndentacion(int nivel) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < nivel; i++) {
+            sb.append("\t"); // Usa tabulaciones para la indentación
+        }
+        return sb.toString();
     }
 
 
@@ -1207,12 +1248,41 @@ public class HelloController {
 
 
     public void CerrarCondicional() {
-        if(!decisionStack.isEmpty()){
+        if (!decisionStack.isEmpty()) {
             double[] coordenadaAnterior = decisionStack.pop();
             inicioX = coordenadaAnterior[0];
             inicioY = coordenadaAnterior[1];
+
+            // Busca la última decisión en el arreglo de figuras
+            Decision ultimaDecision = null;
+            for (int i = figurasarreglo.size() - 1; i >= 0; i--) {
+                if (figurasarreglo.get(i) instanceof Decision) {
+                    ultimaDecision = (Decision) figurasarreglo.get(i);
+                    break;
+                }
+            }
+
+            if (ultimaDecision != null) {
+                double[] ultimaCoordenadaVerdadero = ultimaDecision.obtenerUltimaCoordenadaVerdadero();
+                double[] ultimaCoordenadaFalso = ultimaDecision.obtenerUltimaCoordenadaFalso();
+
+                GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
+                gc.beginPath();
+
+                // Dibuja la línea de cierre desde el lado Verdadero
+                gc.moveTo(ultimaCoordenadaVerdadero[0], ultimaCoordenadaVerdadero[1]);
+                gc.lineTo(inicioX, inicioY);
+
+                // Dibuja la línea de cierre desde el lado Falso
+                gc.moveTo(ultimaCoordenadaFalso[0], ultimaCoordenadaFalso[1]);
+                gc.lineTo(inicioX, inicioY);
+
+                gc.stroke();
+                gc.closePath();
+            }
         }
     }
+
 
 
     @FXML
