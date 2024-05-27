@@ -1,11 +1,12 @@
 package com.example.proyectodeprogramacion;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.text.Font;
-import java.util.List;
+import java.util.Optional;
 import java.util.ArrayList;
 import javafx.scene.control.TextInputDialog;
 import java.util.Stack;
@@ -13,8 +14,6 @@ import java.util.Stack;
 public class HelloController {
     private final ArrayList<Figura> figurasarreglo = new ArrayList<>();
     private Stack<double[]> decisionStack = new Stack<>();
-    //private boolean cambio = true;
-
 
     public abstract class Figura {
         public abstract boolean contienePunto(double x, double y);
@@ -96,6 +95,8 @@ public class HelloController {
 
     private double inicioX = -1;
     private double inicioY = -1;
+    private boolean ListoPresionado = false;
+    private boolean MientrasPresionado = false;
 
     public void initialize() {
         DibujoCanvas.setOnMouseClicked(event -> {
@@ -164,7 +165,10 @@ public class HelloController {
                             Decision decision = new Decision(x, y);
                             decision.DibujarDecision(gc, gc2, x, y);
                             figurasarreglo.add(decision);
-                            decisionStack.push(new double[]{x,y});
+
+                            ArrayList<Figura> LadoVerdadero = new ArrayList<>();
+                            ArrayList<Figura> LadoFalso = new ArrayList<>();
+
                             if (inicioX != -1 && inicioY != -1) {
                                 DibujarFlecha(inicioX, inicioY, x, y);
                                 decision.setInicioFlechaX(inicioX);
@@ -174,7 +178,6 @@ public class HelloController {
                             }
                             inicioX = x - 150;
                             inicioY = y + 50;
-                            //cambio = true;
                             break;
                         case "boton4":
                             EntradaSalida entradaSalida = new EntradaSalida(x, y);
@@ -206,7 +209,7 @@ public class HelloController {
                             break;
                         case "boton7":
                             Mientras mientras = new Mientras(x, y);
-                            mientras.DibujarMientras(gc,gc2, x, y);
+                            mientras.DibujarMientras(gc, gc2, x, y);
                             figurasarreglo.add(mientras);
                             if (inicioX != -1 && inicioY != -1) {
                                 DibujarFlecha(inicioX, inicioY, x, y);
@@ -225,7 +228,6 @@ public class HelloController {
             }
         });
     }
-
 
     private void DibujarFlecha(double inicioX, double inicioY, double finalX, double finalY) {
         GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
@@ -386,14 +388,12 @@ public class HelloController {
 
     public class Decision extends Figura {
         public String textoo;
-        private List<Figura> figurasVerdaderas;
-        private List<Figura> figurasFalsas;
+        private ArrayList Verdadero = new ArrayList();
+        private ArrayList Falso = new ArrayList();
 
 
         public Decision(double x, double y) {
             super(x, y);
-            figurasVerdaderas = new ArrayList<>();
-            figurasFalsas = new ArrayList<>();
         }
 
         public Decision() {
@@ -412,7 +412,6 @@ public class HelloController {
         public String generarPseudocodigo() {
             return "si " + getTexto() + "entonces";
         }
-
 
         public void DibujarDecision(GraphicsContext gc, GraphicsContext gc2, double x, double y) {
             TextInputDialog dialog = new TextInputDialog();
@@ -689,6 +688,7 @@ public class HelloController {
 
         @Override
         public void setTexto(String texto) {
+
         }
 
         public void DibujarMientras(GraphicsContext gc, GraphicsContext gc2, double x, double y) {
@@ -722,6 +722,7 @@ public class HelloController {
                 gc.stroke();
             });
         }
+
         @Override
         public String generarPseudocodigo() {
             return null;
@@ -932,12 +933,182 @@ public class HelloController {
         }
     }
 
+    @FXML
+    private void borrarFiguraX() {
+        int size = figurasarreglo.size();
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Borrar última figura");
+        dialog.setHeaderText(null);
+        dialog.setContentText("Número de posición a borrar (hay " + size + " elementos en la lista):");
+
+        dialog.showAndWait().ifPresent(texto -> {
+            try {
+                int posicion = Integer.parseInt(texto);
+                if (posicion > 0 && posicion <= size) { // Ajuste para que sea de 1 a size
+                    // Ajuste de índice para que coincida con el índice de la lista (base 0)
+                    int index = posicion -1 ;
+
+                    // Guardar las coordenadas del objeto a eliminar
+                    Figura figuraAEliminar = figurasarreglo.get(index);
+                    double xEliminar = figuraAEliminar.getX();
+                    double yEliminar = figuraAEliminar.getY();
+
+                    // Eliminar el objeto en la posición especificada
+                    figurasarreglo.remove(index);
+
+                    // Desplazar los elementos hacia atrás y actualizar sus coordenadas
+                    for (int i = index; i < figurasarreglo.size(); i++) {
+                        Figura figuraActual = figurasarreglo.get(i);
+                        System.out.println(figurasarreglo.get(i).getTexto());
+                        // Guardar las coordenadas actuales de la figura
+                        double xActual = figuraActual.getX();
+                        double yActual = figuraActual.getY();
+
+                        // Asignar las coordenadas de la figura anterior a la actual
+                        figuraActual.setX(xEliminar);
+                        figuraActual.setY(yEliminar);
+
+                        // Actualizar las coordenadas para la siguiente iteración
+                        xEliminar = xActual;
+                        yEliminar = yActual;
+                    }
+
+                    // Redibujar las figuras después de la eliminación y desplazamiento
+                    redibujarFigurasBorradas();
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Por favor, ingresa un número que esté dentro del arreglo.");
+                    alert.showAndWait();
+                }
+            } catch (NumberFormatException e) {
+                // Maneja el caso en que el usuario no ingrese un número válido
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Por favor, ingresa un número válido.");
+                alert.showAndWait();
+            }
+        });
+        Figura ultimafigura = figurasarreglo.get(figurasarreglo.size() - 1);
+    }
+
+
+    private void redibujarFigurasBorradas() {
+        GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
+        GraphicsContext gc2 = DibujoCanvas.getGraphicsContext2D();
+        // Limpiar el lienzo
+        gc.clearRect(0, 0, DibujoCanvas.getWidth(), DibujoCanvas.getHeight());
+
+        // Dibujar todas las figuras
+        for (Figura figura : figurasarreglo) {
+            if (figura instanceof Proceso) {
+                Proceso proceso = (Proceso) figura;
+                proceso.DibujarProceso_Denuevo(gc, figura.getX(), figura.getY());
+            } else if (figura instanceof Decision) {
+                Decision decision = (Decision) figura;
+                decision.DibujarDecision_Denuevo(gc,gc2,figura.getX(), figura.getY());
+            } else if (figura instanceof EntradaSalida) {
+                EntradaSalida entradaSalida = (EntradaSalida) figura;
+                entradaSalida.Dibujar_Entrada_Salida_Denuevo(gc, figura.getX(), figura.getY());
+            } else if (figura instanceof Documento) {
+                Documento documento = (Documento) figura;
+                documento.Dibujar_Documento_Denuevo(gc, figura.getX(), figura.getY());
+            } else if (figura instanceof InicioFin) {
+                InicioFin inicioFin = (InicioFin) figura;
+                inicioFin.DibujarInicioFin_Denuevo(gc, figura.getX(), figura.getY());
+            }
+        }
+
+        // Dibujar las flechas después de dibujar todas las figuras
+        for (int i = 0; i < figurasarreglo.size() - 1; i++) {
+            Figura figuraActual = figurasarreglo.get(i);
+            Figura figuraSiguiente = figurasarreglo.get(i + 1);
+
+            // Actualizar las coordenadas de la flecha de figuraActual a figuraSiguiente
+            figuraActual.setFinFlechaX(figuraSiguiente.getX());
+            figuraActual.setFinFlechaY(figuraSiguiente.getY());
+            figuraSiguiente.setInicioFlechaX(figuraActual.getX());
+            figuraSiguiente.setInicioFlechaY(figuraActual.getY());
+
+            DibujarFlecha(figuraActual.getInicioFlechaX(), figuraActual.getInicioFlechaY(),
+                    figuraActual.getFinFlechaX(), figuraActual.getFinFlechaY());
+        }
+    }
 
     @FXML
     public void MostrarPseudocodigo() {
+        int nivelIndentacion = 0;
+        Stack<String> bloques = new Stack<>();
+        boolean enSi = false;
+
         for (Figura figura : figurasarreglo) {
-            System.out.println(figura.generarPseudocodigo());
+            // Verifica si se debe cerrar un bloque de "Si"
+            if (enSi && !(figura instanceof Decision)) {
+                nivelIndentacion--;
+                System.out.println(generarIndentacion(nivelIndentacion) + "SiNo");
+                nivelIndentacion++;
+                enSi = false;
+            }
+
+            if (figura instanceof Proceso) {
+                System.out.println(generarIndentacion(nivelIndentacion) + "Escribir: " + figura.getTexto());
+            } else if (figura instanceof Decision) {
+                if (enSi) {
+                    nivelIndentacion--;
+                    System.out.println(generarIndentacion(nivelIndentacion) + "SiNo");
+                    nivelIndentacion++;
+                    enSi = false;
+                } else {
+                    System.out.println(generarIndentacion(nivelIndentacion) + "Si " + figura.getTexto() + " Entonces");
+                    nivelIndentacion++;
+                    bloques.push("FinSi");
+                    enSi = true;
+                }
+            } else if (figura instanceof EntradaSalida) {
+                System.out.println(generarIndentacion(nivelIndentacion) + "Leer: " + ((EntradaSalida) figura).getTexto());
+            } else if (figura instanceof Documento) {
+                System.out.println(generarIndentacion(nivelIndentacion) + "Leer: " + ((Documento) figura).getTexto());
+            } else if (figura instanceof Mientras) {
+                cerrarBloquesSiEsNecesario(bloques, nivelIndentacion);
+                System.out.println(generarIndentacion(nivelIndentacion) + "Mientras " + figura.getTexto() + " Hacer");
+                nivelIndentacion++;
+                bloques.push("FinMientras");
+            } else if (figura instanceof Repetir) {
+                cerrarBloquesSiEsNecesario(bloques, nivelIndentacion);
+                System.out.println(generarIndentacion(nivelIndentacion) + "Repetir");
+                nivelIndentacion++;
+                bloques.push("Hasta Que " + figura.getTexto());
+            } else if (figura instanceof InicioFin) {
+                cerrarBloquesSiEsNecesario(bloques, nivelIndentacion);
+                System.out.println(generarIndentacion(nivelIndentacion) + "Algoritmo " + figura.getTexto());
+                nivelIndentacion++;
+                bloques.push("FinAlgoritmo");
+            }
         }
+
+        while (!bloques.isEmpty()) {
+            nivelIndentacion--;
+            System.out.println(generarIndentacion(nivelIndentacion) + bloques.pop());
+        }
+    }
+
+    private void cerrarBloquesSiEsNecesario(Stack<String> bloques, int nivelIndentacion) {
+        if (!bloques.isEmpty()) {
+            while (!bloques.isEmpty() && (bloques.peek().startsWith("FinMientras") || bloques.peek().startsWith("Hasta Que"))) {
+                System.out.println(generarIndentacion(nivelIndentacion - 1) + bloques.pop());
+                nivelIndentacion--;
+            }
+        }
+    }
+
+    private String generarIndentacion(int nivel) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < nivel; i++) {
+            sb.append("\t"); // Usa tabulaciones para la indentación
+        }
+        return sb.toString();
     }
 
 
@@ -1025,55 +1196,56 @@ public class HelloController {
         dialog.setContentText("Número de posición(hay " + (size - 1) + " elementos en la lista):");
 
         dialog.showAndWait().ifPresent(texto ->{
-          try {
-              int posicion = Integer.parseInt(texto);
-              if(posicion > 0 && posicion <= size){
-                  int index = posicion - 1;
+            try {
+                int posicion = Integer.parseInt(texto);
+                if(posicion > 0 && posicion <= size){
+                    int index = posicion - 1;
 
-                  Figura figuraCierre = figurasarreglo.get(index);
-                  double xCerrar = figuraCierre.getX();
-                  double yCerrar = figuraCierre.getY();
-                  if(!figurasarreglo.isEmpty()){
-                      for(int i = figurasarreglo.size() - 1; i >= 0; i--){
-                          Figura figura = figurasarreglo.get(i);
-                          if(figura instanceof Repetir){
-                              Repetir repetir = (Repetir) figura;
-                              double xRepetir = repetir.getX();
-                              double yRepetir = repetir.getY();
-                              GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
-                              GraphicsContext gc2 = DibujoCanvas.getGraphicsContext2D();
-                              double tamanoFlecha = 10.0;
+                    Figura figuraCierre = figurasarreglo.get(index);
+                    double xCerrar = figuraCierre.getX();
+                    double yCerrar = figuraCierre.getY();
+                    if(!figurasarreglo.isEmpty()){
+                        for(int i = figurasarreglo.size() - 1; i >= 0; i--){
+                            Figura figura = figurasarreglo.get(i);
+                            if(figura instanceof Repetir){
+                                Repetir repetir = (Repetir) figura;
+                                double xRepetir = repetir.getX();
+                                double yRepetir = repetir.getY();
+                                GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
+                                GraphicsContext gc2 = DibujoCanvas.getGraphicsContext2D();
+                                double tamanoFlecha = 10.0;
 
-                              gc.beginPath();
+                                gc.beginPath();
 
-                              //Dibujo Linea lado F de ciclo Mientras
-                              gc.moveTo(xRepetir - 100, yCerrar - 30);
-                              gc.lineTo(xRepetir - 100, yRepetir + 50);
-                              gc.moveTo(xRepetir - 100, yCerrar - 30);
-                              gc.lineTo(xRepetir, yCerrar - 30);
-
-                              //Dibujo punta de flecha
-                              gc.strokeLine(xRepetir, yCerrar - 30,
-                                      xRepetir - tamanoFlecha * Math.cos(Math.PI / 6),
-                                      yCerrar - 30 + tamanoFlecha * Math.sin(Math.PI / 6));
-                              gc.strokeLine(xRepetir, yCerrar - 30,
-                                      xRepetir - tamanoFlecha * Math.cos(Math.PI / 6),
-                                      yCerrar - 30 - tamanoFlecha * Math.sin(Math.PI / 6));
+                                //Dibujo Linea lado F de ciclo Mientras
+                                gc.moveTo(xRepetir - 100, yCerrar - 30);
+                                gc.lineTo(xRepetir - 100, yRepetir + 50);
+                                gc.moveTo(xRepetir - 100, yCerrar - 30);
+                                gc.lineTo(xRepetir, yCerrar - 30);
+                                gc2.moveTo(xRepetir - 90, yRepetir + 40);
+                                gc2.strokeText("F", xRepetir - 90, yRepetir + 40, 10);
+                                gc2.moveTo(xRepetir + 10, yRepetir + 120);
+                                gc2.strokeText("V", xRepetir + 10, yRepetir + 120, 10);
 
 
-                              gc.closePath();
-                              gc.stroke();
-                          }
-                      }
-                  }
-              }
-          } catch (NumberFormatException e) {
-              Alert alert = new Alert(Alert.AlertType.ERROR);
-              alert.setTitle("Error");
-              alert.setHeaderText(null);
-              alert.setContentText("Ingrese un número valido");
-              alert.showAndWait();
-          }
+                                //Dibujo punta de flecha
+                                gc.strokeLine(xRepetir, yCerrar - 30, xRepetir - tamanoFlecha * Math.cos(Math.PI / 6), yCerrar - 30 + tamanoFlecha * Math.sin(Math.PI / 6));
+                                gc.strokeLine(xRepetir, yCerrar - 30, xRepetir - tamanoFlecha * Math.cos(Math.PI / 6), yCerrar - 30 - tamanoFlecha * Math.sin(Math.PI / 6));
+
+
+                                gc.closePath();
+                                gc.stroke();
+                            }
+                        }
+                    }
+                }
+            } catch (NumberFormatException e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Ingrese un número valido");
+                alert.showAndWait();
+            }
         });
     }
 
@@ -1085,7 +1257,6 @@ public class HelloController {
             inicioY = coordenadaAnterior[1];
         }
     }
-
 
 
     @FXML
