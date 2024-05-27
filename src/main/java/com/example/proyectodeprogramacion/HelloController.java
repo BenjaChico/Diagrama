@@ -15,8 +15,6 @@ public class HelloController {
     private final ArrayList<Figura> figurasarreglo = new ArrayList<>();
     private Stack<double[]> decisionStack = new Stack<>();
 
-    private boolean cierre;
-
     public abstract class Figura {
         public abstract boolean contienePunto(double x, double y);
 
@@ -390,27 +388,8 @@ public class HelloController {
 
     public class Decision extends Figura {
         public String textoo;
-
-        private Stack<double[]> coordenadasVerdadero = new Stack<>();
-        private Stack<double[]> coordenadasFalso = new Stack<>();
-
-        // Constructor y otros métodos...
-
-        public void agregarCoordenadaVerdadero(double x, double y) {
-            coordenadasVerdadero.push(new double[]{x, y});
-        }
-
-        public void agregarCoordenadaFalso(double x, double y) {
-            coordenadasFalso.push(new double[]{x, y});
-        }
-
-        public double[] obtenerUltimaCoordenadaVerdadero() {
-            return coordenadasVerdadero.isEmpty() ? new double[]{0, 0} : coordenadasVerdadero.peek();
-        }
-
-        public double[] obtenerUltimaCoordenadaFalso() {
-            return coordenadasFalso.isEmpty() ? new double[]{0, 0} : coordenadasFalso.peek();
-        }
+        private ArrayList Verdadero = new ArrayList();
+        private ArrayList Falso = new ArrayList();
 
 
         public Decision(double x, double y) {
@@ -1065,6 +1044,14 @@ public class HelloController {
         boolean enSi = false;
 
         for (Figura figura : figurasarreglo) {
+            // Verifica si se debe cerrar un bloque de "Si"
+            if (enSi && !(figura instanceof Decision)) {
+                nivelIndentacion--;
+                System.out.println(generarIndentacion(nivelIndentacion) + "SiNo");
+                nivelIndentacion++;
+                enSi = false;
+            }
+
             if (figura instanceof Proceso) {
                 System.out.println(generarIndentacion(nivelIndentacion) + "Escribir: " + figura.getTexto());
             } else if (figura instanceof Decision) {
@@ -1084,19 +1071,35 @@ public class HelloController {
             } else if (figura instanceof Documento) {
                 System.out.println(generarIndentacion(nivelIndentacion) + "Leer: " + ((Documento) figura).getTexto());
             } else if (figura instanceof Mientras) {
+                cerrarBloquesSiEsNecesario(bloques, nivelIndentacion);
                 System.out.println(generarIndentacion(nivelIndentacion) + "Mientras " + figura.getTexto() + " Hacer");
                 nivelIndentacion++;
                 bloques.push("FinMientras");
             } else if (figura instanceof Repetir) {
+                cerrarBloquesSiEsNecesario(bloques, nivelIndentacion);
                 System.out.println(generarIndentacion(nivelIndentacion) + "Repetir");
                 nivelIndentacion++;
                 bloques.push("Hasta Que " + figura.getTexto());
+            } else if (figura instanceof InicioFin) {
+                cerrarBloquesSiEsNecesario(bloques, nivelIndentacion);
+                System.out.println(generarIndentacion(nivelIndentacion) + "Algoritmo " + figura.getTexto());
+                nivelIndentacion++;
+                bloques.push("FinAlgoritmo");
             }
         }
 
         while (!bloques.isEmpty()) {
             nivelIndentacion--;
             System.out.println(generarIndentacion(nivelIndentacion) + bloques.pop());
+        }
+    }
+
+    private void cerrarBloquesSiEsNecesario(Stack<String> bloques, int nivelIndentacion) {
+        if (!bloques.isEmpty()) {
+            while (!bloques.isEmpty() && (bloques.peek().startsWith("FinMientras") || bloques.peek().startsWith("Hasta Que"))) {
+                System.out.println(generarIndentacion(nivelIndentacion - 1) + bloques.pop());
+                nivelIndentacion--;
+            }
         }
     }
 
@@ -1248,41 +1251,12 @@ public class HelloController {
 
 
     public void CerrarCondicional() {
-        if (!decisionStack.isEmpty()) {
+        if(!decisionStack.isEmpty()){
             double[] coordenadaAnterior = decisionStack.pop();
             inicioX = coordenadaAnterior[0];
             inicioY = coordenadaAnterior[1];
-
-            // Busca la última decisión en el arreglo de figuras
-            Decision ultimaDecision = null;
-            for (int i = figurasarreglo.size() - 1; i >= 0; i--) {
-                if (figurasarreglo.get(i) instanceof Decision) {
-                    ultimaDecision = (Decision) figurasarreglo.get(i);
-                    break;
-                }
-            }
-
-            if (ultimaDecision != null) {
-                double[] ultimaCoordenadaVerdadero = ultimaDecision.obtenerUltimaCoordenadaVerdadero();
-                double[] ultimaCoordenadaFalso = ultimaDecision.obtenerUltimaCoordenadaFalso();
-
-                GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
-                gc.beginPath();
-
-                // Dibuja la línea de cierre desde el lado Verdadero
-                gc.moveTo(ultimaCoordenadaVerdadero[0], ultimaCoordenadaVerdadero[1]);
-                gc.lineTo(inicioX, inicioY);
-
-                // Dibuja la línea de cierre desde el lado Falso
-                gc.moveTo(ultimaCoordenadaFalso[0], ultimaCoordenadaFalso[1]);
-                gc.lineTo(inicioX, inicioY);
-
-                gc.stroke();
-                gc.closePath();
-            }
         }
     }
-
 
 
     @FXML
