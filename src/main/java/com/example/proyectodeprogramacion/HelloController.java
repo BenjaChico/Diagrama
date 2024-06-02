@@ -1,14 +1,13 @@
 package com.example.proyectodeprogramacion;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Alert;
+import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import java.util.Optional;
+
 import java.util.ArrayList;
-import javafx.scene.control.TextInputDialog;
 import java.util.Stack;
 
 public class HelloController {
@@ -165,9 +164,6 @@ public class HelloController {
                             Decision decision = new Decision(x, y);
                             decision.DibujarDecision(gc, gc2, x, y);
                             figurasarreglo.add(decision);
-
-                            ArrayList<Figura> LadoVerdadero = new ArrayList<>();
-                            ArrayList<Figura> LadoFalso = new ArrayList<>();
 
                             if (inicioX != -1 && inicioY != -1) {
                                 DibujarFlecha(inicioX, inicioY, x, y);
@@ -388,8 +384,7 @@ public class HelloController {
 
     public class Decision extends Figura {
         public String textoo;
-        private ArrayList Verdadero = new ArrayList();
-        private ArrayList Falso = new ArrayList();
+
 
 
         public Decision(double x, double y) {
@@ -1036,71 +1031,62 @@ public class HelloController {
                     figuraActual.getFinFlechaX(), figuraActual.getFinFlechaY());
         }
     }
-
     @FXML
-    public void MostrarPseudocodigo() {
+    private void MostrarPseudocodigo() {
         int nivelIndentacion = 0;
         Stack<String> bloques = new Stack<>();
         boolean enSi = false;
+        StringBuilder pseudocodigo = new StringBuilder();
 
         for (Figura figura : figurasarreglo) {
             // Verifica si se debe cerrar un bloque de "Si"
             if (enSi && !(figura instanceof Decision)) {
                 nivelIndentacion--;
-                System.out.println(generarIndentacion(nivelIndentacion) + "SiNo");
+                pseudocodigo.append(generarIndentacion(nivelIndentacion)).append("SiNo\n");
                 nivelIndentacion++;
                 enSi = false;
             }
 
             if (figura instanceof Proceso) {
-                System.out.println(generarIndentacion(nivelIndentacion) + "Escribir: " + figura.getTexto());
+                pseudocodigo.append(generarIndentacion(nivelIndentacion)).append("Escribir: ").append(figura.getTexto()).append("\n");
             } else if (figura instanceof Decision) {
                 if (enSi) {
                     nivelIndentacion--;
-                    System.out.println(generarIndentacion(nivelIndentacion) + "SiNo");
+                    pseudocodigo.append(generarIndentacion(nivelIndentacion)).append("SiNo\n");
                     nivelIndentacion++;
                     enSi = false;
                 } else {
-                    System.out.println(generarIndentacion(nivelIndentacion) + "Si " + figura.getTexto() + " Entonces");
+                    pseudocodigo.append(generarIndentacion(nivelIndentacion)).append("Si ").append(figura.getTexto()).append(" Entonces\n");
                     nivelIndentacion++;
                     bloques.push("FinSi");
                     enSi = true;
                 }
             } else if (figura instanceof EntradaSalida) {
-                System.out.println(generarIndentacion(nivelIndentacion) + "Leer: " + ((EntradaSalida) figura).getTexto());
+                pseudocodigo.append(generarIndentacion(nivelIndentacion)).append("Leer: ").append(((EntradaSalida) figura).getTexto()).append("\n");
             } else if (figura instanceof Documento) {
-                System.out.println(generarIndentacion(nivelIndentacion) + "Leer: " + ((Documento) figura).getTexto());
+                pseudocodigo.append(generarIndentacion(nivelIndentacion)).append("Leer: ").append(((Documento) figura).getTexto()).append("\n");
             } else if (figura instanceof Mientras) {
-                cerrarBloquesSiEsNecesario(bloques, nivelIndentacion);
-                System.out.println(generarIndentacion(nivelIndentacion) + "Mientras " + figura.getTexto() + " Hacer");
+                pseudocodigo.append(generarIndentacion(nivelIndentacion)).append("Mientras ").append(figura.getTexto()).append(" Hacer\n");
                 nivelIndentacion++;
                 bloques.push("FinMientras");
             } else if (figura instanceof Repetir) {
-                cerrarBloquesSiEsNecesario(bloques, nivelIndentacion);
-                System.out.println(generarIndentacion(nivelIndentacion) + "Repetir");
+                pseudocodigo.append(generarIndentacion(nivelIndentacion)).append("Repetir\n");
                 nivelIndentacion++;
                 bloques.push("Hasta Que " + figura.getTexto());
             } else if (figura instanceof InicioFin) {
-                cerrarBloquesSiEsNecesario(bloques, nivelIndentacion);
-                System.out.println(generarIndentacion(nivelIndentacion) + "Algoritmo " + figura.getTexto());
+                pseudocodigo.append(generarIndentacion(nivelIndentacion)).append("Algoritmo ").append(figura.getTexto()).append("\n");
                 nivelIndentacion++;
                 bloques.push("FinAlgoritmo");
             }
         }
 
+        // Asegurarse de cerrar todos los bloques al final
         while (!bloques.isEmpty()) {
             nivelIndentacion--;
-            System.out.println(generarIndentacion(nivelIndentacion) + bloques.pop());
+            pseudocodigo.append(generarIndentacion(nivelIndentacion)).append(bloques.pop()).append("\n");
         }
-    }
 
-    private void cerrarBloquesSiEsNecesario(Stack<String> bloques, int nivelIndentacion) {
-        if (!bloques.isEmpty()) {
-            while (!bloques.isEmpty() && (bloques.peek().startsWith("FinMientras") || bloques.peek().startsWith("Hasta Que"))) {
-                System.out.println(generarIndentacion(nivelIndentacion - 1) + bloques.pop());
-                nivelIndentacion--;
-            }
-        }
+        mostrarPseudocodigoEnDialog(pseudocodigo.toString());
     }
 
     private String generarIndentacion(int nivel) {
@@ -1111,6 +1097,24 @@ public class HelloController {
         return sb.toString();
     }
 
+    private void mostrarPseudocodigoEnDialog(String pseudocodigo) {
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Pseudocódigo");
+        dialog.setHeaderText(null);
+
+        DialogPane dialogPane = dialog.getDialogPane();
+        dialogPane.getButtonTypes().addAll(ButtonType.CLOSE);
+
+        TextArea textArea = new TextArea(pseudocodigo);
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+
+        VBox content = new VBox();
+        content.getChildren().add(textArea);
+        dialogPane.setContent(content);
+
+        dialog.showAndWait();
+    }
 
     public void CerrarMientras() {
         cerrar();
@@ -1255,6 +1259,7 @@ public class HelloController {
             double[] coordenadaAnterior = decisionStack.pop();
             inicioX = coordenadaAnterior[0];
             inicioY = coordenadaAnterior[1];
+
         }
     }
 
