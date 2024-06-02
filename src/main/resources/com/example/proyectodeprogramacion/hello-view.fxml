@@ -57,6 +57,11 @@
                 <Font size="14.0" />
             </font>
         </Button>
+      <Button mnemonicParsing="false" onAction="#handleButton8Click" prefHeight="30.0" prefWidth="117.0" text="Para">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Button>
     </VBox>
 
 </AnchorPane>
