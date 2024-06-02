@@ -4,16 +4,19 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Alert;
+import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import java.util.Optional;
+
 import java.util.ArrayList;
-import javafx.scene.control.TextInputDialog;
 import java.util.Stack;
 
 public class HelloController {
     private final ArrayList<Figura> figurasarreglo = new ArrayList<>();
     private Stack<double[]> decisionStack = new Stack<>();
+    private boolean MientrasCerrado = false;
+
+
 
     public abstract class Figura {
         public abstract boolean contienePunto(double x, double y);
@@ -166,9 +169,6 @@ public class HelloController {
                             decision.DibujarDecision(gc, gc2, x, y);
                             figurasarreglo.add(decision);
 
-                            ArrayList<Figura> LadoVerdadero = new ArrayList<>();
-                            ArrayList<Figura> LadoFalso = new ArrayList<>();
-
                             if (inicioX != -1 && inicioY != -1) {
                                 DibujarFlecha(inicioX, inicioY, x, y);
                                 decision.setInicioFlechaX(inicioX);
@@ -221,6 +221,16 @@ public class HelloController {
                             inicioX = x;
                             inicioY = y + 100;
                             break;
+                        case "boton8":
+                            Para para = new Para(x, y);
+                            para.DibujarPara(gc);
+                            figurasarreglo.add(para);
+                            if(inicioX != -1 && inicioY != -1){
+                                para.setInicioFlechaX(inicioX);
+                                para.setInicioFlechaY(inicioY);
+                                para.setFinFlechaX(x);
+                                para.setFinFlechaY(y);
+                            }
                     }
                 } else {
                     System.out.println("No se puede colocar aqui");
@@ -388,8 +398,7 @@ public class HelloController {
 
     public class Decision extends Figura {
         public String textoo;
-        private ArrayList Verdadero = new ArrayList();
-        private ArrayList Falso = new ArrayList();
+
 
 
         public Decision(double x, double y) {
@@ -883,6 +892,161 @@ public class HelloController {
             return x >= x1 && x <= x2 && y >= y1 && y <= y2;
         }
     }
+    
+    public class Para extends Figura{
+
+        String textoo;
+
+        public Para(double x, double y) {
+            super(x, y);
+        }
+
+        public Para() {
+            super();
+        }
+
+        @Override
+        public String getTexto() {
+            return textoo;
+        }
+
+        @Override
+        public void setTexto(String _texto) {
+            this.textoo = _texto;
+        }
+
+        @Override
+        public String generarPseudocodigo() {
+            return null;
+        }
+
+        public void DibujarPara(GraphicsContext gc) {
+            int size = figurasarreglo.size();
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Posición de cierre");
+            dialog.setHeaderText(null);
+            dialog.setContentText("Número de posición (hay " + size + " elementos en la lista):");
+
+            dialog.showAndWait().ifPresent(textoo -> {
+                try {
+                    int posicion = Integer.parseInt(textoo);
+                    if (posicion > 0 && posicion <= size) {
+                        int index = posicion - 1;
+
+                        Figura figuraCierre = figurasarreglo.get(index);
+                        double xCerrar = figuraCierre.getX();
+                        double yCerrar = figuraCierre.getY();
+                        Figura ultimaFigura = figurasarreglo.get(figurasarreglo.size() - 1);
+                        double xUltima = ultimaFigura.getX();
+                        double yUltima = ultimaFigura.getY();
+
+                        // Calcular el punto medio entre xCerrar, yCerrar y xUltima, yUltima
+                        double xMedio = (xCerrar + xUltima) / 2;
+                        double yMedio = (yCerrar + yUltima) / 2;
+                        double tamanoFlecha = 10.0;
+
+                        // Primer diálogo adicional
+                        TextInputDialog dialog1 = new TextInputDialog();
+                        dialog1.setTitle("Primer texto");
+                        dialog1.setHeaderText(null);
+                        dialog1.setContentText("Ingrese el primer texto:");
+
+                        dialog1.showAndWait().ifPresent(texto1 -> {
+                            // Segundo diálogo adicional
+                            TextInputDialog dialog2 = new TextInputDialog();
+                            dialog2.setTitle("Segundo texto");
+                            dialog2.setHeaderText(null);
+                            dialog2.setContentText("Ingrese el segundo texto:");
+
+                            dialog2.showAndWait().ifPresent(texto2 -> {
+                                // Tercer diálogo adicional
+                                TextInputDialog dialog3 = new TextInputDialog();
+                                dialog3.setTitle("Tercer texto");
+                                dialog3.setHeaderText(null);
+                                dialog3.setContentText("Ingrese el tercer texto:");
+
+                                dialog3.showAndWait().ifPresent(texto3 -> {
+                                    // Diálogo para el texto principal
+                                    TextInputDialog dialog4 = new TextInputDialog();
+                                    dialog4.setTitle("Cuarto texto");
+                                    dialog4.setHeaderText(null);
+                                    dialog4.setContentText("Ingrese el cuarto texto:");
+
+                                    dialog4.showAndWait().ifPresent(texto -> {
+                                        double tamanotexto = gc.getFont().getSize();
+                                        while (tamanotexto * texto.length() > 140) {
+                                            tamanotexto -= 1;
+                                        }
+
+                                        // Dibujar el círculo en el punto medio y flechas de cierre
+                                        gc.beginPath();
+                                        gc.strokeOval(xMedio - 200, yMedio - 30, 150, 150); // Ajusta para que el círculo esté centrado
+                                        //Dibujo Linea de abajo
+                                        gc.moveTo(xUltima + 50, yUltima + 70);
+                                        gc.lineTo(xUltima - 143, yUltima + 70);
+                                        gc.moveTo(xUltima - 143, yUltima + 70);
+                                        gc.lineTo(xUltima - 143, yMedio + 115);
+
+                                        //Dibujo Linea de arriba
+                                        gc.moveTo(xMedio - 143, yMedio - 30);
+                                        gc.lineTo(xMedio - 143, yCerrar - 20);
+                                        gc.moveTo(xMedio - 143, yCerrar - 20);
+                                        gc.lineTo(xCerrar + 10, yCerrar - 20);
+
+                                        //Dibujo de la flecha superior
+                                        gc.strokeLine(xCerrar + 10, yCerrar - 20, xCerrar - tamanoFlecha * Math.cos(Math.PI / 6), yCerrar - 20 + tamanoFlecha * Math.sin(Math.PI / 6));
+                                        gc.strokeLine(xCerrar + 10, yCerrar - 20, xCerrar - tamanoFlecha * Math.cos(Math.PI / 6), yCerrar - 20 - tamanoFlecha * Math.sin(Math.PI / 6));
+
+                                        //Dibujo de Lineas dentro de figura ciclo for
+                                        //Linea horizontal
+                                        gc.moveTo(xMedio - 50, yMedio + 30);
+                                        gc.lineTo(xMedio - 200, yMedio + 30);
+                                        //Primera linea vertical
+                                        gc.moveTo(xMedio - 150 , yMedio + 30);
+                                        gc.lineTo(xMedio - 150, yMedio + 115);
+                                        //Segunda Linea Vertical
+                                        gc.moveTo(xMedio - 100, yMedio + 30);
+                                        gc.lineTo(xMedio - 100, yMedio + 115);
+                                        gc.closePath();
+
+                                        // Dibujar los textos adicionales y el texto principal
+                                        gc.setFont(new Font(20));
+                                        gc.strokeText(texto1, xMedio - 130 - (texto1.length() * tamanotexto / 4), yMedio + 10);
+                                        gc.strokeText(texto2, xMedio - 180 - (texto2.length() * tamanotexto / 4), yMedio + 60);
+                                        gc.strokeText(texto3, xMedio - 130 - (texto3.length() * tamanotexto / 4), yMedio + 60);
+                                        gc.strokeText(texto, xMedio - 80 - (texto.length() * tamanotexto / 4), yMedio + 60);
+                                        gc.stroke();
+                                    });
+                                });
+                            });
+                        });
+
+                    } else {
+                        throw new NumberFormatException();
+                    }
+                } catch (NumberFormatException e) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Ingrese un número válido");
+                    alert.showAndWait();
+                }
+            });
+        }
+
+        @Override
+        public boolean contienePunto(double x, double y) {
+            double ancho = 100;
+            double alto = 50;
+
+            double x1 = this.getX();
+            double y1 = this.getY();
+            double x2 = x1 + ancho;
+            double y2 = y1 + alto;
+
+            return x >= x1 && x <= x2 && y >= y1 && y <= y2;
+        }
+    }
 
 
     @FXML
@@ -1036,72 +1200,74 @@ public class HelloController {
                     figuraActual.getFinFlechaX(), figuraActual.getFinFlechaY());
         }
     }
-
     @FXML
-    public void MostrarPseudocodigo() {
+    private void MostrarPseudocodigo() {
         int nivelIndentacion = 0;
         Stack<String> bloques = new Stack<>();
         boolean enSi = false;
+        StringBuilder pseudocodigo = new StringBuilder();
 
         for (Figura figura : figurasarreglo) {
             // Verifica si se debe cerrar un bloque de "Si"
             if (enSi && !(figura instanceof Decision)) {
                 nivelIndentacion--;
-                System.out.println(generarIndentacion(nivelIndentacion) + "SiNo");
+                pseudocodigo.append(generarIndentacion(nivelIndentacion)).append("SiNo\n");
                 nivelIndentacion++;
                 enSi = false;
             }
 
+            // Verifica si un bloque "Mientras" ha sido cerrado
+            if (MientrasCerrado && !(figura instanceof Mientras)) {
+                while (!bloques.isEmpty() && "FinMientras".equals(bloques.peek())) {
+                    nivelIndentacion--;
+                    pseudocodigo.append(generarIndentacion(nivelIndentacion)).append(bloques.pop()).append("\n");
+                }
+                MientrasCerrado = false; // Reinicia el estado después de cerrar el bloque "Mientras"
+            }
+
             if (figura instanceof Proceso) {
-                System.out.println(generarIndentacion(nivelIndentacion) + "Escribir: " + figura.getTexto());
+                pseudocodigo.append(generarIndentacion(nivelIndentacion)).append("Escribir: ").append(figura.getTexto()).append("\n");
             } else if (figura instanceof Decision) {
                 if (enSi) {
                     nivelIndentacion--;
-                    System.out.println(generarIndentacion(nivelIndentacion) + "SiNo");
+                    pseudocodigo.append(generarIndentacion(nivelIndentacion)).append("SiNo\n");
                     nivelIndentacion++;
                     enSi = false;
                 } else {
-                    System.out.println(generarIndentacion(nivelIndentacion) + "Si " + figura.getTexto() + " Entonces");
+                    pseudocodigo.append(generarIndentacion(nivelIndentacion)).append("Si ").append(figura.getTexto()).append(" Entonces\n");
                     nivelIndentacion++;
                     bloques.push("FinSi");
                     enSi = true;
                 }
             } else if (figura instanceof EntradaSalida) {
-                System.out.println(generarIndentacion(nivelIndentacion) + "Leer: " + ((EntradaSalida) figura).getTexto());
+                pseudocodigo.append(generarIndentacion(nivelIndentacion)).append("Leer: ").append(((EntradaSalida) figura).getTexto()).append("\n");
             } else if (figura instanceof Documento) {
-                System.out.println(generarIndentacion(nivelIndentacion) + "Leer: " + ((Documento) figura).getTexto());
+                pseudocodigo.append(generarIndentacion(nivelIndentacion)).append("Leer: ").append(((Documento) figura).getTexto()).append("\n");
             } else if (figura instanceof Mientras) {
-                cerrarBloquesSiEsNecesario(bloques, nivelIndentacion);
-                System.out.println(generarIndentacion(nivelIndentacion) + "Mientras " + figura.getTexto() + " Hacer");
+                pseudocodigo.append(generarIndentacion(nivelIndentacion)).append("Mientras ").append(figura.getTexto()).append(" Hacer\n");
                 nivelIndentacion++;
                 bloques.push("FinMientras");
             } else if (figura instanceof Repetir) {
-                cerrarBloquesSiEsNecesario(bloques, nivelIndentacion);
-                System.out.println(generarIndentacion(nivelIndentacion) + "Repetir");
+                pseudocodigo.append(generarIndentacion(nivelIndentacion)).append("Repetir\n");
                 nivelIndentacion++;
                 bloques.push("Hasta Que " + figura.getTexto());
             } else if (figura instanceof InicioFin) {
-                cerrarBloquesSiEsNecesario(bloques, nivelIndentacion);
-                System.out.println(generarIndentacion(nivelIndentacion) + "Algoritmo " + figura.getTexto());
+                pseudocodigo.append(generarIndentacion(nivelIndentacion)).append("Algoritmo ").append(figura.getTexto()).append("\n");
                 nivelIndentacion++;
                 bloques.push("FinAlgoritmo");
             }
         }
 
+        // Asegurarse de cerrar todos los bloques al final
         while (!bloques.isEmpty()) {
             nivelIndentacion--;
-            System.out.println(generarIndentacion(nivelIndentacion) + bloques.pop());
+            pseudocodigo.append(generarIndentacion(nivelIndentacion)).append(bloques.pop()).append("\n");
         }
+
+        mostrarPseudocodigoEnDialog(pseudocodigo.toString());
     }
 
-    private void cerrarBloquesSiEsNecesario(Stack<String> bloques, int nivelIndentacion) {
-        if (!bloques.isEmpty()) {
-            while (!bloques.isEmpty() && (bloques.peek().startsWith("FinMientras") || bloques.peek().startsWith("Hasta Que"))) {
-                System.out.println(generarIndentacion(nivelIndentacion - 1) + bloques.pop());
-                nivelIndentacion--;
-            }
-        }
-    }
+
 
     private String generarIndentacion(int nivel) {
         StringBuilder sb = new StringBuilder();
@@ -1111,6 +1277,24 @@ public class HelloController {
         return sb.toString();
     }
 
+    private void mostrarPseudocodigoEnDialog(String pseudocodigo) {
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Pseudocódigo");
+        dialog.setHeaderText(null);
+
+        DialogPane dialogPane = dialog.getDialogPane();
+        dialogPane.getButtonTypes().addAll(ButtonType.CLOSE);
+
+        TextArea textArea = new TextArea(pseudocodigo);
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+
+        VBox content = new VBox();
+        content.getChildren().add(textArea);
+        dialogPane.setContent(content);
+
+        dialog.showAndWait();
+    }
 
     public void CerrarMientras() {
         cerrar();
@@ -1164,6 +1348,7 @@ public class HelloController {
                     // Actualiza las coordenadas de inicio
                     inicioX = xUltima;
                     inicioY = yUltima + 170;
+                    MientrasCerrado = true;
 
                     break; // Solo queremos cerrar el primer "Mientras" encontrado desde el final
                 }
@@ -1255,6 +1440,7 @@ public class HelloController {
             double[] coordenadaAnterior = decisionStack.pop();
             inicioX = coordenadaAnterior[0];
             inicioY = coordenadaAnterior[1];
+
         }
     }
 
@@ -1294,4 +1480,7 @@ public class HelloController {
         figura = "boton7";
     }
 
+    public void handleButton8Click() {
+        figura = "boton8";
+    }
 }
