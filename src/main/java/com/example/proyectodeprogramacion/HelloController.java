@@ -1840,5 +1840,8 @@ public class HelloController {
     public void handleButton7Click() {
         figura = "boton7";
     }
+    public void handleButton8Click() {
+        figura = "boton8";
+    }
 
 }
