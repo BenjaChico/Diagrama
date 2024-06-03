@@ -895,7 +895,10 @@ public class HelloController {
     
     public class Para extends Figura{
 
-        String textoo;
+        private String texto1;
+        private String texto2;
+        private String texto3;
+        private String texto4;
 
         public Para(double x, double y) {
             super(x, y);
@@ -905,14 +908,41 @@ public class HelloController {
             super();
         }
 
+        public String getTexto1() {
+            return texto1;
+        }
+
+        public String getTexto2() {
+            return texto2;
+        }
+
+        public String getTexto3() {
+            return texto3;
+        }
+
+        public String getTexto4() {
+            return texto4;
+        }
         @Override
         public String getTexto() {
-            return textoo;
+            return String.format("%s <- %s hasta %s con paso %s", texto1, texto2, texto3, texto4);
         }
 
         @Override
         public void setTexto(String _texto) {
-            this.textoo = _texto;
+            this.texto1 = _texto;
+        }
+
+        public void setTexto2(String _texto){
+            this.texto2 = _texto;
+        }
+
+        public void setTexto3(String _texto){
+            this.texto3 = _texto;
+        }
+
+        public void setTexto4(String _texto){
+            this.texto3 = _texto;
         }
 
         @Override
@@ -1255,6 +1285,13 @@ public class HelloController {
                 pseudocodigo.append(generarIndentacion(nivelIndentacion)).append("Algoritmo ").append(figura.getTexto()).append("\n");
                 nivelIndentacion++;
                 bloques.push("FinAlgoritmo");
+            } else if (figura instanceof Para) {
+                Para paraFigura = (Para) figura;
+                pseudocodigo.append(generarIndentacion(nivelIndentacion)).append("Para ").append(paraFigura.getTexto())
+                        .append(" <- ").append(paraFigura.getTexto2()).append(" hasta ").append(paraFigura.getTexto3())
+                        .append(" con paso ").append(paraFigura.getTexto4()).append(" Hacer\n");
+                nivelIndentacion++;
+                bloques.push("FinPara");
             }
         }
 
