@@ -1800,6 +1800,26 @@ public class HelloController {
             ((Decision) decisionX).Falso.clear();
 
 
+        }else{
+            gc.beginPath();
+            gc.moveTo(UltimoXFalso  , UltimoYFalso + 50);
+            double distanciaY = UltimoYVerdadero - UltimoYFalso;
+            gc.lineTo(UltimoXFalso , UltimoYFalso + 50);
+            gc.moveTo(UltimoXFalso + 50, UltimoYFalso + 50);
+            gc.lineTo(UltimoXFalso + 50, UltimoYVerdadero + 80);
+            gc.moveTo(UltimoXVerdadero + 50 , UltimoYVerdadero + 80);
+            gc.lineTo(UltimoXVerdadero +30, UltimoYVerdadero + 80);
+            gc.moveTo(UltimoXVerdadero +50, UltimoYVerdadero + 80);
+            gc.lineTo(UltimoXFalso + 50, UltimoYVerdadero + 80);
+            gc.moveTo(UltimoXVerdadero +30, UltimoYVerdadero + 50);
+            gc.lineTo(UltimoXVerdadero +30, UltimoYVerdadero +80);
+            gc.stroke();
+            inicioX = ((UltimoXVerdadero + UltimoXFalso) / 2) + 50;
+            inicioY = UltimoYVerdadero + 80;
+            ((Decision) decisionX).Verdadero.clear();
+            ((Decision) decisionX).Falso.clear();
+
+
         }
     }
 
