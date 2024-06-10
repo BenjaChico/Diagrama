@@ -10,6 +10,7 @@ import javafx.scene.shape.ArcType;
 import javafx.scene.text.Font;
 import java.util.Optional;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 public class HelloController {
@@ -1452,8 +1453,6 @@ public class HelloController {
                 proceso.setFinFlechaX(proceso.getFinFlechaX()*resize);
                 proceso.setFinFlechaY(proceso.getFinFlechaY()*resize);
                 DibujarFlecha(proceso.getInicioFlechaX(), proceso.getInicioFlechaY(), proceso.getFinFlechaX(), proceso.getFinFlechaY());
-                System.out.println(inicioX);
-                System.out.println(inicioY);
                 setInicioX((proceso.getX()*resize)+50*resize);
                 setInicioY((proceso.getY()*resize)+50*resize);
                 proceso.setX(proceso.getX()*resize);
@@ -1922,7 +1921,6 @@ public class HelloController {
             }
         });
     }
-
 
 
     @FXML
