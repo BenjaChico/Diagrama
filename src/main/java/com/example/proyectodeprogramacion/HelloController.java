@@ -6,6 +6,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.ArcType;
 import javafx.scene.text.Font;
 import java.util.Optional;
 import java.util.ArrayList;
@@ -94,6 +95,22 @@ public class HelloController {
     public Canvas DibujoCanvas;
     private String figura = "";
 
+    public double getInicioX() {
+        return inicioX;
+    }
+
+    public void setInicioX(double inicioX) {
+        this.inicioX = inicioX;
+    }
+
+    public double getInicioY() {
+        return inicioY;
+    }
+
+    public void setInicioY(double inicioY) {
+        this.inicioY = inicioY;
+    }
+
     private double inicioX = -1;
     private double inicioY = -1;
     private boolean ListoPresionado = false;
@@ -164,8 +181,10 @@ public class HelloController {
                                     proceso.setFinFlechaX(x + 50);
                                     proceso.setFinFlechaY(y);
                                 }
-                                inicioX = x + 50;
-                                inicioY = y + 50;
+                                Figura figuraaux = figurasarreglo.get(figurasarreglo.size()-1);
+                                Proceso figuraaux2 = (Proceso) figuraaux;
+                                inicioX = figuraaux2.getX()+50;
+                                inicioY = figuraaux2.getY()+50;
                                 System.out.println(dentroDecision);
                                 System.out.println(ladoverdadero);
                                 break;
@@ -290,6 +309,8 @@ public class HelloController {
                                     inicioY = y + 50;
                                     System.out.println(dentroDecision);
                                     System.out.println(ladoverdadero);
+                                    System.out.println(inicioX);
+                                    System.out.println(inicioY);
                                     break;
                                 case "boton3":
                                     Decision decision = new Decision(x, y);
@@ -547,7 +568,7 @@ public class HelloController {
             double extentAngle = 180;
 
             // Dibujar el semicírculo
-            gc.strokeArc(x - radius, y - radius, radius * 2, radius * 2, startAngle, extentAngle, javafx.scene.shape.ArcType.OPEN);
+            gc.strokeArc(x - radius, y - radius, radius * 2, radius * 2, startAngle, extentAngle, ArcType.OPEN);
 
             // Calcular las coordenadas finales del arco
             double cirx = x + radius * Math.cos(Math.toRadians(90)); // Coordenada x del punto final del arco
@@ -564,7 +585,7 @@ public class HelloController {
             double startAngle2 = 270; // Ángulo de inicio para el segundo semicírculo (mirando hacia la izquierda)
 
             // Dibujar el segundo semicírculo
-            gc.strokeArc(x2 - radius, y2 - radius, radius * 2, radius * 2, startAngle2, extentAngle, javafx.scene.shape.ArcType.OPEN);
+            gc.strokeArc(x2 - radius, y2 - radius, radius * 2, radius * 2, startAngle2, extentAngle, ArcType.OPEN);
 
             // Calcular las coordenadas finales del segundo arco
             double cirx2 = x2 + radius * Math.cos(Math.toRadians(270)); // Coordenada x del punto final del arco
@@ -602,7 +623,7 @@ public class HelloController {
                 double extentAngle = 180;
 
                 // Dibujar el semicírculo
-                gc.strokeArc(x - radius, y - radius, radius * 2, radius * 2, startAngle, extentAngle, javafx.scene.shape.ArcType.OPEN);
+                gc.strokeArc(x - radius, y - radius, radius * 2, radius * 2, startAngle, extentAngle, ArcType.OPEN);
 
                 // Calcular las coordenadas finales del arco
                 double cirx = x + radius * Math.cos(Math.toRadians(90)); // Coordenada x del punto final del arco
@@ -619,7 +640,7 @@ public class HelloController {
                 double startAngle2 = 270; // Ángulo de inicio para el segundo semicírculo (mirando hacia la izquierda)
 
                 // Dibujar el segundo semicírculo
-                gc.strokeArc(x2 - radius, y2 - radius, radius * 2, radius * 2, startAngle2, extentAngle, javafx.scene.shape.ArcType.OPEN);
+                gc.strokeArc(x2 - radius, y2 - radius, radius * 2, radius * 2, startAngle2, extentAngle, ArcType.OPEN);
 
                 // Calcular las coordenadas finales del segundo arco
                 double cirx2 = x2 + radius * Math.cos(Math.toRadians(270)); // Coordenada x del punto final del arco
@@ -1405,6 +1426,59 @@ public class HelloController {
         }
     }
 
+    private void redibujarFigurasResize(double resize) {
+        GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
+        gc.clearRect(0, 0, DibujoCanvas.getWidth(), DibujoCanvas.getHeight());
+        for (Figura figura : figurasarreglo) {
+            if (figura instanceof Proceso) {
+                Proceso proceso = (Proceso) figura;
+                String texto = figura.getTexto();
+                double tamanotexto = gc.getFont().getSize();
+                while (tamanotexto * texto.length() > 140) {
+                    tamanotexto -= 1;
+                }
+                figura.setTexto(texto);
+                gc.beginPath();
+                gc.moveTo(figura.getX()*resize, figura.getY()*resize);
+                gc.lineTo((figura.getX() + 100)*resize, figura.getY()*resize);
+                gc.lineTo((figura.getX() + 100)*resize, (figura.getY() + 50)*resize);
+                gc.lineTo(figura.getX()*resize, (figura.getY() + 50)*resize);
+                gc.closePath();
+                gc.setFont(new Font(20*resize));
+                gc.strokeText(texto, ((figura.getX() + 20)*resize), ((figura.getY() + 30)*resize));
+                gc.stroke();
+                proceso.setInicioFlechaX(proceso.getInicioFlechaX()*resize);
+                proceso.setInicioFlechaY(proceso.getInicioFlechaY()*resize);
+                proceso.setFinFlechaX(proceso.getFinFlechaX()*resize);
+                proceso.setFinFlechaY(proceso.getFinFlechaY()*resize);
+                DibujarFlecha(proceso.getInicioFlechaX(), proceso.getInicioFlechaY(), proceso.getFinFlechaX(), proceso.getFinFlechaY());
+                System.out.println(inicioX);
+                System.out.println(inicioY);
+                setInicioX((proceso.getX()*resize)+50*resize);
+                setInicioY((proceso.getY()*resize)+50*resize);
+                proceso.setX(proceso.getX()*resize);
+                proceso.setY(proceso.getY()*resize);
+
+            } else if (figura instanceof Decision) {
+                Decision decision = (Decision) figura;
+                decision.DibujarDecision_Denuevo(gc, gc, figura.getX(), figura.getY());
+                DibujarFlecha(decision.getInicioFlechaX(), decision.getInicioFlechaY(), decision.getFinFlechaX(), decision.getFinFlechaY());
+            } else if (figura instanceof EntradaSalida) {
+                EntradaSalida entradaSalida = (EntradaSalida) figura;
+                entradaSalida.Dibujar_Entrada_Salida_Denuevo(gc, figura.getX(), figura.getY());
+                DibujarFlecha(entradaSalida.getInicioFlechaX(), entradaSalida.getInicioFlechaY(), entradaSalida.getFinFlechaX(), entradaSalida.getFinFlechaY());
+            } else if (figura instanceof Documento) {
+                Documento documento = (Documento) figura;
+                documento.Dibujar_Documento_Denuevo(gc, figura.getX(), figura.getY());
+                DibujarFlecha(documento.getInicioFlechaX(), documento.getInicioFlechaY(), documento.getFinFlechaX(), documento.getFinFlechaY());
+            } else if (figura instanceof InicioFin) {
+                InicioFin inicioFin = (InicioFin) figura;
+                inicioFin.DibujarInicioFin_Denuevo(gc, figura.getX(), figura.getY());
+                DibujarFlecha(inicioFin.getInicioFlechaX(), inicioFin.getInicioFlechaY(), inicioFin.getFinFlechaX(), inicioFin.getFinFlechaY());
+            }
+        }
+    }
+
     @FXML
     private void borrarFiguraX() {
         int size = figurasarreglo.size();
@@ -1595,6 +1669,7 @@ public class HelloController {
             }
             return sb.toString();
         }
+
 
         private void mostrarPseudocodigoEnDialog(String pseudocodigo) {
             Dialog<String> dialog = new Dialog<>();
@@ -1823,6 +1898,30 @@ public class HelloController {
         }
     }
 
+
+    @FXML
+    private void AjustarTamano() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Ajustar Tamaño");
+        dialog.setHeaderText(null);
+        dialog.setContentText("¿% De zoom a aplicar?");
+
+        // Mostrar el cuadro de diálogo y esperar hasta que el usuario haga una entrada
+        Optional<String> result = dialog.showAndWait();
+
+        // Procesar la entrada del usuario
+        result.ifPresent(input -> {
+            try {
+                double resize = Double.parseDouble(input)*0.01;
+                System.out.println("Zoom ajustado a: " + resize);
+                redibujarFigurasResize(resize);
+                System.out.println("ajustea a "+resize);
+            } catch (NumberFormatException e) {
+                System.err.println("Invalid input: " + input);
+                // Aquí puedes agregar manejo de errores si el usuario ingresa un valor no numérico
+            }
+        });
+    }
 
 
 
