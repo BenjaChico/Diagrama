@@ -1429,12 +1429,13 @@ public class HelloController {
 
     private void redibujarFigurasResize(double resize) {
         GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
+        GraphicsContext gc2 = DibujoCanvas.getGraphicsContext2D();
         gc.clearRect(0, 0, DibujoCanvas.getWidth(), DibujoCanvas.getHeight());
         for (Figura figura : figurasarreglo) {
             if (figura instanceof Proceso) {
                 Proceso proceso = (Proceso) figura;
                 String texto = figura.getTexto();
-                double tamanotexto = gc.getFont().getSize();
+                double tamanotexto = gc.getFont().getSize()*resize;
                 while (tamanotexto * texto.length() > 140) {
                     tamanotexto -= 1;
                 }
@@ -1460,20 +1461,96 @@ public class HelloController {
 
             } else if (figura instanceof Decision) {
                 Decision decision = (Decision) figura;
-                decision.DibujarDecision_Denuevo(gc, gc, figura.getX(), figura.getY());
+                String texto = figura.getTexto();
+                double tamanotexto = gc.getFont().getSize()*resize;
+                while (tamanotexto * texto.length() > 140) {
+                    tamanotexto -= 1;
+                }
+                figura.setTexto(texto);
+                gc.beginPath();
+                gc.moveTo(figura.getX()*resize, figura.getY()*resize);
+                gc.lineTo(figura.getX()*resize + 70, figura.getY()*resize + 50);
+                gc.lineTo(figura.getX()*resize, figura.getY()*resize + 100);
+                gc.lineTo(figura.getX()*resize - 70, figura.getY()*resize + 50);
+                gc.closePath();
+
+                //Dibuja Lineas Verdadero y Falso de figura Decisión
+                gc.moveTo(figura.getX()*resize - 70, figura.getY()*resize + 50);
+                gc.lineTo(figura.getX()*resize - 150, figura.getY()*resize + 50);
+                gc.moveTo(figura.getX()*resize + 70, figura.getY()*resize + 50);
+                gc.lineTo(figura.getX()*resize + 150, figura.getY()*resize + 50);
+
+                gc2.setFont(new Font(15));
+                gc2.strokeText("V", figura.getX()*resize - 130, figura.getY()*resize + 45);
+                gc2.strokeText("F", figura.getX()*resize + 120, figura.getY()*resize + 45);
+
+                gc.setFont(new Font(tamanotexto + 5));
+                gc.strokeText(texto, figura.getX()* - ((texto.length() * tamanotexto / 4)*resize) - 10, figura.getY()*resize + 55);
+                gc.stroke();
+                decision.setInicioFlechaX(decision.getInicioFlechaX()*resize);
+                decision.setInicioFlechaY(decision.getInicioFlechaY()*resize);
+                decision.setFinFlechaX(decision.getFinFlechaX()*resize);
+                decision.setFinFlechaY(decision.getFinFlechaY()*resize);
                 DibujarFlecha(decision.getInicioFlechaX(), decision.getInicioFlechaY(), decision.getFinFlechaX(), decision.getFinFlechaY());
+                setInicioX((decision.getX()*resize)+50*resize);
+                setInicioY((decision.getY()*resize)+50*resize);
+                decision.setX(decision.getX()*resize);
+                decision.setY(decision.getY()*resize);
             } else if (figura instanceof EntradaSalida) {
                 EntradaSalida entradaSalida = (EntradaSalida) figura;
-                entradaSalida.Dibujar_Entrada_Salida_Denuevo(gc, figura.getX(), figura.getY());
+                String texto = figura.getTexto();
+                double tamanotexto = gc.getFont().getSize()*resize;
+                while (tamanotexto * texto.length() > 140) {
+                    tamanotexto -= 1;
+                }
+                gc.beginPath();
+                gc.moveTo(figura.getX()*resize, figura.getY()*resize);
+                gc.lineTo((figura.getX() + 100)*resize, figura.getY()*resize);
+                gc.lineTo((figura.getX() + 100 - (50) / 4)*resize, (figura.getY() + 50)*resize);
+                gc.lineTo((figura.getX() - (50) / 4)*resize, (figura.getY() + 50)*resize);
+                gc.closePath();
+                gc.setFont(new Font(20*resize));
+                gc.strokeText(texto, (figura.getX() + 20)*resize, (figura.getY() + 30)*resize);
+                gc.stroke();
+                entradaSalida.setInicioFlechaX(entradaSalida.getInicioFlechaX()*resize);
+                entradaSalida.setInicioFlechaY(entradaSalida.getInicioFlechaY()*resize);
+                entradaSalida.setFinFlechaX(entradaSalida.getFinFlechaX()*resize);
+                entradaSalida.setFinFlechaY(entradaSalida.getFinFlechaY()*resize);
                 DibujarFlecha(entradaSalida.getInicioFlechaX(), entradaSalida.getInicioFlechaY(), entradaSalida.getFinFlechaX(), entradaSalida.getFinFlechaY());
+                setInicioX((entradaSalida.getX()*resize)+50*resize);
+                setInicioY((entradaSalida.getY()*resize)+50*resize);
+                entradaSalida.setX(entradaSalida.getX()*resize);
+                entradaSalida.setY(entradaSalida.getY()*resize);
             } else if (figura instanceof Documento) {
                 Documento documento = (Documento) figura;
-                documento.Dibujar_Documento_Denuevo(gc, figura.getX(), figura.getY());
+                String texto = figura.getTexto();
+                double tamanotexto = gc.getFont().getSize()*resize;
+                while (tamanotexto * texto.length() > 140) {
+                    tamanotexto -= 1;
+                }
+                gc.strokeLine(figura.getX()*resize, figura.getY() *resize, (figura.getX() + 100)*resize, figura.getY()*resize); // Línea Superior
+                gc.strokeLine(figura.getX()*resize, figura.getY()*resize, figura.getX()*resize, (figura.getY() + 50)*resize); // Línea Izquierda
+                gc.strokeLine((figura.getX() + 100)*resize, (figura.getY()), (figura.getX() + 100)*resize, (figura.getY() + 40)*resize);
+                gc.beginPath();
+                gc.moveTo(figura.getX() *resize, (figura.getY() + 50)*resize); // Mover al punto de inicio de la curva
+                gc.bezierCurveTo((figura.getX() + 40)*resize, (figura.getY() + 80)*resize, (figura.getX() + 50)*resize, (figura.getY() + 35)*resize, (figura.getX() + 100)*resize, (figura.getY() + 40)*resize);
+                gc.stroke(); // Trazar la curva
+                gc.setFont(new Font(20*resize));
+                gc.strokeText(texto, (figura.getX() + 15)*resize, (figura.getY() + 30)*resize); // Escribir texto
+                gc.stroke();
                 DibujarFlecha(documento.getInicioFlechaX(), documento.getInicioFlechaY(), documento.getFinFlechaX(), documento.getFinFlechaY());
-            } else if (figura instanceof InicioFin) {
+                setInicioX((documento.getX()*resize)+50*resize);
+                setInicioY((documento.getY()*resize)+50*resize);
+                documento.setX(documento.getX()*resize);
+                documento.setY(documento.getY()*resize);}
+            else if (figura instanceof InicioFin) {
                 InicioFin inicioFin = (InicioFin) figura;
                 inicioFin.DibujarInicioFin_Denuevo(gc, figura.getX(), figura.getY());
                 DibujarFlecha(inicioFin.getInicioFlechaX(), inicioFin.getInicioFlechaY(), inicioFin.getFinFlechaX(), inicioFin.getFinFlechaY());
+                setInicioX((inicioFin.getX()*resize)+50*resize);
+                setInicioY((inicioFin.getY()*resize)+50*resize);
+                inicioFin.setX(inicioFin.getX()*resize);
+                inicioFin.setY(inicioFin.getY()*resize);
             }
         }
     }
