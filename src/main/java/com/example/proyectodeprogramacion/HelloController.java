@@ -2,21 +2,24 @@ package com.example.proyectodeprogramacion;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.ArcType;
 import javafx.scene.text.Font;
+import javafx.stage.Stage;
 
+import java.util.Optional;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 public class HelloController {
     private final ArrayList<Figura> figurasarreglo = new ArrayList<>();
     private Stack<double[]> decisionStack = new Stack<>();
     private boolean MientrasCerrado = false;
-
-
 
     public abstract class Figura {
         public abstract boolean contienePunto(double x, double y);
@@ -96,16 +99,35 @@ public class HelloController {
     public Canvas DibujoCanvas;
     private String figura = "";
 
+    public double getInicioX() {
+        return inicioX;
+    }
+
+    public void setInicioX(double inicioX) {
+        this.inicioX = inicioX;
+    }
+
+    public double getInicioY() {
+        return inicioY;
+    }
+
+    public void setInicioY(double inicioY) {
+        this.inicioY = inicioY;
+    }
+
     private double inicioX = -1;
     private double inicioY = -1;
     private boolean ListoPresionado = false;
     private boolean MientrasPresionado = false;
 
+    private boolean dentroDecision = false;
+    private boolean ladoverdadero = true;
+
+    private Figura decisionAux;
     public void initialize() {
         DibujoCanvas.setOnMouseClicked(event -> {
             double x = event.getX();
             double y = event.getY();
-
             GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
             GraphicsContext gc2 = DibujoCanvas.getGraphicsContext2D();
             Figura figuraSeleccionada = obtenerFiguraClicada(x, y);
@@ -121,116 +143,373 @@ public class HelloController {
                 });
             } else {
                 if (x <= DibujoCanvas.getWidth() - 140.0) {
-                    switch (figura) {
-                        case "boton6":
-                            Repetir repetir = new Repetir(x, y);
-                            repetir.DibujarRepetir(gc, x, y);
-                            figurasarreglo.add(repetir);
-                            if (inicioX != -1 && inicioY != -1) {
-                                DibujarFlecha(inicioX, inicioY, x, y);
-                                repetir.setInicioFlechaX(inicioX);
-                                repetir.setInicioFlechaY(inicioY);
-                                repetir.setFinFlechaX(x);
-                                repetir.setFinFlechaY(y);
+                    if (!dentroDecision) {
+                        // Crear figuras si no está dentro de una decisión
+                        switch (figura) {
+                            case "boton6":
+                                Repetir repetir = new Repetir(x, y);
+                                repetir.DibujarRepetir(gc, x, y);
+                                figurasarreglo.add(repetir);
+                                if (inicioX != -1 && inicioY != -1) {
+                                    DibujarFlecha(inicioX, inicioY, x, y);
+                                    repetir.setInicioFlechaX(inicioX);
+                                    repetir.setInicioFlechaY(inicioY);
+                                    repetir.setFinFlechaX(x);
+                                    repetir.setFinFlechaY(y);
+                                }
+                                inicioX = x;
+                                inicioY = y + 100;
+                                break;
+                            case "boton1":
+                                InicioFin inicioFin = new InicioFin(x, y);
+                                inicioFin.DibujarInicioFin(gc, x, y + 25);
+                                figurasarreglo.add(inicioFin);
+                                if (inicioX != -1 && inicioY != -1) {
+                                    DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                    inicioFin.setInicioFlechaX(inicioX);
+                                    inicioFin.setInicioFlechaY(inicioY);
+                                    inicioFin.setFinFlechaX(x + 50);
+                                    inicioFin.setFinFlechaY(y);
+                                }
+                                inicioX = x + 50;
+                                inicioY = y + 50;
+                                break;
+                            case "boton2":
+                                Proceso proceso = new Proceso(x, y);
+                                proceso.DibujarProceso(gc, x, y);
+                                figurasarreglo.add(proceso);
+                                if (inicioX != -1 && inicioY != -1) {
+                                    DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                    proceso.setInicioFlechaX(inicioX);
+                                    proceso.setInicioFlechaY(inicioY);
+                                    proceso.setFinFlechaX(x + 50);
+                                    proceso.setFinFlechaY(y);
+                                }
+                                Figura figuraaux = figurasarreglo.get(figurasarreglo.size()-1);
+                                Proceso figuraaux2 = (Proceso) figuraaux;
+                                inicioX = figuraaux2.getX()+50;
+                                inicioY = figuraaux2.getY()+50;
+                                break;
+                            case "boton3":
+                                Decision decision = new Decision(x, y);
+                                decision.DibujarDecision(gc, gc2, x, y);
+                                figurasarreglo.add(decision);
+                                if (inicioX != -1 && inicioY != -1) {
+                                    DibujarFlecha(inicioX, inicioY, x, y);
+                                    decision.setInicioFlechaX(inicioX);
+                                    decision.setInicioFlechaY(inicioY);
+                                    decision.setFinFlechaX(x);
+                                    decision.setFinFlechaY(y);
+                                }
+                                inicioX = x - 150;
+                                inicioY = y + 50;
+                                dentroDecision = true;
+                                break;
+                            case "boton4":
+                                EntradaSalida entradaSalida = new EntradaSalida(x, y);
+                                entradaSalida.Dibujar_Entrada_Salida(gc, x, y);
+                                figurasarreglo.add(entradaSalida);
+                                if (inicioX != -1 && inicioY != -1) {
+                                    DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                    entradaSalida.setInicioFlechaX(inicioX);
+                                    entradaSalida.setInicioFlechaY(inicioY);
+                                    entradaSalida.setFinFlechaX(x + 50);
+                                    entradaSalida.setFinFlechaY(y);
+                                }
+                                inicioX = x + 50;
+                                inicioY = y + 50;
+                                break;
+                            case "boton5":
+                                Documento documento = new Documento(x, y);
+                                documento.Dibujar_Documento(gc, x, y);
+                                figurasarreglo.add(documento);
+                                if (inicioX != -1 && inicioY != -1) {
+                                    DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                    documento.setInicioFlechaX(inicioX);
+                                    documento.setInicioFlechaY(inicioY);
+                                    documento.setFinFlechaX(x + 50);
+                                    documento.setFinFlechaY(y);
+                                }
+                                inicioX = x + 50;
+                                inicioY = y + 55;
+                                break;
+                            case "boton7":
+                                Mientras mientras = new Mientras(x, y);
+                                mientras.DibujarMientras(gc, gc2, x, y);
+                                figurasarreglo.add(mientras);
+                                if (inicioX != -1 && inicioY != -1) {
+                                    DibujarFlecha(inicioX, inicioY, x, y);
+                                    mientras.setInicioFlechaX(inicioX);
+                                    mientras.setInicioFlechaY(inicioY);
+                                    mientras.setFinFlechaX(x);
+                                    mientras.setFinFlechaY(y);
+                                }
+                                inicioX = x;
+                                inicioY = y + 100;
+                                break;
+                            case "boton8":
+                                Para para = new Para(x, y);
+                                para.DibujarPara(gc);
+                                figurasarreglo.add(para);
+                                if(inicioX != -1 && inicioY != -1){
+                                    para.setInicioFlechaX(inicioX);
+                                    para.setInicioFlechaY(inicioY);
+                                    para.setFinFlechaX(x);
+                                    para.setFinFlechaY(y);
+                                }
+                        }
+                    } else {
+                        if(figurasarreglo.get(figurasarreglo.size()-1) instanceof Decision){
+                            decisionAux = figurasarreglo.get(figurasarreglo.size()-1);
+                        }
+                        Decision decisionX = (Decision) decisionAux;
+                        if (ladoverdadero == true) {
+                            switch (figura) {
+                                case "boton6":
+                                    Repetir repetir = new Repetir(x, y);
+                                    repetir.DibujarRepetir(gc, x, y);
+                                    figurasarreglo.add(repetir);
+                                    decisionX.Verdadero.add(repetir);
+                                    if (inicioX != -1 && inicioY != -1) {
+                                        DibujarFlecha(inicioX, inicioY, x, y);
+                                        repetir.setInicioFlechaX(inicioX);
+                                        repetir.setInicioFlechaY(inicioY);
+                                        repetir.setFinFlechaX(x);
+                                        repetir.setFinFlechaY(y);
+                                    }
+                                    inicioX = x;
+                                    inicioY = y + 100;
+                                    break;
+                                case "boton1":
+                                    InicioFin inicioFin = new InicioFin(x, y);
+                                    inicioFin.DibujarInicioFin(gc, x, y + 25);
+                                    figurasarreglo.add(inicioFin);
+                                    decisionX.Verdadero.add(inicioFin);
+                                    if (inicioX != -1 && inicioY != -1) {
+                                        DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                        inicioFin.setInicioFlechaX(inicioX);
+                                        inicioFin.setInicioFlechaY(inicioY);
+                                        inicioFin.setFinFlechaX(x + 50);
+                                        inicioFin.setFinFlechaY(y);
+                                    }
+                                    inicioX = x + 50;
+                                    inicioY = y + 50;
+                                    break;
+                                case "boton2":
+                                    Proceso proceso = new Proceso(x, y);
+                                    proceso.DibujarProceso(gc, x, y);
+                                    figurasarreglo.add(proceso);
+                                    decisionX.Verdadero.add(proceso);
+                                    if (inicioX != -1 && inicioY != -1) {
+                                        DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                        proceso.setInicioFlechaX(inicioX);
+                                        proceso.setInicioFlechaY(inicioY);
+                                        proceso.setFinFlechaX(x + 50);
+                                        proceso.setFinFlechaY(y);
+                                    }
+                                    inicioX = x + 50;
+                                    inicioY = y + 50;
+                                    System.out.println(dentroDecision);
+                                    System.out.println(ladoverdadero);
+                                    System.out.println(inicioX);
+                                    System.out.println(inicioY);
+                                    break;
+                                case "boton3":
+                                    Decision decision = new Decision(x, y);
+                                    decision.DibujarDecision(gc, gc2, x, y);
+                                    figurasarreglo.add(decision);
+                                    decisionX.Verdadero.add(decision);
+                                    if (inicioX != -1 && inicioY != -1) {
+                                        DibujarFlecha(inicioX, inicioY, x, y);
+                                        decision.setInicioFlechaX(inicioX);
+                                        decision.setInicioFlechaY(inicioY);
+                                        decision.setFinFlechaX(x);
+                                        decision.setFinFlechaY(y);
+                                    }
+                                    inicioX = x - 150;
+                                    inicioY = y + 50;
+                                    break;
+                                case "boton4":
+                                    EntradaSalida entradaSalida = new EntradaSalida(x, y);
+                                    entradaSalida.Dibujar_Entrada_Salida(gc, x, y);
+                                    figurasarreglo.add(entradaSalida);
+                                    decisionX.Verdadero.add(entradaSalida);
+                                    if (inicioX != -1 && inicioY != -1) {
+                                        DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                        entradaSalida.setInicioFlechaX(inicioX);
+                                        entradaSalida.setInicioFlechaY(inicioY);
+                                        entradaSalida.setFinFlechaX(x + 50);
+                                        entradaSalida.setFinFlechaY(y);
+                                    }
+                                    inicioX = x + 50;
+                                    inicioY = y + 50;
+                                    break;
+                                case "boton5":
+                                    Documento documento = new Documento(x, y);
+                                    documento.Dibujar_Documento(gc, x, y);
+                                    figurasarreglo.add(documento);
+                                    decisionX.Verdadero.add(documento);
+                                    if (inicioX != -1 && inicioY != -1) {
+                                        DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                        documento.setInicioFlechaX(inicioX);
+                                        documento.setInicioFlechaY(inicioY);
+                                        documento.setFinFlechaX(x + 50);
+                                        documento.setFinFlechaY(y);
+                                    }
+                                    inicioX = x + 50;
+                                    inicioY = y + 55;
+                                    break;
+                                case "boton7":
+                                    Mientras mientras = new Mientras(x, y);
+                                    mientras.DibujarMientras(gc, gc2, x, y);
+                                    figurasarreglo.add(mientras);
+                                    decisionX.Verdadero.add(mientras);
+                                    if (inicioX != -1 && inicioY != -1) {
+                                        DibujarFlecha(inicioX, inicioY, x, y);
+                                        mientras.setInicioFlechaX(inicioX);
+                                        mientras.setInicioFlechaY(inicioY);
+                                        mientras.setFinFlechaX(x);
+                                        mientras.setFinFlechaY(y);
+                                    }
+                                    inicioX = x;
+                                    inicioY = y + 100;
+                                    break;
+                                case "boton8":
+                                    Para para = new Para(x, y);
+                                    para.DibujarPara(gc);
+                                    figurasarreglo.add(para);
+                                    if(inicioX != -1 && inicioY != -1){
+                                        para.setInicioFlechaX(inicioX);
+                                        para.setInicioFlechaY(inicioY);
+                                        para.setFinFlechaX(x);
+                                        para.setFinFlechaY(y);
+                                    }
+                                    // Otros casos de figuras dentro de una decisión
                             }
-                            inicioX = x;
-                            inicioY = y + 100;
-                            break;
-                        case "boton1":
-                            InicioFin inicioFin = new InicioFin(x, y);
-                            inicioFin.DibujarInicioFin(gc, x, y + 25);
-                            figurasarreglo.add(inicioFin);
-                            if (inicioX != -1 && inicioY != -1) {
-                                DibujarFlecha(inicioX, inicioY, x + 50, y);
-                                inicioFin.setInicioFlechaX(inicioX);
-                                inicioFin.setInicioFlechaY(inicioY);
-                                inicioFin.setFinFlechaX(x + 50);
-                                inicioFin.setFinFlechaY(y);
+                        }else if(ladoverdadero == false){
+                            switch (figura) {
+                                case "boton6":
+                                    Repetir repetir = new Repetir(x, y);
+                                    repetir.DibujarRepetir(gc, x, y);
+                                    figurasarreglo.add(repetir);
+                                    decisionX.Falso.add(repetir);
+                                    if (inicioX != -1 && inicioY != -1) {
+                                        DibujarFlecha(inicioX, inicioY, x, y);
+                                        repetir.setInicioFlechaX(inicioX);
+                                        repetir.setInicioFlechaY(inicioY);
+                                        repetir.setFinFlechaX(x);
+                                        repetir.setFinFlechaY(y);
+                                    }
+                                    inicioX = x;
+                                    inicioY = y + 100;
+                                    break;
+                                case "boton1":
+                                    InicioFin inicioFin = new InicioFin(x, y);
+                                    inicioFin.DibujarInicioFin(gc, x, y + 25);
+                                    figurasarreglo.add(inicioFin);
+                                    decisionX.Falso.add(inicioFin);
+                                    if (inicioX != -1 && inicioY != -1) {
+                                        DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                        inicioFin.setInicioFlechaX(inicioX);
+                                        inicioFin.setInicioFlechaY(inicioY);
+                                        inicioFin.setFinFlechaX(x + 50);
+                                        inicioFin.setFinFlechaY(y);
+                                    }
+                                    inicioX = x + 50;
+                                    inicioY = y + 50;
+                                    break;
+                                case "boton2":
+                                    Proceso proceso = new Proceso(x, y);
+                                    proceso.DibujarProceso(gc, x, y);
+                                    figurasarreglo.add(proceso);
+                                    decisionX.Falso.add(proceso);
+                                    if (inicioX != -1 && inicioY != -1) {
+                                        DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                        proceso.setInicioFlechaX(inicioX);
+                                        proceso.setInicioFlechaY(inicioY);
+                                        proceso.setFinFlechaX(x + 50);
+                                        proceso.setFinFlechaY(y);
+                                    }
+                                    inicioX = x + 50;
+                                    inicioY = y + 50;
+                                    System.out.println(dentroDecision);
+                                    System.out.println(ladoverdadero);
+                                    break;
+                                case "boton3":
+                                    Decision decision = new Decision(x, y);
+                                    decision.DibujarDecision(gc, gc2, x, y);
+                                    figurasarreglo.add(decision);
+                                    decisionX.Falso.add(decision);
+                                    if (inicioX != -1 && inicioY != -1) {
+                                        DibujarFlecha(inicioX, inicioY, x, y);
+                                        decision.setInicioFlechaX(inicioX);
+                                        decision.setInicioFlechaY(inicioY);
+                                        decision.setFinFlechaX(x);
+                                        decision.setFinFlechaY(y);
+                                    }
+                                    inicioX = x - 150;
+                                    inicioY = y + 50;
+                                    break;
+                                case "boton4":
+                                    EntradaSalida entradaSalida = new EntradaSalida(x, y);
+                                    entradaSalida.Dibujar_Entrada_Salida(gc, x, y);
+                                    figurasarreglo.add(entradaSalida);
+                                    decisionX.Falso.add(entradaSalida);
+                                    if (inicioX != -1 && inicioY != -1) {
+                                        DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                        entradaSalida.setInicioFlechaX(inicioX);
+                                        entradaSalida.setInicioFlechaY(inicioY);
+                                        entradaSalida.setFinFlechaX(x + 50);
+                                        entradaSalida.setFinFlechaY(y);
+                                    }
+                                    inicioX = x + 50;
+                                    inicioY = y + 50;
+                                    break;
+                                case "boton5":
+                                    Documento documento = new Documento(x, y);
+                                    documento.Dibujar_Documento(gc, x, y);
+                                    figurasarreglo.add(documento);
+                                    decisionX.Falso.add(documento);
+                                    if (inicioX != -1 && inicioY != -1) {
+                                        DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                        documento.setInicioFlechaX(inicioX);
+                                        documento.setInicioFlechaY(inicioY);
+                                        documento.setFinFlechaX(x + 50);
+                                        documento.setFinFlechaY(y);
+                                    }
+                                    inicioX = x + 50;
+                                    inicioY = y + 55;
+                                    break;
+                                case "boton7":
+                                    Mientras mientras = new Mientras(x, y);
+                                    mientras.DibujarMientras(gc, gc2, x, y);
+                                    figurasarreglo.add(mientras);
+                                    decisionX.Falso.add(mientras);
+                                    if (inicioX != -1 && inicioY != -1) {
+                                        DibujarFlecha(inicioX, inicioY, x, y);
+                                        mientras.setInicioFlechaX(inicioX);
+                                        mientras.setInicioFlechaY(inicioY);
+                                        mientras.setFinFlechaX(x);
+                                        mientras.setFinFlechaY(y);
+                                    }
+                                    inicioX = x;
+                                    inicioY = y + 100;
+                                    break;
+                                case "boton8":
+                                    Para para = new Para(x, y);
+                                    para.DibujarPara(gc);
+                                    figurasarreglo.add(para);
+                                    if(inicioX != -1 && inicioY != -1){
+                                        para.setInicioFlechaX(inicioX);
+                                        para.setInicioFlechaY(inicioY);
+                                        para.setFinFlechaX(x);
+                                        para.setFinFlechaY(y);
+                                    }
                             }
-                            inicioX = x + 50;
-                            inicioY = y + 50;
-                            break;
-                        case "boton2":
-                            Proceso proceso = new Proceso(x, y);
-                            proceso.DibujarProceso(gc, x, y);
-                            figurasarreglo.add(proceso);
-                            if (inicioX != -1 && inicioY != -1) {
-                                DibujarFlecha(inicioX, inicioY, x + 50, y);
-                                proceso.setInicioFlechaX(inicioX);
-                                proceso.setInicioFlechaY(inicioY);
-                                proceso.setFinFlechaX(x + 50);
-                                proceso.setFinFlechaY(y);
-                            }
-                            inicioX = x + 50;
-                            inicioY = y + 50;
-                            break;
-                        case "boton3":
-                            Decision decision = new Decision(x, y);
-                            decision.DibujarDecision(gc, gc2, x, y);
-                            figurasarreglo.add(decision);
 
-                            if (inicioX != -1 && inicioY != -1) {
-                                DibujarFlecha(inicioX, inicioY, x, y);
-                                decision.setInicioFlechaX(inicioX);
-                                decision.setInicioFlechaY(inicioY);
-                                decision.setFinFlechaX(x);
-                                decision.setFinFlechaY(y);
-                            }
-                            inicioX = x - 150;
-                            inicioY = y + 50;
-                            break;
-                        case "boton4":
-                            EntradaSalida entradaSalida = new EntradaSalida(x, y);
-                            entradaSalida.Dibujar_Entrada_Salida(gc, x, y);
-                            figurasarreglo.add(entradaSalida);
-                            if (inicioX != -1 && inicioY != -1) {
-                                DibujarFlecha(inicioX, inicioY, x + 50, y);
-                                entradaSalida.setInicioFlechaX(inicioX);
-                                entradaSalida.setInicioFlechaY(inicioY);
-                                entradaSalida.setFinFlechaX(x + 50);
-                                entradaSalida.setFinFlechaY(y);
-                            }
-                            inicioX = x + 50;
-                            inicioY = y + 50;
-                            break;
-                        case "boton5":
-                            Documento documento = new Documento(x, y);
-                            documento.Dibujar_Documento(gc, x, y);
-                            figurasarreglo.add(documento);
-                            if (inicioX != -1 && inicioY != -1) {
-                                DibujarFlecha(inicioX, inicioY, x + 50, y);
-                                documento.setInicioFlechaX(inicioX);
-                                documento.setInicioFlechaY(inicioY);
-                                documento.setFinFlechaX(x + 50);
-                                documento.setFinFlechaY(y);
-                            }
-                            inicioX = x + 50;
-                            inicioY = y + 55;
-                            break;
-                        case "boton7":
-                            Mientras mientras = new Mientras(x, y);
-                            mientras.DibujarMientras(gc, gc2, x, y);
-                            figurasarreglo.add(mientras);
-                            if (inicioX != -1 && inicioY != -1) {
-                                DibujarFlecha(inicioX, inicioY, x, y);
-                                mientras.setInicioFlechaX(inicioX);
-                                mientras.setInicioFlechaY(inicioY);
-                                mientras.setFinFlechaX(x);
-                                mientras.setFinFlechaY(y);
-                            }
-                            inicioX = x;
-                            inicioY = y + 100;
-                            break;
-                        case "boton8":
-                            Para para = new Para(x, y);
-                            para.DibujarPara(gc);
-                            figurasarreglo.add(para);
-                            if(inicioX != -1 && inicioY != -1){
-                                para.setInicioFlechaX(inicioX);
-                                para.setInicioFlechaY(inicioY);
-                                para.setFinFlechaX(x);
-                                para.setFinFlechaY(y);
-                            }
+
+
+                        }
                     }
                 } else {
                     System.out.println("No se puede colocar aqui");
@@ -238,6 +517,7 @@ public class HelloController {
             }
         });
     }
+
 
     private void DibujarFlecha(double inicioX, double inicioY, double finalX, double finalY) {
         GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
@@ -290,7 +570,7 @@ public class HelloController {
             double extentAngle = 180;
 
             // Dibujar el semicírculo
-            gc.strokeArc(x - radius, y - radius, radius * 2, radius * 2, startAngle, extentAngle, javafx.scene.shape.ArcType.OPEN);
+            gc.strokeArc(x - radius, y - radius, radius * 2, radius * 2, startAngle, extentAngle, ArcType.OPEN);
 
             // Calcular las coordenadas finales del arco
             double cirx = x + radius * Math.cos(Math.toRadians(90)); // Coordenada x del punto final del arco
@@ -307,7 +587,7 @@ public class HelloController {
             double startAngle2 = 270; // Ángulo de inicio para el segundo semicírculo (mirando hacia la izquierda)
 
             // Dibujar el segundo semicírculo
-            gc.strokeArc(x2 - radius, y2 - radius, radius * 2, radius * 2, startAngle2, extentAngle, javafx.scene.shape.ArcType.OPEN);
+            gc.strokeArc(x2 - radius, y2 - radius, radius * 2, radius * 2, startAngle2, extentAngle, ArcType.OPEN);
 
             // Calcular las coordenadas finales del segundo arco
             double cirx2 = x2 + radius * Math.cos(Math.toRadians(270)); // Coordenada x del punto final del arco
@@ -345,7 +625,7 @@ public class HelloController {
                 double extentAngle = 180;
 
                 // Dibujar el semicírculo
-                gc.strokeArc(x - radius, y - radius, radius * 2, radius * 2, startAngle, extentAngle, javafx.scene.shape.ArcType.OPEN);
+                gc.strokeArc(x - radius, y - radius, radius * 2, radius * 2, startAngle, extentAngle, ArcType.OPEN);
 
                 // Calcular las coordenadas finales del arco
                 double cirx = x + radius * Math.cos(Math.toRadians(90)); // Coordenada x del punto final del arco
@@ -362,7 +642,7 @@ public class HelloController {
                 double startAngle2 = 270; // Ángulo de inicio para el segundo semicírculo (mirando hacia la izquierda)
 
                 // Dibujar el segundo semicírculo
-                gc.strokeArc(x2 - radius, y2 - radius, radius * 2, radius * 2, startAngle2, extentAngle, javafx.scene.shape.ArcType.OPEN);
+                gc.strokeArc(x2 - radius, y2 - radius, radius * 2, radius * 2, startAngle2, extentAngle, ArcType.OPEN);
 
                 // Calcular las coordenadas finales del segundo arco
                 double cirx2 = x2 + radius * Math.cos(Math.toRadians(270)); // Coordenada x del punto final del arco
@@ -398,7 +678,9 @@ public class HelloController {
 
     public class Decision extends Figura {
         public String textoo;
+        private ArrayList Verdadero = new ArrayList();
 
+        private ArrayList Falso = new ArrayList();
 
 
         public Decision(double x, double y) {
@@ -421,6 +703,25 @@ public class HelloController {
         public String generarPseudocodigo() {
             return "si " + getTexto() + "entonces";
         }
+
+
+
+
+
+        public void cerrarDecision() {
+            // Calcula las coordenadas de cierre de la figura
+            double xCierre = this.getX() - 150; // Ajusta según el ancho de la figura de decisión
+            double yCierre = this.getY() + 50; // Ajusta según el tamaño de la figura de decisión
+
+            // Agrega las líneas necesarias para cerrar la figura
+            GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
+            gc.beginPath();
+            gc.moveTo(this.getX(), this.getY() + 50); // Se mueve a la esquina inferior izquierda
+            gc.lineTo(xCierre, yCierre); // Línea diagonal hacia arriba y hacia la izquierda
+            gc.lineTo(xCierre, this.getY() - 50); // Línea vertical hacia arriba
+            gc.stroke(); // Dibuja las líneas
+        }
+
 
         public void DibujarDecision(GraphicsContext gc, GraphicsContext gc2, double x, double y) {
             TextInputDialog dialog = new TextInputDialog();
@@ -654,6 +955,7 @@ public class HelloController {
                 gc.setFont(new Font(20));
                 gc.strokeText(texto, x + 20, y + 30);
                 gc.stroke();
+                System.out.println(figurasarreglo.size());
             });
         }
 
@@ -892,8 +1194,8 @@ public class HelloController {
             return x >= x1 && x <= x2 && y >= y1 && y <= y2;
         }
     }
-    
-    public class Para extends Figura{
+
+    public class Para extends Figura {
 
         private String texto1;
         private String texto2;
@@ -923,6 +1225,7 @@ public class HelloController {
         public String getTexto4() {
             return texto4;
         }
+
         @Override
         public String getTexto() {
             return String.format("%s <- %s hasta %s con paso %s", texto1, texto2, texto3, texto4);
@@ -933,15 +1236,15 @@ public class HelloController {
             this.texto1 = _texto;
         }
 
-        public void setTexto2(String _texto){
+        public void setTexto2(String _texto) {
             this.texto2 = _texto;
         }
 
-        public void setTexto3(String _texto){
+        public void setTexto3(String _texto) {
             this.texto3 = _texto;
         }
 
-        public void setTexto4(String _texto){
+        public void setTexto4(String _texto) {
             this.texto3 = _texto;
         }
 
@@ -1032,7 +1335,7 @@ public class HelloController {
                                         gc.moveTo(xMedio - 50, yMedio + 30);
                                         gc.lineTo(xMedio - 200, yMedio + 30);
                                         //Primera linea vertical
-                                        gc.moveTo(xMedio - 150 , yMedio + 30);
+                                        gc.moveTo(xMedio - 150, yMedio + 30);
                                         gc.lineTo(xMedio - 150, yMedio + 115);
                                         //Segunda Linea Vertical
                                         gc.moveTo(xMedio - 100, yMedio + 30);
@@ -1063,7 +1366,6 @@ public class HelloController {
                 }
             });
         }
-
         @Override
         public boolean contienePunto(double x, double y) {
             double ancho = 100;
@@ -1077,7 +1379,6 @@ public class HelloController {
             return x >= x1 && x <= x2 && y >= y1 && y <= y2;
         }
     }
-
 
     @FXML
     private void borrarFigurasClick() {
@@ -1123,6 +1424,134 @@ public class HelloController {
                 InicioFin inicioFin = (InicioFin) figura;
                 inicioFin.DibujarInicioFin_Denuevo(gc, figura.getX(), figura.getY());
                 DibujarFlecha(inicioFin.getInicioFlechaX(), inicioFin.getInicioFlechaY(), inicioFin.getFinFlechaX(), inicioFin.getFinFlechaY());
+            }
+        }
+    }
+
+    private void redibujarFigurasResize(double resize) {
+        GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
+        GraphicsContext gc2 = DibujoCanvas.getGraphicsContext2D();
+        gc.clearRect(0, 0, DibujoCanvas.getWidth(), DibujoCanvas.getHeight());
+        for (Figura figura : figurasarreglo) {
+            if (figura instanceof Proceso) {
+                Proceso proceso = (Proceso) figura;
+                String texto = figura.getTexto();
+                double tamanotexto = gc.getFont().getSize()*resize;
+                while (tamanotexto * texto.length() > 140) {
+                    tamanotexto -= 1;
+                }
+                figura.setTexto(texto);
+                gc.beginPath();
+                gc.moveTo(figura.getX()*resize, figura.getY()*resize);
+                gc.lineTo((figura.getX() + 100)*resize, figura.getY()*resize);
+                gc.lineTo((figura.getX() + 100)*resize, (figura.getY() + 50)*resize);
+                gc.lineTo(figura.getX()*resize, (figura.getY() + 50)*resize);
+                gc.closePath();
+                gc.setFont(new Font(20*resize));
+                gc.strokeText(texto, ((figura.getX() + 20)*resize), ((figura.getY() + 30)*resize));
+                gc.stroke();
+                proceso.setInicioFlechaX(proceso.getInicioFlechaX()*resize);
+                proceso.setInicioFlechaY(proceso.getInicioFlechaY()*resize);
+                proceso.setFinFlechaX(proceso.getFinFlechaX()*resize);
+                proceso.setFinFlechaY(proceso.getFinFlechaY()*resize);
+                DibujarFlecha(proceso.getInicioFlechaX(), proceso.getInicioFlechaY(), proceso.getFinFlechaX(), proceso.getFinFlechaY());
+                setInicioX((proceso.getX()*resize)+50*resize);
+                setInicioY((proceso.getY()*resize)+50*resize);
+                proceso.setX(proceso.getX()*resize);
+                proceso.setY(proceso.getY()*resize);
+
+            } else if (figura instanceof Decision) {
+                Decision decision = (Decision) figura;
+                String texto = figura.getTexto();
+                double tamanotexto = gc.getFont().getSize()*resize;
+                while (tamanotexto * texto.length() > 140) {
+                    tamanotexto -= 1;
+                }
+                figura.setTexto(texto);
+                gc.beginPath();
+                gc.moveTo(figura.getX()*resize, figura.getY()*resize);
+                gc.lineTo(figura.getX()*resize + 70, figura.getY()*resize + 50);
+                gc.lineTo(figura.getX()*resize, figura.getY()*resize + 100);
+                gc.lineTo(figura.getX()*resize - 70, figura.getY()*resize + 50);
+                gc.closePath();
+
+                //Dibuja Lineas Verdadero y Falso de figura Decisión
+                gc.moveTo(figura.getX()*resize - 70, figura.getY()*resize + 50);
+                gc.lineTo(figura.getX()*resize - 150, figura.getY()*resize + 50);
+                gc.moveTo(figura.getX()*resize + 70, figura.getY()*resize + 50);
+                gc.lineTo(figura.getX()*resize + 150, figura.getY()*resize + 50);
+
+                gc2.setFont(new Font(15));
+                gc2.strokeText("V", figura.getX()*resize - 130, figura.getY()*resize + 45);
+                gc2.strokeText("F", figura.getX()*resize + 120, figura.getY()*resize + 45);
+
+                gc.setFont(new Font(tamanotexto + 5));
+                gc.strokeText(texto, figura.getX()* - ((texto.length() * tamanotexto / 4)*resize) - 10, figura.getY()*resize + 55);
+                gc.stroke();
+                decision.setInicioFlechaX(decision.getInicioFlechaX()*resize);
+                decision.setInicioFlechaY(decision.getInicioFlechaY()*resize);
+                decision.setFinFlechaX(decision.getFinFlechaX()*resize);
+                decision.setFinFlechaY(decision.getFinFlechaY()*resize);
+                DibujarFlecha(decision.getInicioFlechaX(), decision.getInicioFlechaY(), decision.getFinFlechaX(), decision.getFinFlechaY());
+                setInicioX((decision.getX()*resize)+50*resize);
+                setInicioY((decision.getY()*resize)+50*resize);
+                decision.setX(decision.getX()*resize);
+                decision.setY(decision.getY()*resize);
+            } else if (figura instanceof EntradaSalida) {
+                EntradaSalida entradaSalida = (EntradaSalida) figura;
+                String texto = figura.getTexto();
+                double tamanotexto = gc.getFont().getSize()*resize;
+                while (tamanotexto * texto.length() > 140) {
+                    tamanotexto -= 1;
+                }
+                gc.beginPath();
+                gc.moveTo(figura.getX()*resize, figura.getY()*resize);
+                gc.lineTo((figura.getX() + 100)*resize, figura.getY()*resize);
+                gc.lineTo((figura.getX() + 100 - (50) / 4)*resize, (figura.getY() + 50)*resize);
+                gc.lineTo((figura.getX() - (50) / 4)*resize, (figura.getY() + 50)*resize);
+                gc.closePath();
+                gc.setFont(new Font(20*resize));
+                gc.strokeText(texto, (figura.getX() + 20)*resize, (figura.getY() + 30)*resize);
+                gc.stroke();
+                entradaSalida.setInicioFlechaX(entradaSalida.getInicioFlechaX()*resize);
+                entradaSalida.setInicioFlechaY(entradaSalida.getInicioFlechaY()*resize);
+                entradaSalida.setFinFlechaX(entradaSalida.getFinFlechaX()*resize);
+                entradaSalida.setFinFlechaY(entradaSalida.getFinFlechaY()*resize);
+                DibujarFlecha(entradaSalida.getInicioFlechaX(), entradaSalida.getInicioFlechaY(), entradaSalida.getFinFlechaX(), entradaSalida.getFinFlechaY());
+                setInicioX((entradaSalida.getX()*resize)+50*resize);
+                setInicioY((entradaSalida.getY()*resize)+50*resize);
+                entradaSalida.setX(entradaSalida.getX()*resize);
+                entradaSalida.setY(entradaSalida.getY()*resize);
+            } else if (figura instanceof Documento) {
+                Documento documento = (Documento) figura;
+                String texto = figura.getTexto();
+                double tamanotexto = gc.getFont().getSize()*resize;
+                while (tamanotexto * texto.length() > 140) {
+                    tamanotexto -= 1;
+                }
+                gc.strokeLine(figura.getX()*resize, figura.getY() *resize, (figura.getX() + 100)*resize, figura.getY()*resize); // Línea Superior
+                gc.strokeLine(figura.getX()*resize, figura.getY()*resize, figura.getX()*resize, (figura.getY() + 50)*resize); // Línea Izquierda
+                gc.strokeLine((figura.getX() + 100)*resize, (figura.getY()), (figura.getX() + 100)*resize, (figura.getY() + 40)*resize);
+                gc.beginPath();
+                gc.moveTo(figura.getX() *resize, (figura.getY() + 50)*resize); // Mover al punto de inicio de la curva
+                gc.bezierCurveTo((figura.getX() + 40)*resize, (figura.getY() + 80)*resize, (figura.getX() + 50)*resize, (figura.getY() + 35)*resize, (figura.getX() + 100)*resize, (figura.getY() + 40)*resize);
+                gc.stroke(); // Trazar la curva
+                gc.setFont(new Font(20*resize));
+                gc.strokeText(texto, (figura.getX() + 15)*resize, (figura.getY() + 30)*resize); // Escribir texto
+                gc.stroke();
+                DibujarFlecha(documento.getInicioFlechaX(), documento.getInicioFlechaY(), documento.getFinFlechaX(), documento.getFinFlechaY());
+                setInicioX((documento.getX()*resize)+50*resize);
+                setInicioY((documento.getY()*resize)+50*resize);
+                documento.setX(documento.getX()*resize);
+                documento.setY(documento.getY()*resize);}
+            else if (figura instanceof InicioFin) {
+                InicioFin inicioFin = (InicioFin) figura;
+                inicioFin.DibujarInicioFin_Denuevo(gc, figura.getX(), figura.getY());
+                DibujarFlecha(inicioFin.getInicioFlechaX(), inicioFin.getInicioFlechaY(), inicioFin.getFinFlechaX(), inicioFin.getFinFlechaY());
+                setInicioX((inicioFin.getX()*resize)+50*resize);
+                setInicioY((inicioFin.getY()*resize)+50*resize);
+                inicioFin.setX(inicioFin.getX()*resize);
+                inicioFin.setY(inicioFin.getY()*resize);
             }
         }
     }
@@ -1230,6 +1659,10 @@ public class HelloController {
                     figuraActual.getFinFlechaX(), figuraActual.getFinFlechaY());
         }
     }
+
+
+
+
     @FXML
     private void MostrarPseudocodigo() {
         int nivelIndentacion = 0;
@@ -1314,6 +1747,7 @@ public class HelloController {
         return sb.toString();
     }
 
+
     private void mostrarPseudocodigoEnDialog(String pseudocodigo) {
         Dialog<String> dialog = new Dialog<>();
         dialog.setTitle("Pseudocódigo");
@@ -1336,6 +1770,8 @@ public class HelloController {
     public void CerrarMientras() {
         cerrar();
     }
+
+
 
     public void cerrar() {
         if (!figurasarreglo.isEmpty()) {
@@ -1385,7 +1821,6 @@ public class HelloController {
                     // Actualiza las coordenadas de inicio
                     inicioX = xUltima;
                     inicioY = yUltima + 170;
-                    MientrasCerrado = true;
 
                     break; // Solo queremos cerrar el primer "Mientras" encontrado desde el final
                 }
@@ -1395,6 +1830,7 @@ public class HelloController {
 
 
     public void BotonListo() {
+        ladoverdadero = false;
         for (Figura figura : figurasarreglo) {
             if (figura instanceof Decision) {
                 Decision decision = (Decision) figura;
@@ -1471,16 +1907,261 @@ public class HelloController {
         });
     }
 
-
     public void CerrarCondicional() {
+        ladoverdadero = true;
+        GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
+        dentroDecision = false;
         if(!decisionStack.isEmpty()){
             double[] coordenadaAnterior = decisionStack.pop();
             inicioX = coordenadaAnterior[0];
             inicioY = coordenadaAnterior[1];
+        }
+        Decision decisionX = (Decision) decisionAux;
+        int tamanoV = decisionX.Verdadero.size();
+        int tamanoF = decisionX.Falso.size();
+        System.out.println(tamanoV);
+        System.out.println(tamanoF);
+
+        Figura UltimoV = (Figura) decisionX.Verdadero.get(decisionX.Verdadero.size()-1);
+        double UltimoXVerdadero = UltimoV.getX();
+        double UltimoYVerdadero = UltimoV.getY();
+        System.out.println(UltimoXVerdadero);
+        System.out.println(UltimoYVerdadero);
+        Figura UltimoF = (Figura) decisionX.Falso.get(decisionX.Falso.size()-1);
+        double UltimoXFalso = UltimoF.getX();
+        double UltimoYFalso = UltimoF.getY();
+        System.out.println(UltimoXFalso);
+        System.out.println(UltimoYFalso);
+        if(UltimoYFalso > UltimoYVerdadero){
+            gc.beginPath();
+            gc.moveTo(UltimoXVerdadero+50,UltimoYVerdadero+50);
+            double distanciaY = UltimoYFalso-UltimoYVerdadero;
+            gc.lineTo(UltimoXVerdadero+50,UltimoYVerdadero+50);
+            gc.moveTo(UltimoXVerdadero+50,UltimoYVerdadero+50);
+            gc.lineTo(UltimoXVerdadero+50,UltimoYFalso+80);
+            gc.moveTo(UltimoXFalso+50,UltimoYFalso+80);
+            gc.lineTo(UltimoXFalso,UltimoYFalso+80);
+            gc.moveTo(UltimoXFalso,UltimoYFalso+80);
+            gc.lineTo(UltimoXVerdadero+50,UltimoYFalso+80);
+            gc.moveTo(UltimoXFalso+50,UltimoYFalso+50);
+            gc.lineTo(UltimoXFalso+50,UltimoYFalso+80);
+            gc.stroke();
+            inicioX = ((UltimoXVerdadero+UltimoXFalso)/2)+50;
+            inicioY = UltimoYFalso+80;
+            ((Decision) decisionX).Verdadero.clear();
+            ((Decision) decisionX).Falso.clear();
+
+
+        }else{
+            gc.beginPath();
+            gc.moveTo(UltimoXFalso  , UltimoYFalso + 50);
+            double distanciaY = UltimoYVerdadero - UltimoYFalso;
+            gc.lineTo(UltimoXFalso , UltimoYFalso + 50);
+            gc.moveTo(UltimoXFalso + 50, UltimoYFalso + 50);
+            gc.lineTo(UltimoXFalso + 50, UltimoYVerdadero + 80);
+            gc.moveTo(UltimoXVerdadero + 50 , UltimoYVerdadero + 80);
+            gc.lineTo(UltimoXVerdadero +30, UltimoYVerdadero + 80);
+            gc.moveTo(UltimoXVerdadero +50, UltimoYVerdadero + 80);
+            gc.lineTo(UltimoXFalso + 50, UltimoYVerdadero + 80);
+            gc.moveTo(UltimoXVerdadero +30, UltimoYVerdadero + 50);
+            gc.lineTo(UltimoXVerdadero +30, UltimoYVerdadero +80);
+            gc.stroke();
+            inicioX = ((UltimoXVerdadero + UltimoXFalso) / 2) + 50;
+            inicioY = UltimoYVerdadero + 80;
+            ((Decision) decisionX).Verdadero.clear();
+            ((Decision) decisionX).Falso.clear();
+
 
         }
     }
 
+
+    @FXML
+    private void AjustarTamano() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Ajustar Tamaño");
+        dialog.setHeaderText(null);
+        dialog.setContentText("¿% De zoom a aplicar?");
+
+        // Mostrar el cuadro de diálogo y esperar hasta que el usuario haga una entrada
+        Optional<String> result = dialog.showAndWait();
+
+        // Procesar la entrada del usuario
+        result.ifPresent(input -> {
+            try {
+                double resize = Double.parseDouble(input)*0.01;
+                System.out.println("Zoom ajustado a: " + resize);
+                redibujarFigurasResize(resize);
+                System.out.println("ajustea a "+resize);
+            } catch (NumberFormatException e) {
+                System.err.println("Invalid input: " + input);
+                // Aquí puedes agregar manejo de errores si el usuario ingresa un valor no numérico
+            }
+        });
+    }
+
+    public void MostrarVentana(){
+        Stage ventana = new Stage();
+        ventana.setTitle("Pseudocodigo: ");
+
+        TextArea textArea = new TextArea();
+        textArea.setPrefHeight(400);
+
+        Button btnConvertir = new Button("Convertir a Diagrama");
+        btnConvertir.setOnAction(event -> convertirPseudocodigoADiagrama(textArea.getText()));
+
+        VBox vBox = new VBox(textArea, btnConvertir);
+        Scene scene = new Scene(vBox, 400, 500);
+
+        ventana.setScene(scene);
+        ventana.show();
+    }
+
+    private void convertirPseudocodigoADiagrama(String pseudocodigo) {
+        GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
+        String[] lineas = pseudocodigo.split("\n");
+        double x; // Coordenada inicial X
+        double y; // Coordenada inicial Y
+        double incrementoY = 100; // Incremento en Y para cada nueva figura
+
+        if(figurasarreglo.isEmpty()){
+            x = 300;
+            y = 100;
+            inicioX = 300;
+            inicioY = 100;
+        }
+        else{
+            Figura ultimafigura = figurasarreglo.get(figurasarreglo.size() - 1);
+            double xUltima = ultimafigura.getX();
+            double yUltima = ultimafigura.getY();
+            x = xUltima;
+            y = yUltima + 100;
+        }
+
+        for (String linea : lineas) {
+            linea = linea.trim();
+            if (linea.startsWith("Algoritmo")) {
+                //String texto = linea.substring("Algoritmo".length()).trim();
+                InicioFin inicioFin = new InicioFin(x, y);
+                //inicioFin.setTexto(texto);
+                inicioFin.DibujarInicioFin(gc, x, y);
+                figurasarreglo.add(inicioFin);
+                if (inicioX != -1 && inicioY != -1) {
+                    DibujarFlecha(inicioX, inicioY, x + 50, y);
+                    inicioFin.setInicioFlechaX(inicioX);
+                    inicioFin.setInicioFlechaY(inicioY);
+                    inicioFin.setFinFlechaX(x + 50);
+                    inicioFin.setFinFlechaY(y);
+                }
+                inicioX = x + 50;
+                inicioY = y + 50;
+
+            }
+
+            else if (linea.startsWith("Proceso")) {
+                //String texto = linea.substring("Proceso".length()).trim();
+                Proceso proceso = new Proceso(x, y);
+                //proceso.setTexto(texto);
+                proceso.DibujarProceso(gc, x, y);
+                figurasarreglo.add(proceso);
+                if (inicioX != -1 && inicioY != -1) {
+                    DibujarFlecha(inicioX, inicioY, x + 50, y);
+                    proceso.setInicioFlechaX(inicioX);
+                    proceso.setInicioFlechaY(inicioY);
+                    proceso.setFinFlechaX(x + 50);
+                    proceso.setFinFlechaY(y);
+                    inicioX = x + 50;
+                    inicioY = y + 50;
+                }
+            }
+
+            else if (linea.startsWith("Si")) {
+                //String texto = linea.substring("Si".length()).trim();
+                Decision decision = new Decision(x, y);
+                //decision.setTexto(texto);
+                decision.DibujarDecision(gc, gc, x, y);
+                figurasarreglo.add(decision);
+                if (inicioX != -1 && inicioY != -1) {
+                    DibujarFlecha(inicioX, inicioY, x, y);
+                    decision.setInicioFlechaX(inicioX);
+                    decision.setInicioFlechaY(inicioY);
+                    decision.setFinFlechaX(x);
+                    decision.setFinFlechaY(y);
+                }
+                inicioX = x - 150;
+                inicioY = y + 50;
+                dentroDecision = true;
+            }
+
+            else if (linea.startsWith("Leer")) {
+                //String texto = linea.substring("Leer:".length()).trim();
+                EntradaSalida entradaSalida = new EntradaSalida(x, y);
+                //entradaSalida.setTexto(texto);
+                entradaSalida.Dibujar_Entrada_Salida(gc, x, y);
+                figurasarreglo.add(entradaSalida);
+                if (inicioX != -1 && inicioY != -1) {
+                    DibujarFlecha(inicioX, inicioY, x + 50, y);
+                    entradaSalida.setInicioFlechaX(inicioX);
+                    entradaSalida.setInicioFlechaY(inicioY);
+                    entradaSalida.setFinFlechaX(x + 50);
+                    entradaSalida.setFinFlechaY(y);
+                }
+                inicioX = x + 50;
+                inicioY = y + 50;
+            }
+
+            else if (linea.startsWith("Mientras")) {
+                //String texto = linea.substring("Mientras".length(), linea.indexOf("Hacer")).trim();
+                Mientras mientras = new Mientras(x, y);
+                //mientras.setTexto(texto);
+                mientras.DibujarMientras(gc, gc, x, y);
+                figurasarreglo.add(mientras);
+                if (inicioX != -1 && inicioY != -1) {
+                    DibujarFlecha(inicioX, inicioY, x, y);
+                    mientras.setInicioFlechaX(inicioX);
+                    mientras.setInicioFlechaY(inicioY);
+                    mientras.setFinFlechaX(x);
+                    mientras.setFinFlechaY(y);
+                }
+                inicioX = x;
+                inicioY = y + 100;
+
+            }
+
+            else if (linea.startsWith("Repetir")) {
+                Repetir repetir = new Repetir(x, y);
+                figurasarreglo.add(repetir);
+                repetir.DibujarRepetir(gc, x, y);
+                if (inicioX != -1 && inicioY != -1) {
+                    DibujarFlecha(inicioX, inicioY, x, y);
+                    repetir.setInicioFlechaX(inicioX);
+                    repetir.setInicioFlechaY(inicioY);
+                    repetir.setFinFlechaX(x);
+                    repetir.setFinFlechaY(y);
+                }
+                inicioX = x;
+                inicioY = y + 100;
+            }
+
+            else if (linea.startsWith("Para")) {
+                String[] partes = linea.split(" ");
+                Para para = new Para(x, y);
+                para.setTexto(partes[1]);
+                para.setTexto2(partes[3]);
+                para.setTexto3(partes[5]);
+                para.setTexto4(partes[7]);
+                figurasarreglo.add(para);
+                para.DibujarPara(gc);
+                if(inicioX != -1 && inicioY != -1){
+                    para.setInicioFlechaX(inicioX);
+                    para.setInicioFlechaY(inicioY);
+                    para.setFinFlechaX(x);
+                    para.setFinFlechaY(y);
+                }
+            }
+            y += incrementoY;
+        }
+    }
 
     @FXML
     private void handleButton1Click() {
@@ -1516,8 +2197,8 @@ public class HelloController {
     public void handleButton7Click() {
         figura = "boton7";
     }
-
     public void handleButton8Click() {
         figura = "boton8";
     }
+
 }
