@@ -40,7 +40,6 @@ public class HelloApplication extends Application {
 
     }
 
-/** ***/
     private void DibujarLineaLimite(Canvas canvas) {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.clearRect(0,0, canvas.getWidth(), canvas.getHeight());
