@@ -2,12 +2,15 @@ package com.example.proyectodeprogramacion;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.ArcType;
 import javafx.scene.text.Font;
+import javafx.stage.Stage;
+
 import java.util.Optional;
 import java.util.ArrayList;
 import java.util.List;
@@ -186,8 +189,6 @@ public class HelloController {
                                 Proceso figuraaux2 = (Proceso) figuraaux;
                                 inicioX = figuraaux2.getX()+50;
                                 inicioY = figuraaux2.getY()+50;
-                                System.out.println(dentroDecision);
-                                System.out.println(ladoverdadero);
                                 break;
                             case "boton3":
                                 Decision decision = new Decision(x, y);
@@ -259,7 +260,7 @@ public class HelloController {
                         }
                     } else {
                         if(figurasarreglo.get(figurasarreglo.size()-1) instanceof Decision){
-                        decisionAux = figurasarreglo.get(figurasarreglo.size()-1);
+                            decisionAux = figurasarreglo.get(figurasarreglo.size()-1);
                         }
                         Decision decisionX = (Decision) decisionAux;
                         if (ladoverdadero == true) {
@@ -383,7 +384,7 @@ public class HelloController {
                                         para.setFinFlechaX(x);
                                         para.setFinFlechaY(y);
                                     }
-                                // Otros casos de figuras dentro de una decisión
+                                    // Otros casos de figuras dentro de una decisión
                             }
                         }else if(ladoverdadero == false){
                             switch (figura) {
@@ -1738,37 +1739,37 @@ public class HelloController {
 
 
 
-        private String generarIndentacion(int nivel) {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < nivel; i++) {
-                sb.append("\t"); // Usa tabulaciones para la indentación
-            }
-            return sb.toString();
+    private String generarIndentacion(int nivel) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < nivel; i++) {
+            sb.append("\t"); // Usa tabulaciones para la indentación
         }
+        return sb.toString();
+    }
 
 
-        private void mostrarPseudocodigoEnDialog(String pseudocodigo) {
-            Dialog<String> dialog = new Dialog<>();
-            dialog.setTitle("Pseudocódigo");
-            dialog.setHeaderText(null);
+    private void mostrarPseudocodigoEnDialog(String pseudocodigo) {
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Pseudocódigo");
+        dialog.setHeaderText(null);
 
-            DialogPane dialogPane = dialog.getDialogPane();
-            dialogPane.getButtonTypes().addAll(ButtonType.CLOSE);
+        DialogPane dialogPane = dialog.getDialogPane();
+        dialogPane.getButtonTypes().addAll(ButtonType.CLOSE);
 
-            TextArea textArea = new TextArea(pseudocodigo);
-            textArea.setEditable(false);
-            textArea.setWrapText(true);
+        TextArea textArea = new TextArea(pseudocodigo);
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
 
-            VBox content = new VBox();
-            content.getChildren().add(textArea);
-            dialogPane.setContent(content);
+        VBox content = new VBox();
+        content.getChildren().add(textArea);
+        dialogPane.setContent(content);
 
-            dialog.showAndWait();
-        }
+        dialog.showAndWait();
+    }
 
-        public void CerrarMientras() {
-            cerrar();
-        }
+    public void CerrarMientras() {
+        cerrar();
+    }
 
 
 
@@ -1999,6 +2000,168 @@ public class HelloController {
         });
     }
 
+    public void MostrarVentana(){
+        Stage ventana = new Stage();
+        ventana.setTitle("Pseudocodigo: ");
+
+        TextArea textArea = new TextArea();
+        textArea.setPrefHeight(400);
+
+        Button btnConvertir = new Button("Convertir a Diagrama");
+        btnConvertir.setOnAction(event -> convertirPseudocodigoADiagrama(textArea.getText()));
+
+        VBox vBox = new VBox(textArea, btnConvertir);
+        Scene scene = new Scene(vBox, 400, 500);
+
+        ventana.setScene(scene);
+        ventana.show();
+    }
+
+    private void convertirPseudocodigoADiagrama(String pseudocodigo) {
+        GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
+        String[] lineas = pseudocodigo.split("\n");
+        double x; // Coordenada inicial X
+        double y; // Coordenada inicial Y
+        double incrementoY = 100; // Incremento en Y para cada nueva figura
+
+        if(figurasarreglo.isEmpty()){
+            x = 300;
+            y = 100;
+            inicioX = 300;
+            inicioY = 100;
+        }
+        else{
+            Figura ultimafigura = figurasarreglo.get(figurasarreglo.size() - 1);
+            double xUltima = ultimafigura.getX();
+            double yUltima = ultimafigura.getY();
+            x = xUltima;
+            y = yUltima + 100;
+        }
+
+        for (String linea : lineas) {
+            linea = linea.trim();
+            if (linea.startsWith("Algoritmo")) {
+                //String texto = linea.substring("Algoritmo".length()).trim();
+                InicioFin inicioFin = new InicioFin(x, y);
+                //inicioFin.setTexto(texto);
+                inicioFin.DibujarInicioFin(gc, x, y);
+                figurasarreglo.add(inicioFin);
+                if (inicioX != -1 && inicioY != -1) {
+                    DibujarFlecha(inicioX, inicioY, x + 50, y);
+                    inicioFin.setInicioFlechaX(inicioX);
+                    inicioFin.setInicioFlechaY(inicioY);
+                    inicioFin.setFinFlechaX(x + 50);
+                    inicioFin.setFinFlechaY(y);
+                }
+                inicioX = x + 50;
+                inicioY = y + 50;
+
+            }
+
+            else if (linea.startsWith("Proceso")) {
+                //String texto = linea.substring("Proceso".length()).trim();
+                Proceso proceso = new Proceso(x, y);
+                //proceso.setTexto(texto);
+                proceso.DibujarProceso(gc, x, y);
+                figurasarreglo.add(proceso);
+                if (inicioX != -1 && inicioY != -1) {
+                    DibujarFlecha(inicioX, inicioY, x + 50, y);
+                    proceso.setInicioFlechaX(inicioX);
+                    proceso.setInicioFlechaY(inicioY);
+                    proceso.setFinFlechaX(x + 50);
+                    proceso.setFinFlechaY(y);
+                    inicioX = x + 50;
+                    inicioY = y + 50;
+                }
+            }
+
+            else if (linea.startsWith("Si")) {
+                //String texto = linea.substring("Si".length()).trim();
+                Decision decision = new Decision(x, y);
+                //decision.setTexto(texto);
+                decision.DibujarDecision(gc, gc, x, y);
+                figurasarreglo.add(decision);
+                if (inicioX != -1 && inicioY != -1) {
+                    DibujarFlecha(inicioX, inicioY, x, y);
+                    decision.setInicioFlechaX(inicioX);
+                    decision.setInicioFlechaY(inicioY);
+                    decision.setFinFlechaX(x);
+                    decision.setFinFlechaY(y);
+                }
+                inicioX = x - 150;
+                inicioY = y + 50;
+                dentroDecision = true;
+            }
+
+            else if (linea.startsWith("Leer")) {
+                //String texto = linea.substring("Leer:".length()).trim();
+                EntradaSalida entradaSalida = new EntradaSalida(x, y);
+                //entradaSalida.setTexto(texto);
+                entradaSalida.Dibujar_Entrada_Salida(gc, x, y);
+                figurasarreglo.add(entradaSalida);
+                if (inicioX != -1 && inicioY != -1) {
+                    DibujarFlecha(inicioX, inicioY, x + 50, y);
+                    entradaSalida.setInicioFlechaX(inicioX);
+                    entradaSalida.setInicioFlechaY(inicioY);
+                    entradaSalida.setFinFlechaX(x + 50);
+                    entradaSalida.setFinFlechaY(y);
+                }
+                inicioX = x + 50;
+                inicioY = y + 50;
+            }
+
+            else if (linea.startsWith("Mientras")) {
+                //String texto = linea.substring("Mientras".length(), linea.indexOf("Hacer")).trim();
+                Mientras mientras = new Mientras(x, y);
+                //mientras.setTexto(texto);
+                mientras.DibujarMientras(gc, gc, x, y);
+                figurasarreglo.add(mientras);
+                if (inicioX != -1 && inicioY != -1) {
+                    DibujarFlecha(inicioX, inicioY, x, y);
+                    mientras.setInicioFlechaX(inicioX);
+                    mientras.setInicioFlechaY(inicioY);
+                    mientras.setFinFlechaX(x);
+                    mientras.setFinFlechaY(y);
+                }
+                inicioX = x;
+                inicioY = y + 100;
+
+            }
+
+            else if (linea.startsWith("Repetir")) {
+                Repetir repetir = new Repetir(x, y);
+                figurasarreglo.add(repetir);
+                repetir.DibujarRepetir(gc, x, y);
+                if (inicioX != -1 && inicioY != -1) {
+                    DibujarFlecha(inicioX, inicioY, x, y);
+                    repetir.setInicioFlechaX(inicioX);
+                    repetir.setInicioFlechaY(inicioY);
+                    repetir.setFinFlechaX(x);
+                    repetir.setFinFlechaY(y);
+                }
+                inicioX = x;
+                inicioY = y + 100;
+            }
+
+            else if (linea.startsWith("Para")) {
+                String[] partes = linea.split(" ");
+                Para para = new Para(x, y);
+                para.setTexto(partes[1]);
+                para.setTexto2(partes[3]);
+                para.setTexto3(partes[5]);
+                para.setTexto4(partes[7]);
+                figurasarreglo.add(para);
+                para.DibujarPara(gc);
+                if(inicioX != -1 && inicioY != -1){
+                    para.setInicioFlechaX(inicioX);
+                    para.setInicioFlechaY(inicioY);
+                    para.setFinFlechaX(x);
+                    para.setFinFlechaY(y);
+                }
+            }
+            y += incrementoY;
+        }
+    }
 
     @FXML
     private void handleButton1Click() {
