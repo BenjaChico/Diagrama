@@ -119,18 +119,40 @@ public class HelloController {
     private double inicioY = -1;
     private boolean ListoPresionado = false;
     private boolean MientrasPresionado = false;
+    private boolean InsercionActiva = false;
+
+    public void setPosicionado(int posicionado) {
+        Posicionado = posicionado;
+    }
+
+    int Posicionado = 0;
 
     private boolean dentroDecision = false;
     private boolean ladoverdadero = true;
-
+    int i = 0;
     private Figura decisionAux;
     public void initialize() {
         DibujoCanvas.setOnMouseClicked(event -> {
             double x = event.getX();
             double y = event.getY();
+            System.out.println("Valor de i: "+i);
+            System.out.println("largo del arreglo: "+figurasarreglo.size());
             GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
             GraphicsContext gc2 = DibujoCanvas.getGraphicsContext2D();
             Figura figuraSeleccionada = obtenerFiguraClicada(x, y);
+            System.out.println("Posicion a insertar"+Posicionado);
+            for (Figura figura : figurasarreglo) {
+                System.out.println("Texto de la figura en posicion:  "+ figura.getTexto());
+            }
+            if(InsercionActiva){
+                i= Posicionado;
+                System.out.println("Cayo al condicional:" +i);
+                inicioX = figurasarreglo.get(Posicionado).getInicioFlechaX();
+                inicioY = figurasarreglo.get(Posicionado).getInicioFlechaY();
+
+            }else{
+                i = figurasarreglo.size();
+            }
             if (figuraSeleccionada != null) {
                 TextInputDialog dialog = new TextInputDialog(figuraSeleccionada.getTexto());
                 dialog.setTitle("Modificar Texto");
@@ -149,7 +171,7 @@ public class HelloController {
                             case "boton6":
                                 Repetir repetir = new Repetir(x, y);
                                 repetir.DibujarRepetir(gc, x, y);
-                                figurasarreglo.add(repetir);
+                                figurasarreglo.add(i,repetir);
                                 if (inicioX != -1 && inicioY != -1) {
                                     DibujarFlecha(inicioX, inicioY, x, y);
                                     repetir.setInicioFlechaX(inicioX);
@@ -158,12 +180,14 @@ public class HelloController {
                                     repetir.setFinFlechaY(y);
                                 }
                                 inicioX = x;
+                                i=figurasarreglo.size();
                                 inicioY = y + 100;
+                                InsercionActiva = false;
                                 break;
                             case "boton1":
                                 InicioFin inicioFin = new InicioFin(x, y);
                                 inicioFin.DibujarInicioFin(gc, x, y + 25);
-                                figurasarreglo.add(inicioFin);
+                                figurasarreglo.add(i,inicioFin);
                                 if (inicioX != -1 && inicioY != -1) {
                                     DibujarFlecha(inicioX, inicioY, x + 50, y);
                                     inicioFin.setInicioFlechaX(inicioX);
@@ -172,14 +196,25 @@ public class HelloController {
                                     inicioFin.setFinFlechaY(y);
                                 }
                                 inicioX = x + 50;
+                                i=figurasarreglo.size();
                                 inicioY = y + 50;
+                                InsercionActiva = false;
                                 break;
                             case "boton2":
                                 Proceso proceso = new Proceso(x, y);
                                 proceso.DibujarProceso(gc, x, y);
-                                figurasarreglo.add(proceso);
+                                figurasarreglo.add(i,proceso);
                                 if (inicioX != -1 && inicioY != -1) {
-                                    DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                    if(InsercionActiva){
+                                        DibujarFlecha(inicioX, inicioY, x + 50,y);
+                                        System.out.println("Dibujare flecha exigida");
+                                        proceso.setInicioFlechaX(inicioX);
+                                        proceso.setInicioFlechaY(inicioY);
+                                        proceso.setFinFlechaX(x + 50);
+                                        proceso.setFinFlechaY(y);
+                                    }else{
+                                        DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                    }
                                     proceso.setInicioFlechaX(inicioX);
                                     proceso.setInicioFlechaY(inicioY);
                                     proceso.setFinFlechaX(x + 50);
@@ -188,12 +223,14 @@ public class HelloController {
                                 Figura figuraaux = figurasarreglo.get(figurasarreglo.size()-1);
                                 Proceso figuraaux2 = (Proceso) figuraaux;
                                 inicioX = figuraaux2.getX()+50;
+                                i=figurasarreglo.size();
                                 inicioY = figuraaux2.getY()+50;
+                                InsercionActiva = false;
                                 break;
                             case "boton3":
                                 Decision decision = new Decision(x, y);
                                 decision.DibujarDecision(gc, gc2, x, y);
-                                figurasarreglo.add(decision);
+                                figurasarreglo.add(i,decision);
                                 if (inicioX != -1 && inicioY != -1) {
                                     DibujarFlecha(inicioX, inicioY, x, y);
                                     decision.setInicioFlechaX(inicioX);
@@ -202,13 +239,15 @@ public class HelloController {
                                     decision.setFinFlechaY(y);
                                 }
                                 inicioX = x - 150;
+                                i=figurasarreglo.size();
                                 inicioY = y + 50;
                                 dentroDecision = true;
+                                InsercionActiva = false;
                                 break;
                             case "boton4":
                                 EntradaSalida entradaSalida = new EntradaSalida(x, y);
                                 entradaSalida.Dibujar_Entrada_Salida(gc, x, y);
-                                figurasarreglo.add(entradaSalida);
+                                figurasarreglo.add(i,entradaSalida);
                                 if (inicioX != -1 && inicioY != -1) {
                                     DibujarFlecha(inicioX, inicioY, x + 50, y);
                                     entradaSalida.setInicioFlechaX(inicioX);
@@ -217,12 +256,14 @@ public class HelloController {
                                     entradaSalida.setFinFlechaY(y);
                                 }
                                 inicioX = x + 50;
+                                i=figurasarreglo.size();
                                 inicioY = y + 50;
+                                InsercionActiva = false;
                                 break;
                             case "boton5":
                                 Documento documento = new Documento(x, y);
                                 documento.Dibujar_Documento(gc, x, y);
-                                figurasarreglo.add(documento);
+                                figurasarreglo.add(i,documento);
                                 if (inicioX != -1 && inicioY != -1) {
                                     DibujarFlecha(inicioX, inicioY, x + 50, y);
                                     documento.setInicioFlechaX(inicioX);
@@ -231,12 +272,14 @@ public class HelloController {
                                     documento.setFinFlechaY(y);
                                 }
                                 inicioX = x + 50;
+                                i=figurasarreglo.size();
                                 inicioY = y + 55;
+                                InsercionActiva = false;
                                 break;
                             case "boton7":
                                 Mientras mientras = new Mientras(x, y);
                                 mientras.DibujarMientras(gc, gc2, x, y);
-                                figurasarreglo.add(mientras);
+                                figurasarreglo.add(i,mientras);
                                 if (inicioX != -1 && inicioY != -1) {
                                     DibujarFlecha(inicioX, inicioY, x, y);
                                     mientras.setInicioFlechaX(inicioX);
@@ -245,12 +288,14 @@ public class HelloController {
                                     mientras.setFinFlechaY(y);
                                 }
                                 inicioX = x;
+                                i=figurasarreglo.size();
                                 inicioY = y + 100;
+                                InsercionActiva = false;
                                 break;
                             case "boton8":
                                 Para para = new Para(x, y);
                                 para.DibujarPara(gc);
-                                figurasarreglo.add(para);
+                                figurasarreglo.add(i,para);
                                 if(inicioX != -1 && inicioY != -1){
                                     para.setInicioFlechaX(inicioX);
                                     para.setInicioFlechaY(inicioY);
@@ -268,7 +313,7 @@ public class HelloController {
                                 case "boton6":
                                     Repetir repetir = new Repetir(x, y);
                                     repetir.DibujarRepetir(gc, x, y);
-                                    figurasarreglo.add(repetir);
+                                    figurasarreglo.add(i,repetir);
                                     decisionX.Verdadero.add(repetir);
                                     if (inicioX != -1 && inicioY != -1) {
                                         DibujarFlecha(inicioX, inicioY, x, y);
@@ -278,12 +323,14 @@ public class HelloController {
                                         repetir.setFinFlechaY(y);
                                     }
                                     inicioX = x;
+                                    i=figurasarreglo.size();
                                     inicioY = y + 100;
+                                    InsercionActiva = false;
                                     break;
                                 case "boton1":
                                     InicioFin inicioFin = new InicioFin(x, y);
                                     inicioFin.DibujarInicioFin(gc, x, y + 25);
-                                    figurasarreglo.add(inicioFin);
+                                    figurasarreglo.add(i,inicioFin);
                                     decisionX.Verdadero.add(inicioFin);
                                     if (inicioX != -1 && inicioY != -1) {
                                         DibujarFlecha(inicioX, inicioY, x + 50, y);
@@ -293,12 +340,14 @@ public class HelloController {
                                         inicioFin.setFinFlechaY(y);
                                     }
                                     inicioX = x + 50;
+                                    i=figurasarreglo.size();
                                     inicioY = y + 50;
+                                    InsercionActiva = false;
                                     break;
                                 case "boton2":
                                     Proceso proceso = new Proceso(x, y);
                                     proceso.DibujarProceso(gc, x, y);
-                                    figurasarreglo.add(proceso);
+                                    figurasarreglo.add(i,proceso);
                                     decisionX.Verdadero.add(proceso);
                                     if (inicioX != -1 && inicioY != -1) {
                                         DibujarFlecha(inicioX, inicioY, x + 50, y);
@@ -308,6 +357,8 @@ public class HelloController {
                                         proceso.setFinFlechaY(y);
                                     }
                                     inicioX = x + 50;
+                                    i=figurasarreglo.size();
+                                    InsercionActiva = false;
                                     inicioY = y + 50;
                                     System.out.println(dentroDecision);
                                     System.out.println(ladoverdadero);
@@ -317,7 +368,7 @@ public class HelloController {
                                 case "boton3":
                                     Decision decision = new Decision(x, y);
                                     decision.DibujarDecision(gc, gc2, x, y);
-                                    figurasarreglo.add(decision);
+                                    figurasarreglo.add(i,decision);
                                     decisionX.Verdadero.add(decision);
                                     if (inicioX != -1 && inicioY != -1) {
                                         DibujarFlecha(inicioX, inicioY, x, y);
@@ -327,12 +378,14 @@ public class HelloController {
                                         decision.setFinFlechaY(y);
                                     }
                                     inicioX = x - 150;
+                                    i=figurasarreglo.size();
+                                    InsercionActiva = false;
                                     inicioY = y + 50;
                                     break;
                                 case "boton4":
                                     EntradaSalida entradaSalida = new EntradaSalida(x, y);
                                     entradaSalida.Dibujar_Entrada_Salida(gc, x, y);
-                                    figurasarreglo.add(entradaSalida);
+                                    figurasarreglo.add(i,entradaSalida);
                                     decisionX.Verdadero.add(entradaSalida);
                                     if (inicioX != -1 && inicioY != -1) {
                                         DibujarFlecha(inicioX, inicioY, x + 50, y);
@@ -342,12 +395,14 @@ public class HelloController {
                                         entradaSalida.setFinFlechaY(y);
                                     }
                                     inicioX = x + 50;
+                                    i=figurasarreglo.size();
+                                    InsercionActiva = false;
                                     inicioY = y + 50;
                                     break;
                                 case "boton5":
                                     Documento documento = new Documento(x, y);
                                     documento.Dibujar_Documento(gc, x, y);
-                                    figurasarreglo.add(documento);
+                                    figurasarreglo.add(i,documento);
                                     decisionX.Verdadero.add(documento);
                                     if (inicioX != -1 && inicioY != -1) {
                                         DibujarFlecha(inicioX, inicioY, x + 50, y);
@@ -357,12 +412,14 @@ public class HelloController {
                                         documento.setFinFlechaY(y);
                                     }
                                     inicioX = x + 50;
+                                    i=figurasarreglo.size();
+                                    InsercionActiva = false;
                                     inicioY = y + 55;
                                     break;
                                 case "boton7":
                                     Mientras mientras = new Mientras(x, y);
                                     mientras.DibujarMientras(gc, gc2, x, y);
-                                    figurasarreglo.add(mientras);
+                                    figurasarreglo.add(i,mientras);
                                     decisionX.Verdadero.add(mientras);
                                     if (inicioX != -1 && inicioY != -1) {
                                         DibujarFlecha(inicioX, inicioY, x, y);
@@ -372,12 +429,14 @@ public class HelloController {
                                         mientras.setFinFlechaY(y);
                                     }
                                     inicioX = x;
+                                    i=figurasarreglo.size();
+                                    InsercionActiva = false;
                                     inicioY = y + 100;
                                     break;
                                 case "boton8":
                                     Para para = new Para(x, y);
                                     para.DibujarPara(gc);
-                                    figurasarreglo.add(para);
+                                    figurasarreglo.add(i,para);
                                     if(inicioX != -1 && inicioY != -1){
                                         para.setInicioFlechaX(inicioX);
                                         para.setInicioFlechaY(inicioY);
@@ -391,7 +450,7 @@ public class HelloController {
                                 case "boton6":
                                     Repetir repetir = new Repetir(x, y);
                                     repetir.DibujarRepetir(gc, x, y);
-                                    figurasarreglo.add(repetir);
+                                    figurasarreglo.add(i,repetir);
                                     decisionX.Falso.add(repetir);
                                     if (inicioX != -1 && inicioY != -1) {
                                         DibujarFlecha(inicioX, inicioY, x, y);
@@ -401,12 +460,14 @@ public class HelloController {
                                         repetir.setFinFlechaY(y);
                                     }
                                     inicioX = x;
+                                    i=figurasarreglo.size();
+                                    InsercionActiva = false;
                                     inicioY = y + 100;
                                     break;
                                 case "boton1":
                                     InicioFin inicioFin = new InicioFin(x, y);
                                     inicioFin.DibujarInicioFin(gc, x, y + 25);
-                                    figurasarreglo.add(inicioFin);
+                                    figurasarreglo.add(i,inicioFin);
                                     decisionX.Falso.add(inicioFin);
                                     if (inicioX != -1 && inicioY != -1) {
                                         DibujarFlecha(inicioX, inicioY, x + 50, y);
@@ -416,12 +477,14 @@ public class HelloController {
                                         inicioFin.setFinFlechaY(y);
                                     }
                                     inicioX = x + 50;
+                                    i=figurasarreglo.size();
+                                    InsercionActiva = false;
                                     inicioY = y + 50;
                                     break;
                                 case "boton2":
                                     Proceso proceso = new Proceso(x, y);
                                     proceso.DibujarProceso(gc, x, y);
-                                    figurasarreglo.add(proceso);
+                                    figurasarreglo.add(i,proceso);
                                     decisionX.Falso.add(proceso);
                                     if (inicioX != -1 && inicioY != -1) {
                                         DibujarFlecha(inicioX, inicioY, x + 50, y);
@@ -431,6 +494,8 @@ public class HelloController {
                                         proceso.setFinFlechaY(y);
                                     }
                                     inicioX = x + 50;
+                                    i=figurasarreglo.size();
+                                    InsercionActiva = false;
                                     inicioY = y + 50;
                                     System.out.println(dentroDecision);
                                     System.out.println(ladoverdadero);
@@ -438,7 +503,7 @@ public class HelloController {
                                 case "boton3":
                                     Decision decision = new Decision(x, y);
                                     decision.DibujarDecision(gc, gc2, x, y);
-                                    figurasarreglo.add(decision);
+                                    figurasarreglo.add(i,decision);
                                     decisionX.Falso.add(decision);
                                     if (inicioX != -1 && inicioY != -1) {
                                         DibujarFlecha(inicioX, inicioY, x, y);
@@ -448,12 +513,14 @@ public class HelloController {
                                         decision.setFinFlechaY(y);
                                     }
                                     inicioX = x - 150;
+                                    i=figurasarreglo.size();
+                                    InsercionActiva = false;
                                     inicioY = y + 50;
                                     break;
                                 case "boton4":
                                     EntradaSalida entradaSalida = new EntradaSalida(x, y);
                                     entradaSalida.Dibujar_Entrada_Salida(gc, x, y);
-                                    figurasarreglo.add(entradaSalida);
+                                    figurasarreglo.add(i,entradaSalida);
                                     decisionX.Falso.add(entradaSalida);
                                     if (inicioX != -1 && inicioY != -1) {
                                         DibujarFlecha(inicioX, inicioY, x + 50, y);
@@ -463,12 +530,14 @@ public class HelloController {
                                         entradaSalida.setFinFlechaY(y);
                                     }
                                     inicioX = x + 50;
+                                    i=figurasarreglo.size();
+                                    InsercionActiva = false;
                                     inicioY = y + 50;
                                     break;
                                 case "boton5":
                                     Documento documento = new Documento(x, y);
                                     documento.Dibujar_Documento(gc, x, y);
-                                    figurasarreglo.add(documento);
+                                    figurasarreglo.add(i,documento);
                                     decisionX.Falso.add(documento);
                                     if (inicioX != -1 && inicioY != -1) {
                                         DibujarFlecha(inicioX, inicioY, x + 50, y);
@@ -478,12 +547,14 @@ public class HelloController {
                                         documento.setFinFlechaY(y);
                                     }
                                     inicioX = x + 50;
+                                    i=figurasarreglo.size();
+                                    InsercionActiva = false;
                                     inicioY = y + 55;
                                     break;
                                 case "boton7":
                                     Mientras mientras = new Mientras(x, y);
                                     mientras.DibujarMientras(gc, gc2, x, y);
-                                    figurasarreglo.add(mientras);
+                                    figurasarreglo.add(i,mientras);
                                     decisionX.Falso.add(mientras);
                                     if (inicioX != -1 && inicioY != -1) {
                                         DibujarFlecha(inicioX, inicioY, x, y);
@@ -493,12 +564,14 @@ public class HelloController {
                                         mientras.setFinFlechaY(y);
                                     }
                                     inicioX = x;
+                                    i=figurasarreglo.size();
+                                    InsercionActiva = false;
                                     inicioY = y + 100;
                                     break;
                                 case "boton8":
                                     Para para = new Para(x, y);
                                     para.DibujarPara(gc);
-                                    figurasarreglo.add(para);
+                                    figurasarreglo.add(i,para);
                                     if(inicioX != -1 && inicioY != -1){
                                         para.setInicioFlechaX(inicioX);
                                         para.setInicioFlechaY(inicioY);
@@ -1975,7 +2048,6 @@ public class HelloController {
         }
     }
 
-
     @FXML
     private void AjustarTamano() {
         TextInputDialog dialog = new TextInputDialog();
@@ -2162,6 +2234,32 @@ public class HelloController {
             y += incrementoY;
         }
     }
+
+
+    @FXML
+    private void InsertarX(){
+        TextInputDialog dialog = new TextInputDialog();
+        int tamano =figurasarreglo.size();
+        dialog.setTitle("Numero de posicion maximo a insertar: "+tamano);
+        dialog.setHeaderText(null);
+        dialog.setContentText("¿Posicion?");
+
+        // Mostrar el cuadro de diálogo y esperar hasta que el usuario haga una entrada
+        Optional<String> result = dialog.showAndWait();
+
+        // Procesar la entrada del usuario
+        result.ifPresent(input -> {
+            try {
+                setPosicionado(Integer.parseInt(input));
+                InsercionActiva = true;
+                initialize();
+            } catch (NumberFormatException e) {
+                System.err.println("Invalid input: " + input);
+                // Aquí puedes agregar manejo de errores si el usuario ingresa un valor no numérico
+            }
+        });
+    }
+
 
     @FXML
     private void handleButton1Click() {
