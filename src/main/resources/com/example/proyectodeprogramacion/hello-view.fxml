@@ -20,9 +20,13 @@
                 <Button layoutX="487.0" layoutY="1.0" mnemonicParsing="false" onAction="#borrarFigurasClick" text="Borrar Figuras" />
                 <Button layoutX="577.0" layoutY="1.0" mnemonicParsing="false" onAction="#borrarFiguraX" text="borrarFiguraX" />
                 <Button layoutX="376.0" layoutY="1.0" mnemonicParsing="false" onAction="#CerrarCondicional" text="CerrarCondicional" />
+                <Button layoutX="1.0" layoutY="40.0" mnemonicParsing="false" onAction="#AjustarTamano" text="AjustarTamano" />
+                <Button layoutX="95.0" layoutY="40.0" fx:id="btnPseudocodigo" onAction="#MostrarVentana" text="Ingresar Pseudocódigo"/>
+                <Button layoutX="150.0" layoutY="40.0" mnemonicParsing="false" onAction="#InsertarX" text="Insertar en X Pos" />
             </AnchorPane>
         </content>
     </ScrollPane>
+
 
     <!-- Botones en el Lado Derecho -->
     <VBox alignment="CENTER_RIGHT" prefHeight="600.0" spacing="50" AnchorPane.bottomAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
@@ -52,6 +56,11 @@
             </font>
         </Button>
         <Button mnemonicParsing="false" onAction="#handleButton7Click" prefHeight="51.0" prefWidth="112.0" text="Mientras">
+            <font>
+                <Font size="14.0" />
+            </font>
+        </Button>
+        <Button mnemonicParsing="false" onAction="#handleButton8Click" prefHeight="30.0" prefWidth="117.0" text="Para">
             <font>
                 <Font size="14.0" />
             </font>

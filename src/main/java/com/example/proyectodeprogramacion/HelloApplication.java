@@ -40,13 +40,12 @@ public class HelloApplication extends Application {
 
     }
 
-/** ***/
     private void DibujarLineaLimite(Canvas canvas) {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.clearRect(0,0, canvas.getWidth(), canvas.getHeight());
         gc.setStroke(javafx.scene.paint.Color.BLACK);
         gc.setLineWidth(2.0);
-        gc.strokeLine(canvas.getWidth() - 140.0, 0, canvas.getWidth() - 140.0, canvas.getHeight());
+        //gc.strokeLine(canvas.getWidth() - 140.0, 0, canvas.getWidth() - 140.0, canvas.getHeight());
     }
 
     public static void main(String[] args) {
