@@ -22,7 +22,15 @@ public class HelloController {
     private boolean MientrasCerrado = false;
     private Decision decisionActual = null;
 
-    public abstract class Figura {
+    private ArrayList<Figura> cloneFigurasArreglo() {
+        ArrayList<Figura> clone = new ArrayList<>();
+        for (Figura figura : figurasarreglo) {
+            clone.add(figura.clone());
+        }
+        return clone;
+    }
+
+    public abstract class Figura implements Cloneable{
         public abstract boolean contienePunto(double x, double y);
 
         public abstract String getTexto();
@@ -80,6 +88,15 @@ public class HelloController {
             return y;
         }
 
+
+        @Override
+        public Figura clone() {
+            try {
+                return (Figura) super.clone();
+            } catch (CloneNotSupportedException e) {
+                throw new AssertionError(); // No debería ocurrir, ya que estamos implementando Cloneable
+            }
+        }
         public void setY(double y) {
             this.y = y;
         }
@@ -95,6 +112,7 @@ public class HelloController {
         public Figura() {
         }
     }
+
 
     @FXML
     public Canvas DibujoCanvas;
@@ -127,7 +145,8 @@ public class HelloController {
     }
 
     int Posicionado = 0;
-
+    private Stack<ArrayList<Figura>> undoStack = new Stack<>();
+    private Stack<ArrayList<Figura>> redoStack = new Stack<>();
     private boolean dentroDecision = false;
     private boolean ladoverdadero = true;
     int i = 0;
@@ -166,6 +185,7 @@ public class HelloController {
                 });
             } else {
                 if (x <= DibujoCanvas.getWidth() - 140.0) {
+                    guardarEstadoParaUndo();
                     if (!dentroDecision) {
                         // Crear figuras si no está dentro de una decisión
                         switch (figura) {
@@ -608,6 +628,12 @@ public class HelloController {
     public class InicioFin extends Figura {
         public String textoo;
 
+
+        @Override
+        public InicioFin clone() {
+            return (InicioFin) super.clone();
+        }
+
         public InicioFin(double x, double y) {
             super(x, y);
         }
@@ -809,6 +835,11 @@ public class HelloController {
             super(x, y);
         }
 
+        public Decision clone() {
+            Decision clone = (Decision) super.clone();
+            return clone;
+        }
+
         public Decision() {
             super();
         }
@@ -949,6 +980,12 @@ public class HelloController {
             super(x, y);
         }
 
+        @Override
+        public Documento clone() {
+            Documento clone = (Documento) super.clone();
+            return clone;
+        }
+
         public Documento() {
             super();
         }
@@ -1055,6 +1092,12 @@ public class HelloController {
             super(x, y);
         }
 
+        @Override
+        public EntradaSalida clone() {
+            EntradaSalida clone = (EntradaSalida) super.clone();
+            return clone;
+        }
+
         public EntradaSalida() {
             super();
         }
@@ -1159,6 +1202,12 @@ public class HelloController {
             super();
         }
 
+        @Override
+        public Mientras clone() {
+            Mientras clone = (Mientras) super.clone();
+            return clone;
+        }
+
         public String textoo;
 
         @Override
@@ -1243,6 +1292,12 @@ public class HelloController {
     public class Repetir extends Figura {
         public Repetir(double x, double y) {
             super(x, y);
+        }
+
+        @Override
+        public Repetir clone() {
+            Repetir clone = (Repetir) super.clone();
+            return clone;
         }
 
         public Repetir() {
@@ -1340,6 +1395,13 @@ public class HelloController {
             super(x, y);
         }
 
+        @Override
+        public Proceso clone() {
+            Proceso clone = (Proceso) super.clone();
+            // Copia profunda de los atributos específicos si es necesario
+            return clone;
+        }
+
         public Proceso() {
             super();
         }
@@ -1431,6 +1493,11 @@ public class HelloController {
     }
 
     public class Para extends Figura {
+        @Override
+        public Para clone() {
+            Para clone = (Para) super.clone();
+            return clone;
+        }
 
         private String texto1;
         private String texto2;
@@ -1638,6 +1705,9 @@ public class HelloController {
         GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
         // Limpiar el lienzo
         gc.clearRect(0, 0, DibujoCanvas.getWidth(), DibujoCanvas.getHeight());
+        setInicioX(figurasarreglo.get(0).getX()+50);
+        setInicioY(figurasarreglo.get(0).getY()+50);
+        ajustarflechas();
         for (Figura figura : figurasarreglo) {
             if (figura instanceof Proceso) {
                 Proceso proceso = (Proceso) figura;
@@ -2425,7 +2495,44 @@ public class HelloController {
         });
     }
 
+    private void ajustarflechas() {
+        if (inicioX != -1 && inicioY != -1) {
+            System.out.println(figurasarreglo.get(1).getX());
+            System.out.println(figurasarreglo.get(1).getY());
+            for (int i = 1; i < figurasarreglo.size(); i++) {
+                figurasarreglo.get(i).setInicioFlechaX(figurasarreglo.get(i).getX() + 50);
+                figurasarreglo.get(i).setInicioFlechaY(figurasarreglo.get(i).getY() + 50);
+                figurasarreglo.get(i - 1).setFinFlechaX(figurasarreglo.get(i).getX() + 50);
+                figurasarreglo.get(i - 1).setFinFlechaY(figurasarreglo.get(i).getY());
 
+            }
+        }
+    }
+
+    private void guardarEstadoParaUndo() {
+        ArrayList<Figura> copia = new ArrayList<>(figurasarreglo.size());
+        for (Figura figura : figurasarreglo) {
+            copia.add(figura.clone());
+        }
+        undoStack.push(copia);
+    }
+    @FXML
+    public void Undo() {
+        if (!undoStack.isEmpty()) {
+            redoStack.push(cloneFigurasArreglo());
+            figurasarreglo.clear();
+            figurasarreglo.addAll(undoStack.pop());
+            redibujarFiguras();
+        }
+    }
+    @FXML
+    public void Redo() {
+        if (!redoStack.isEmpty()) {
+            undoStack.push(cloneFigurasArreglo());
+            figurasarreglo.addAll(redoStack.pop());
+            redibujarFiguras();
+        }
+    }
     @FXML
     private void handleButton1Click() {
         figura = "boton6";
