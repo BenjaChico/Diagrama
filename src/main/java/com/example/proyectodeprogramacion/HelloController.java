@@ -17,17 +17,17 @@ import java.util.List;
 import java.util.Stack;
 
 public class HelloController {
-    private final ArrayList<Figura> figurasarreglo = new ArrayList<>();
+    private ArrayList<Figura> figurasarreglo = new ArrayList<>();
     private Stack<Decision> decisionStack = new Stack<>();
     private boolean MientrasCerrado = false;
     private Decision decisionActual = null;
 
     private ArrayList<Figura> cloneFigurasArreglo() {
-        ArrayList<Figura> clone = new ArrayList<>();
+        ArrayList<Figura> copia = new ArrayList<>(figurasarreglo.size());
         for (Figura figura : figurasarreglo) {
-            clone.add(figura.clone());
+            copia.add(figura.clone());
         }
-        return clone;
+        return copia;
     }
 
     public abstract class Figura implements Cloneable{
@@ -324,6 +324,15 @@ public class HelloController {
                                     para.setFinFlechaY(y);
                                 }
                         }
+
+                        // Limpiar el redoStack
+                        redoStack.clear();
+
+                        // Guardar estado actual para Undo
+                        guardarEstadoParaUndo();
+
+                        // Redibujar todas las figuras
+                        redibujarFiguras();
                     } else {
                         if(figurasarreglo.get(figurasarreglo.size()-1) instanceof Decision){
                             decisionAux = figurasarreglo.get(figurasarreglo.size()-1);
@@ -466,7 +475,17 @@ public class HelloController {
                                     }
                                     // Otros casos de figuras dentro de una decisión
                             }
-                        }else if(ladoverdadero == false){
+
+                            // Limpiar el redoStack
+                            redoStack.clear();
+
+                            // Guardar estado actual para Undo
+                            guardarEstadoParaUndo();
+
+                            // Redibujar todas las figuras
+                            redibujarFiguras();
+                        }
+                        else if(ladoverdadero == false){
                             switch (figura) {
                                 case "boton6":
                                     Repetir repetir = new Repetir(x, y);
@@ -601,8 +620,14 @@ public class HelloController {
                                     }
                             }
 
+                            // Limpiar el redoStack
+                            redoStack.clear();
 
+                            // Guardar estado actual para Undo
+                            guardarEstadoParaUndo();
 
+                            // Redibujar todas las figuras
+                            redibujarFiguras();
                         }
                     }
                 } else {
@@ -1280,7 +1305,7 @@ public class HelloController {
             gc.setFont(new Font(tamanotexto + 5));
             gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) - 10, y + 55);
             gc.stroke();
-            }
+        }
 
         @Override
         public String generarPseudocodigo() {
@@ -1357,21 +1382,21 @@ public class HelloController {
             while (tamanotexto * texto.length() > 140) {
                 tamanotexto -= 1;
 
-            setTexto(texto);
-            gc.beginPath();
-            gc.moveTo(x, y);
-            gc.lineTo(x + 70, y + 50);
-            gc.lineTo(x, y + 100);
-            gc.lineTo(x - 70, y + 50);
-            gc.closePath();
-            //Flecha izquierda
-            gc.moveTo(x - 70, y + 50);
-            gc.lineTo(x - 100, y + 50);
+                setTexto(texto);
+                gc.beginPath();
+                gc.moveTo(x, y);
+                gc.lineTo(x + 70, y + 50);
+                gc.lineTo(x, y + 100);
+                gc.lineTo(x - 70, y + 50);
+                gc.closePath();
+                //Flecha izquierda
+                gc.moveTo(x - 70, y + 50);
+                gc.lineTo(x - 100, y + 50);
 
 
-            gc.setFont(new Font(tamanotexto + 5));
-            gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) - 10, y + 55);
-            gc.stroke();
+                gc.setFont(new Font(tamanotexto + 5));
+                gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) - 10, y + 55);
+                gc.stroke();
             }
         }
 
@@ -1705,30 +1730,38 @@ public class HelloController {
         GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
         // Limpiar el lienzo
         gc.clearRect(0, 0, DibujoCanvas.getWidth(), DibujoCanvas.getHeight());
-        setInicioX(figurasarreglo.get(0).getX()+50);
-        setInicioY(figurasarreglo.get(0).getY()+50);
-        ajustarflechas();
+
         for (Figura figura : figurasarreglo) {
             if (figura instanceof Proceso) {
                 Proceso proceso = (Proceso) figura;
                 proceso.DibujarProceso_Denuevo(gc, figura.getX(), figura.getY());
-                DibujarFlecha(proceso.getInicioFlechaX(), proceso.getInicioFlechaY(), proceso.getFinFlechaX(), proceso.getFinFlechaY());
+                if (proceso.getInicioFlechaX() != -1 && proceso.getInicioFlechaY() != -1) {
+                    DibujarFlecha(proceso.getInicioFlechaX(), proceso.getInicioFlechaY(), proceso.getFinFlechaX(), proceso.getFinFlechaY());
+                }
             } else if (figura instanceof Decision) {
                 Decision decision = (Decision) figura;
                 decision.DibujarDecision_Denuevo(gc, gc, figura.getX(), figura.getY());
-                DibujarFlecha(decision.getInicioFlechaX(), decision.getInicioFlechaY(), decision.getFinFlechaX(), decision.getFinFlechaY());
+                if (decision.getInicioFlechaX() != -1 && decision.getInicioFlechaY() != -1) {
+                    DibujarFlecha(decision.getInicioFlechaX(), decision.getInicioFlechaY(), decision.getFinFlechaX(), decision.getFinFlechaY());
+                }
             } else if (figura instanceof EntradaSalida) {
                 EntradaSalida entradaSalida = (EntradaSalida) figura;
                 entradaSalida.Dibujar_Entrada_Salida_Denuevo(gc, figura.getX(), figura.getY());
-                DibujarFlecha(entradaSalida.getInicioFlechaX(), entradaSalida.getInicioFlechaY(), entradaSalida.getFinFlechaX(), entradaSalida.getFinFlechaY());
+                if (entradaSalida.getInicioFlechaX() != -1 && entradaSalida.getInicioFlechaY() != -1) {
+                    DibujarFlecha(entradaSalida.getInicioFlechaX(), entradaSalida.getInicioFlechaY(), entradaSalida.getFinFlechaX(), entradaSalida.getFinFlechaY());
+                }
             } else if (figura instanceof Documento) {
                 Documento documento = (Documento) figura;
                 documento.Dibujar_Documento_Denuevo(gc, figura.getX(), figura.getY());
-                DibujarFlecha(documento.getInicioFlechaX(), documento.getInicioFlechaY(), documento.getFinFlechaX(), documento.getFinFlechaY());
+                if (documento.getInicioFlechaX() != -1 && documento.getInicioFlechaY() != -1) {
+                    DibujarFlecha(documento.getInicioFlechaX(), documento.getInicioFlechaY(), documento.getFinFlechaX(), documento.getFinFlechaY());
+                }
             } else if (figura instanceof InicioFin) {
                 InicioFin inicioFin = (InicioFin) figura;
                 inicioFin.DibujarInicioFin_Denuevo(gc, figura.getX(), figura.getY());
-                DibujarFlecha(inicioFin.getInicioFlechaX(), inicioFin.getInicioFlechaY(), inicioFin.getFinFlechaX(), inicioFin.getFinFlechaY());
+                if (inicioFin.getInicioFlechaX() != -1 && inicioFin.getInicioFlechaY() != -1) {
+                    DibujarFlecha(inicioFin.getInicioFlechaX(), inicioFin.getInicioFlechaY(), inicioFin.getFinFlechaX(), inicioFin.getFinFlechaY());
+                }
             }
         }
     }
@@ -2304,12 +2337,21 @@ public class HelloController {
         });
     }
 
+
+    private String pseudocodigoTexto = "";
+
     public void MostrarVentana(){
         Stage ventana = new Stage();
         ventana.setTitle("Pseudocodigo: ");
 
         TextArea textArea = new TextArea();
         textArea.setPrefHeight(400);
+        textArea.setText(pseudocodigoTexto); // Restaurar el contenido del TextArea
+
+        // Listener para actualizar la variable cuando el texto cambie
+        textArea.textProperty().addListener((observable, oldValue, newValue) -> {
+            pseudocodigoTexto = newValue;
+        });
 
         Button btnConvertir = new Button("Convertir a Diagrama");
         btnConvertir.setOnAction(event -> convertirPseudocodigoADiagrama(textArea.getText()));
@@ -2323,6 +2365,8 @@ public class HelloController {
 
     private void convertirPseudocodigoADiagrama(String pseudocodigo) {
         GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
+        guardarEstadoParaUndo();
+
         String[] lineas = pseudocodigo.split("\n");
         double x; // Coordenada inicial X
         double y; // Coordenada inicial Y
@@ -2348,7 +2392,7 @@ public class HelloController {
                 String texto = linea.substring("Algoritmo".length()).trim();
                 InicioFin inicioFin = new InicioFin(x, y);
                 inicioFin.setTexto(texto);
-                inicioFin.DibujarInicioFin_pseudo(gc, x, y, texto);
+                inicioFin.DibujarInicioFin_pseudo(gc, x, y + 25, texto);
                 figurasarreglo.add(inicioFin);
                 if (inicioX != -1 && inicioY != -1) {
                     DibujarFlecha(inicioX, inicioY, x + 50, y);
@@ -2466,8 +2510,31 @@ public class HelloController {
                     para.setFinFlechaY(y);
                 }
             }
+            else if (linea.startsWith("Documento")){
+                String texto = linea.substring("Documento".length()).trim();
+                Documento documento = new Documento(x, y);
+                documento.Dibujar_Documento_Pseudo(gc, x, y, texto);
+                figurasarreglo.add(i,documento);
+                if (inicioX != -1 && inicioY != -1) {
+                    DibujarFlecha(inicioX, inicioY, x + 50, y);
+                    documento.setInicioFlechaX(inicioX);
+                    documento.setInicioFlechaY(inicioY);
+                    documento.setFinFlechaX(x + 50);
+                    documento.setFinFlechaY(y);
+                }
+                inicioX = x + 50;
+                inicioY = y + 55;
+            }
             y += incrementoY;
         }
+        // Limpiar el redoStack
+        redoStack.clear();
+
+        // Guardar estado actual para Undo
+        guardarEstadoParaUndo();
+
+        // Redibujar todas las figuras
+        redibujarFiguras();
     }
 
 
@@ -2509,6 +2576,8 @@ public class HelloController {
         }
     }
 
+
+
     private void guardarEstadoParaUndo() {
         ArrayList<Figura> copia = new ArrayList<>(figurasarreglo.size());
         for (Figura figura : figurasarreglo) {
@@ -2516,23 +2585,41 @@ public class HelloController {
         }
         undoStack.push(copia);
     }
+
     @FXML
     public void Undo() {
         if (!undoStack.isEmpty()) {
             redoStack.push(cloneFigurasArreglo());
-            figurasarreglo.clear();
-            figurasarreglo.addAll(undoStack.pop());
+            figurasarreglo = undoStack.pop();
+            if (!figurasarreglo.isEmpty()) {
+                Figura ultimaFigura = figurasarreglo.get(figurasarreglo.size() - 1);
+                setInicioX(ultimaFigura.getX() + 50);
+                setInicioY(ultimaFigura.getY() + 50);
+            } else {
+                setInicioX(-1);
+                setInicioY(-1);
+            }
             redibujarFiguras();
         }
     }
+
     @FXML
     public void Redo() {
         if (!redoStack.isEmpty()) {
             undoStack.push(cloneFigurasArreglo());
-            figurasarreglo.addAll(redoStack.pop());
+            figurasarreglo = redoStack.pop();
+            if (!figurasarreglo.isEmpty()) {
+                Figura ultimaFigura = figurasarreglo.get(figurasarreglo.size() - 1);
+                setInicioX(ultimaFigura.getX() + 50);
+                setInicioY(ultimaFigura.getY() + 50);
+            } else {
+                setInicioX(-1);
+                setInicioY(-1);
+            }
             redibujarFiguras();
         }
     }
+
     @FXML
     private void handleButton1Click() {
         figura = "boton6";
