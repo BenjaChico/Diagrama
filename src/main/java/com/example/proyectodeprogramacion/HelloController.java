@@ -21,6 +21,7 @@ public class HelloController {
     private Stack<Decision> decisionStack = new Stack<>();
     private boolean MientrasCerrado = false;
     private Decision decisionActual = null;
+    private String pseudocodigoTexto = "";
 
     private ArrayList<Figura> cloneFigurasArreglo() {
         ArrayList<Figura> copia = new ArrayList<>(figurasarreglo.size());
@@ -1287,8 +1288,8 @@ public class HelloController {
             double tamanotexto = gc.getFont().getSize();
             while (tamanotexto * texto.length() > 140) {
                 tamanotexto -= 1;
-
             }
+
             setTexto(texto);
             gc.beginPath();
             gc.moveTo(x, y);
@@ -2337,9 +2338,6 @@ public class HelloController {
         });
     }
 
-
-    private String pseudocodigoTexto = "";
-
     public void MostrarVentana(){
         Stage ventana = new Stage();
         ventana.setTitle("Pseudocodigo: ");
@@ -2459,7 +2457,7 @@ public class HelloController {
             }
 
             else if (linea.startsWith("Mientras")) {
-                String texto = linea.substring("Mientras".length(), linea.indexOf("Hacer")).trim();
+                String texto = linea.substring("Mientras".length()).trim();
                 Mientras mientras = new Mientras(x, y);
                 mientras.setTexto(texto);
                 mientras.DibujarMientras_Pseudo(gc, gc, x, y, texto);
