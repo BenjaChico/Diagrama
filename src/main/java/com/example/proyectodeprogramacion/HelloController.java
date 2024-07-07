@@ -10,6 +10,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.ArcType;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import org.controlsfx.control.tableview2.filter.filtereditor.SouthFilter;
 
 import java.util.Optional;
 import java.util.ArrayList;
@@ -21,6 +22,8 @@ public class HelloController {
     private Stack<Decision> decisionStack = new Stack<>();
     private boolean MientrasCerrado = false;
     private Decision decisionActual = null;
+
+
 
     private ArrayList<Figura> cloneFigurasArreglo() {
         ArrayList<Figura> copia = new ArrayList<>(figurasarreglo.size());
@@ -38,6 +41,7 @@ public class HelloController {
         public abstract void setTexto(String texto);
 
         public abstract String generarPseudocodigo();
+
 
         public double getX() {
             return x;
@@ -147,6 +151,7 @@ public class HelloController {
     int Posicionado = 0;
     private Stack<ArrayList<Figura>> undoStack = new Stack<>();
     private Stack<ArrayList<Figura>> redoStack = new Stack<>();
+    public ArrayList <String> validacion = new ArrayList<>();
     private boolean dentroDecision = false;
     private boolean ladoverdadero = true;
     int i = 0;
@@ -892,34 +897,42 @@ public class HelloController {
             dialog.setHeaderText(null);
             dialog.setContentText("Texto Decisión:");
 
-            dialog.showAndWait().ifPresent(texto -> {
-                textoo = texto;
-                double tamanotexto = gc.getFont().getSize();
-                while (tamanotexto * texto.length() > 140) {
-                    tamanotexto -= 1;
+            Optional<String> result = dialog.showAndWait();
+            if (result.isPresent()) {
+                String texto = result.get();
+                if (validacion.contains(texto)) {
+                    double tamanotexto = gc.getFont().getSize();
+                    while (tamanotexto * texto.length() > 140) {
+                        tamanotexto -= 1;
+                    }
+                    setTexto(texto);
+                    gc.beginPath();
+                    gc.moveTo(x, y);
+                    gc.lineTo(x + 70, y + 50);
+                    gc.lineTo(x, y + 100);
+                    gc.lineTo(x - 70, y + 50);
+                    gc.closePath();
+                    gc.moveTo(x - 70, y + 50);
+                    gc.lineTo(x - 150, y + 50);
+                    gc.moveTo(x + 70, y + 50);
+                    gc.lineTo(x + 150, y + 50);
 
+                    gc2.setFont(new Font(15));
+                    gc2.strokeText("V", x - 130, y + 45);
+                    gc2.strokeText("F", x + 120, y + 45);
+
+                    gc.setFont(new Font(tamanotexto + 5));
+                    gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) - 10, y + 55);
+                    gc.stroke();
+                } else {
+                    // Mostrar un mensaje de error si el texto no está en validacion
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error de validación");
+                    alert.setHeaderText(null);
+                    alert.setContentText("El texto de decisión debe ser uno de los elementos válidos en la lista.");
+                    alert.showAndWait();
                 }
-                setTexto(texto);
-                gc.beginPath();
-                gc.moveTo(x, y);
-                gc.lineTo(x + 70, y + 50);
-                gc.lineTo(x, y + 100);
-                gc.lineTo(x - 70, y + 50);
-                gc.closePath();
-                gc.moveTo(x - 70, y + 50);
-                gc.lineTo(x - 150, y + 50);
-                gc.moveTo(x + 70, y + 50);
-                gc.lineTo(x + 150, y + 50);
-
-                gc2.setFont(new Font(15));
-                gc2.strokeText("V", x - 130, y + 45);
-                gc2.strokeText("F", x + 120, y + 45);
-
-
-                gc.setFont(new Font(tamanotexto + 5));
-                gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) - 10, y + 55);
-                gc.stroke();
-            });
+            }
 
         }
 
@@ -1180,7 +1193,8 @@ public class HelloController {
                 gc.setFont(new Font(20));
                 gc.strokeText(texto, x + 20, y + 30);
                 gc.stroke();
-                System.out.println(figurasarreglo.size());
+                validacion.add(textoo);
+                System.out.println(validacion.get(i));
             });
         }
 
