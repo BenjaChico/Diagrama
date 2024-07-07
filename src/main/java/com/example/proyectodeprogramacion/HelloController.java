@@ -2646,6 +2646,7 @@ public class HelloController {
         figura = "boton4";
     }
 
+
     @FXML
     private void handleButton6Click() {
         figura = "boton5";
