@@ -192,34 +192,51 @@ public class HelloController {
                             case "boton6":
                                 Repetir repetir = new Repetir(x, y);
                                 repetir.DibujarRepetir(gc, x, y);
-                                figurasarreglo.add(i,repetir);
+                                figurasarreglo.add(i, repetir);
                                 if (inicioX != -1 && inicioY != -1) {
-                                    DibujarFlecha(inicioX, inicioY, x, y);
+                                    if (InsercionActiva) {
+                                        DibujarFlecha(inicioX, inicioY, x, y);
+                                        System.out.println("Dibujare flecha exigida");
+                                        repetir.setInicioFlechaX(inicioX);
+                                        repetir.setInicioFlechaY(inicioY);
+                                        repetir.setFinFlechaX(x);
+                                        repetir.setFinFlechaY(y);
+                                    } else {
+                                        DibujarFlecha(inicioX, inicioY, x, y);
+                                    }
                                     repetir.setInicioFlechaX(inicioX);
                                     repetir.setInicioFlechaY(inicioY);
                                     repetir.setFinFlechaX(x);
                                     repetir.setFinFlechaY(y);
                                 }
                                 inicioX = x;
-                                i=figurasarreglo.size();
                                 inicioY = y + 100;
                                 InsercionActiva = false;
                                 break;
                             case "boton1":
                                 InicioFin inicioFin = new InicioFin(x, y);
                                 inicioFin.DibujarInicioFin(gc, x, y + 25);
-                                figurasarreglo.add(i,inicioFin);
+                                figurasarreglo.add(i, inicioFin);
                                 if (inicioX != -1 && inicioY != -1) {
-                                    DibujarFlecha(inicioX, inicioY, x + 50, y);
-                                    inicioFin.setInicioFlechaX(inicioX);
-                                    inicioFin.setInicioFlechaY(inicioY);
-                                    inicioFin.setFinFlechaX(x + 50);
-                                    inicioFin.setFinFlechaY(y);
+                                    if (InsercionActiva) {
+                                        DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                        System.out.println("Dibujare flecha exigida");
+                                        inicioFin.setInicioFlechaX(inicioX);
+                                        inicioFin.setInicioFlechaY(inicioY);
+                                        inicioFin.setFinFlechaX(x + 50);
+                                        inicioFin.setFinFlechaY(y);
+                                    } else {
+                                        DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                        inicioFin.setInicioFlechaX(inicioX);
+                                        inicioFin.setInicioFlechaY(inicioY);
+                                        inicioFin.setFinFlechaX(x + 50);
+                                        inicioFin.setFinFlechaY(y);
+                                    }
                                 }
                                 inicioX = x + 50;
-                                i=figurasarreglo.size();
                                 inicioY = y + 50;
                                 InsercionActiva = false;
+                                i = figurasarreglo.size();
                                 break;
                             case "boton2":
                                 Proceso proceso = new Proceso(x, y);
@@ -251,78 +268,129 @@ public class HelloController {
                             case "boton3":
                                 Decision decision = new Decision(x, y);
                                 decision.DibujarDecision(gc, gc2, x, y);
-                                figurasarreglo.add(i,decision);
+                                figurasarreglo.add(i, decision);
                                 if (inicioX != -1 && inicioY != -1) {
-                                    DibujarFlecha(inicioX, inicioY, x, y);
-                                    decision.setInicioFlechaX(inicioX);
-                                    decision.setInicioFlechaY(inicioY);
-                                    decision.setFinFlechaX(x);
-                                    decision.setFinFlechaY(y);
+                                    if (InsercionActiva) {
+                                        DibujarFlecha(inicioX, inicioY, x, y);
+                                        System.out.println("Dibujare flecha exigida");
+                                        decision.setInicioFlechaX(inicioX);
+                                        decision.setInicioFlechaY(inicioY);
+                                        decision.setFinFlechaX(x);
+                                        decision.setFinFlechaY(y);
+                                    } else {
+                                        DibujarFlecha(inicioX, inicioY, x, y);
+                                        decision.setInicioFlechaX(inicioX);
+                                        decision.setInicioFlechaY(inicioY);
+                                        decision.setFinFlechaX(x);
+                                        decision.setFinFlechaY(y);
+                                    }
                                 }
                                 inicioX = x - 150;
-                                i=figurasarreglo.size();
                                 inicioY = y + 50;
                                 dentroDecision = true;
                                 InsercionActiva = false;
+                                i = figurasarreglo.size();
                                 break;
                             case "boton4":
                                 EntradaSalida entradaSalida = new EntradaSalida(x, y);
                                 entradaSalida.Dibujar_Entrada_Salida(gc, x, y);
-                                figurasarreglo.add(i,entradaSalida);
+                                figurasarreglo.add(i, entradaSalida);
                                 if (inicioX != -1 && inicioY != -1) {
-                                    DibujarFlecha(inicioX, inicioY, x + 50, y);
-                                    entradaSalida.setInicioFlechaX(inicioX);
-                                    entradaSalida.setInicioFlechaY(inicioY);
-                                    entradaSalida.setFinFlechaX(x + 50);
-                                    entradaSalida.setFinFlechaY(y);
+                                    if (InsercionActiva) {
+                                        DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                        System.out.println("Dibujare flecha exigida");
+                                        entradaSalida.setInicioFlechaX(inicioX);
+                                        entradaSalida.setInicioFlechaY(inicioY);
+                                        entradaSalida.setFinFlechaX(x + 50);
+                                        entradaSalida.setFinFlechaY(y);
+                                    } else {
+                                        DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                        entradaSalida.setInicioFlechaX(inicioX);
+                                        entradaSalida.setInicioFlechaY(inicioY);
+                                        entradaSalida.setFinFlechaX(x + 50);
+                                        entradaSalida.setFinFlechaY(y);
+                                    }
                                 }
                                 inicioX = x + 50;
-                                i=figurasarreglo.size();
                                 inicioY = y + 50;
                                 InsercionActiva = false;
+                                i = figurasarreglo.size();
                                 break;
                             case "boton5":
                                 Documento documento = new Documento(x, y);
                                 documento.Dibujar_Documento(gc, x, y);
-                                figurasarreglo.add(i,documento);
+                                figurasarreglo.add(i, documento);
                                 if (inicioX != -1 && inicioY != -1) {
-                                    DibujarFlecha(inicioX, inicioY, x + 50, y);
-                                    documento.setInicioFlechaX(inicioX);
-                                    documento.setInicioFlechaY(inicioY);
-                                    documento.setFinFlechaX(x + 50);
-                                    documento.setFinFlechaY(y);
+                                    if (InsercionActiva) {
+                                        DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                        System.out.println("Dibujare flecha exigida");
+                                        documento.setInicioFlechaX(inicioX);
+                                        documento.setInicioFlechaY(inicioY);
+                                        documento.setFinFlechaX(x + 50);
+                                        documento.setFinFlechaY(y);
+                                    } else {
+                                        DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                        documento.setInicioFlechaX(inicioX);
+                                        documento.setInicioFlechaY(inicioY);
+                                        documento.setFinFlechaX(x + 50);
+                                        documento.setFinFlechaY(y);
+                                    }
                                 }
                                 inicioX = x + 50;
-                                i=figurasarreglo.size();
                                 inicioY = y + 55;
                                 InsercionActiva = false;
+                                i = figurasarreglo.size();
                                 break;
                             case "boton7":
                                 Mientras mientras = new Mientras(x, y);
                                 mientras.DibujarMientras(gc, gc2, x, y);
-                                figurasarreglo.add(i,mientras);
+                                figurasarreglo.add(i, mientras);
                                 if (inicioX != -1 && inicioY != -1) {
-                                    DibujarFlecha(inicioX, inicioY, x, y);
-                                    mientras.setInicioFlechaX(inicioX);
-                                    mientras.setInicioFlechaY(inicioY);
-                                    mientras.setFinFlechaX(x);
-                                    mientras.setFinFlechaY(y);
+                                    if (InsercionActiva) {
+                                        DibujarFlecha(inicioX, inicioY, x, y);
+                                        System.out.println("Dibujare flecha exigida");
+                                        mientras.setInicioFlechaX(inicioX);
+                                        mientras.setInicioFlechaY(inicioY);
+                                        mientras.setFinFlechaX(x);
+                                        mientras.setFinFlechaY(y);
+                                    } else {
+                                        DibujarFlecha(inicioX, inicioY, x, y);
+                                        mientras.setInicioFlechaX(inicioX);
+                                        mientras.setInicioFlechaY(inicioY);
+                                        mientras.setFinFlechaX(x);
+                                        mientras.setFinFlechaY(y);
+                                    }
                                 }
                                 inicioX = x;
-                                i=figurasarreglo.size();
                                 inicioY = y + 100;
                                 InsercionActiva = false;
+                                i = figurasarreglo.size();
                                 break;
                             case "boton8":
                                 Para para = new Para(x, y);
                                 para.DibujarPara(gc);
-                                figurasarreglo.add(i,para);
-                                if(inicioX != -1 && inicioY != -1){
-                                    para.setInicioFlechaX(inicioX);
-                                    para.setInicioFlechaY(inicioY);
-                                    para.setFinFlechaX(x);
-                                    para.setFinFlechaY(y);
+                                figurasarreglo.add(i, para);
+                                if (inicioX != -1 && inicioY != -1) {
+                                    if (InsercionActiva) {
+                                        DibujarFlecha(inicioX, inicioY, x, y);
+                                        System.out.println("Dibujare flecha exigida");
+                                        para.setInicioFlechaX(inicioX);
+                                        para.setInicioFlechaY(inicioY);
+                                        para.setFinFlechaX(x);
+                                        para.setFinFlechaY(y);
+                                    } else {
+                                        DibujarFlecha(inicioX, inicioY, x, y);
+                                        para.setInicioFlechaX(inicioX);
+                                        para.setInicioFlechaY(inicioY);
+                                        para.setFinFlechaX(x);
+                                        para.setFinFlechaY(y);
+                                    }
                                 }
+                                inicioX = x;
+                                inicioY = y + 50; // Ajusta este valor si es necesario
+                                InsercionActiva = false;
+                                i = figurasarreglo.size();
+                                break;
                         }
 
                         // Limpiar el redoStack
