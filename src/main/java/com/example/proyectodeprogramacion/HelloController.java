@@ -153,6 +153,7 @@ public class HelloController {
     int i = 0;
     private Figura decisionAux;
     public void initialize() {
+        iniciarDiagramaConInicioFin();
         DibujoCanvas.setOnMouseClicked(event -> {
             double x = event.getX();
             double y = event.getY();
@@ -208,18 +209,18 @@ public class HelloController {
                                 break;
                             case "boton1":
                                 InicioFin inicioFin = new InicioFin(x, y);
-                                inicioFin.DibujarInicioFin(gc, x, y + 25);
+                                inicioFin.DibujarInicioFin(gc, x, y);
                                 figurasarreglo.add(i,inicioFin);
                                 if (inicioX != -1 && inicioY != -1) {
-                                    DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                    DibujarFlecha(inicioX, inicioY, x + 50, y - 25);
                                     inicioFin.setInicioFlechaX(inicioX);
                                     inicioFin.setInicioFlechaY(inicioY);
                                     inicioFin.setFinFlechaX(x + 50);
-                                    inicioFin.setFinFlechaY(y);
+                                    inicioFin.setFinFlechaY(y - 25);
                                 }
                                 inicioX = x + 50;
                                 i=figurasarreglo.size();
-                                inicioY = y + 50;
+                                inicioY = y + 25;
                                 InsercionActiva = false;
                                 break;
                             case "boton2":
@@ -360,15 +361,15 @@ public class HelloController {
                                     break;
                                 case "boton1":
                                     InicioFin inicioFin = new InicioFin(x, y);
-                                    inicioFin.DibujarInicioFin(gc, x, y + 25);
+                                    inicioFin.DibujarInicioFin(gc, x, y);
                                     figurasarreglo.add(i,inicioFin);
                                     decisionX.Verdadero.add(inicioFin);
                                     if (inicioX != -1 && inicioY != -1) {
-                                        DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                        DibujarFlecha(inicioX, inicioY, x + 50, y - 25);
                                         inicioFin.setInicioFlechaX(inicioX);
                                         inicioFin.setInicioFlechaY(inicioY);
                                         inicioFin.setFinFlechaX(x + 50);
-                                        inicioFin.setFinFlechaY(y);
+                                        inicioFin.setFinFlechaY(y - 25);
                                     }
                                     inicioX = x + 50;
                                     i=figurasarreglo.size();
@@ -507,15 +508,15 @@ public class HelloController {
                                     break;
                                 case "boton1":
                                     InicioFin inicioFin = new InicioFin(x, y);
-                                    inicioFin.DibujarInicioFin(gc, x, y + 25);
+                                    inicioFin.DibujarInicioFin(gc, x, y);
                                     figurasarreglo.add(i,inicioFin);
                                     decisionX.Falso.add(inicioFin);
                                     if (inicioX != -1 && inicioY != -1) {
-                                        DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                        DibujarFlecha(inicioX, inicioY, x + 50, y - 25);
                                         inicioFin.setInicioFlechaX(inicioX);
                                         inicioFin.setInicioFlechaY(inicioY);
                                         inicioFin.setFinFlechaX(x + 50);
-                                        inicioFin.setFinFlechaY(y);
+                                        inicioFin.setFinFlechaY(y - 25);
                                     }
                                     inicioX = x + 50;
                                     i=figurasarreglo.size();
@@ -649,6 +650,28 @@ public class HelloController {
             gc.strokeLine(finalX, finalY, finalX - TamañoFlecha * Math.cos(angulo - Math.PI / 6), finalY - TamañoFlecha * Math.sin(angulo - Math.PI / 6));
             gc.strokeLine(finalX, finalY, finalX - TamañoFlecha * Math.cos(angulo + Math.PI / 6), finalY - TamañoFlecha * Math.sin(angulo + Math.PI / 6));
         }
+    }
+
+
+    private void iniciarDiagramaConInicioFin() {
+        // Coordenadas iniciales para la figura de "Inicio/Fin"
+        int x = 300;
+        int y = 100;
+
+        // Crear la figura de "Inicio/Fin"
+        InicioFin inicioFin = new InicioFin(x, y);
+        inicioFin.setTexto("Inicio/Fin");
+
+        // Agregar la figura al arreglo de figuras
+        figurasarreglo.add(inicioFin);
+
+        // Dibujar la figura de "Inicio/Fin"
+        GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
+        inicioFin.DibujarInicioFin(gc, x, y);
+
+        // Ajustar las coordenadas de inicio para las siguientes figuras
+        inicioX = x + 50;
+        inicioY = y + 25;
     }
 
     public class InicioFin extends Figura {
@@ -1715,6 +1738,7 @@ public class HelloController {
         inicioX = -1;
         inicioY = -1;
         figurasarreglo.clear();
+        iniciarDiagramaConInicioFin();
     }
 
     private Figura obtenerFiguraClicada(double x, double y) {
