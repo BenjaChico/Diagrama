@@ -269,7 +269,7 @@ public class HelloController {
                                     break;
                                 case "boton7":
                                     Mientras mientras = new Mientras(x, y);
-                                    mientras.DibujarMientras(gc, gc2, x, y);
+                                    mientras.DibujarMientras(gc,x, y);
                                     figurasarreglo.add(i, mientras);
                                     if (inicioX != -1 && inicioY != -1) {
                                         DibujarFlecha(inicioX, inicioY, x, y);
@@ -417,7 +417,7 @@ public class HelloController {
                                     break;
                                 case "boton7":
                                     Mientras mientras = new Mientras(x, y);
-                                    mientras.DibujarMientras(gc, gc2, x, y);
+                                    mientras.DibujarMientras(gc, x, y);
                                     figurasarreglo.add(i,mientras);
                                     decisionX.Verdadero.add(mientras);
                                     if (inicioX != -1 && inicioY != -1) {
@@ -559,7 +559,7 @@ public class HelloController {
                                     break;
                                 case "boton7":
                                     Mientras mientras = new Mientras(x, y);
-                                    mientras.DibujarMientras(gc, gc2, x, y);
+                                    mientras.DibujarMientras(gc, x, y);
                                     figurasarreglo.add(i,mientras);
                                     decisionX.Falso.add(mientras);
                                     if (inicioX != -1 && inicioY != -1) {
@@ -1153,7 +1153,7 @@ public class HelloController {
         }
         @Override
         public void setTexto(String texto) {
-
+            this.textoo = texto;
         }
 
         public void DibujarMientras_Denuevo(GraphicsContext gc, GraphicsContext gc2, double x, double y) {
@@ -1181,13 +1181,44 @@ public class HelloController {
             gc.stroke();
         };
 
-        public void DibujarMientras(GraphicsContext gc, GraphicsContext gc2, double x, double y) {
-            TextInputDialog dialog = new TextInputDialog();
-            dialog.setTitle("Texto Mientras");
-            dialog.setHeaderText(null);
-            dialog.setContentText("Texto Mientras:");
-            dialog.showAndWait().ifPresent(texto -> {
-                textoo = texto;
+        public void DibujarMientras(GraphicsContext gc, double x, double y) {
+            String texto = null;
+            boolean textoValido = false;
+            while (!textoValido) {
+                TextInputDialog dialog = new TextInputDialog();
+                dialog.setTitle("Texto Repetir");
+                dialog.setHeaderText(null);
+                dialog.setContentText("Texto Repetir:");
+                Optional<String> result = dialog.showAndWait();
+                if (result.isPresent()) {
+                    texto = result.get();
+                    if (texto.length() == 5 && texto.charAt(1) == ' ' && texto.charAt(3) == ' ' &&
+                            (texto.charAt(2) == '>' || texto.charAt(2) == '<' || texto.charAt(2) == '=')) {
+                        String[] partes = texto.split(" ");
+                        String parte1 = partes[0];
+                        String parte2 = partes[2];
+                        if (validacion.contains(parte1) && validacion.contains(parte2)) {
+                            textoValido = true;
+                        } else {
+                            // Mostrar un mensaje de error si las partes no están en validacion
+                            Alert alert = new Alert(Alert.AlertType.ERROR);
+                            alert.setTitle("Error de validación");
+                            alert.setHeaderText(null);
+                            alert.setContentText("El texto de decisión debe contener elementos válidos en la lista.");
+                            alert.showAndWait();
+                        }
+                    } else {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error de formato");
+                        alert.setHeaderText(null);
+                        alert.setContentText("El texto de decisión debe estar en el formato 'a > b', 'b < a'.");
+                        alert.showAndWait();
+                    }
+                } else {
+                    break;
+                }
+            }
+            if (textoValido) {
                 double tamanotexto = gc.getFont().getSize();
                 while (tamanotexto * texto.length() > 140) {
                     tamanotexto -= 1;
@@ -1199,14 +1230,15 @@ public class HelloController {
                 gc.lineTo(x, y + 100);
                 gc.lineTo(x - 70, y + 50);
                 gc.closePath();
+
                 //Flecha derecha
                 gc.moveTo(x + 70, y + 50);
                 gc.lineTo(x + 120, y + 50);
-                gc2.strokeText("F", x + 100, y + 45);
+                gc.strokeText("F", x + 100, y + 45);
                 gc.setFont(new Font(tamanotexto + 5));
                 gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) - 10, y + 55);
                 gc.stroke();
-            });
+            };
         }
 
         public void DibujarMientras_Pseudo(GraphicsContext gc, GraphicsContext gc2, double x, double y, String texto) {
@@ -1259,12 +1291,43 @@ public class HelloController {
             return "Repetir" + "/n" + "Hasta Que" + getTexto();
         }
         public void DibujarRepetir(GraphicsContext gc, double x, double y) {
-            TextInputDialog dialog = new TextInputDialog();
-            dialog.setTitle("Texto Repetir");
-            dialog.setHeaderText(null);
-            dialog.setContentText("Texto Repetir:");
-            dialog.showAndWait().ifPresent(texto -> {
-                textoo = texto;
+            String texto = null;
+            boolean textoValido = false;
+            while (!textoValido) {
+                TextInputDialog dialog = new TextInputDialog();
+                dialog.setTitle("Texto Repetir");
+                dialog.setHeaderText(null);
+                dialog.setContentText("Texto Repetir:");
+                Optional<String> result = dialog.showAndWait();
+                if (result.isPresent()) {
+                    texto = result.get();
+                    if (texto.length() == 5 && texto.charAt(1) == ' ' && texto.charAt(3) == ' ' &&
+                            (texto.charAt(2) == '>' || texto.charAt(2) == '<' || texto.charAt(2) == '=')) {
+                        String[] partes = texto.split(" ");
+                        String parte1 = partes[0];
+                        String parte2 = partes[2];
+                        if (validacion.contains(parte1) && validacion.contains(parte2)) {
+                            textoValido = true;
+                        } else {
+                            // Mostrar un mensaje de error si las partes no están en validacion
+                            Alert alert = new Alert(Alert.AlertType.ERROR);
+                            alert.setTitle("Error de validación");
+                            alert.setHeaderText(null);
+                            alert.setContentText("El texto de decisión debe contener elementos válidos en la lista.");
+                            alert.showAndWait();
+                        }
+                    } else {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error de formato");
+                        alert.setHeaderText(null);
+                        alert.setContentText("El texto de decisión debe estar en el formato 'a > b', 'b < a'.");
+                        alert.showAndWait();
+                    }
+                } else {
+                    break;
+                }
+            }
+            if (textoValido) {
                 double tamanotexto = gc.getFont().getSize();
                 while (tamanotexto * texto.length() > 140) {
                     tamanotexto -= 1;
@@ -1282,8 +1345,9 @@ public class HelloController {
                 gc.setFont(new Font(tamanotexto + 5));
                 gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) - 10, y + 55);
                 gc.stroke();
-            });
+            };
         }
+
 
         public void DibujarRepetir_Pseudo(GraphicsContext gc, double x, double y, String texto) {
             double tamanotexto = gc.getFont().getSize();
@@ -1381,7 +1445,7 @@ public class HelloController {
                         Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setTitle("Error de formato/validación");
                         alert.setHeaderText(null);
-                        alert.setContentText("El texto del proceso debe estar en el formato 'a = a + b', 'a = b + 50', 'b = a * 30 + b', etc., y 'a' y 'b' deben estar en la lista de validación.");
+                        alert.setContentText("El texto del proceso debe estar en el formato 'a = a + b', 'a = b + 50', 'b = a * 30 + b', etc., Las variables deben estar en la lista de validación.");
                         alert.showAndWait();
                     }
                 } else {
