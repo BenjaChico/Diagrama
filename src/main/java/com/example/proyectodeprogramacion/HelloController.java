@@ -157,6 +157,7 @@ public class HelloController {
     int i = 0;
     private Figura decisionAux;
     public void initialize() {
+        iniciarDiagramaConInicioFin();
         DibujoCanvas.setOnMouseClicked(event -> {
             double x = event.getX();
             double y = event.getY();
@@ -215,15 +216,15 @@ public class HelloController {
                                 inicioFin.DibujarInicioFin(gc, x, y + 25);
                                 figurasarreglo.add(i,inicioFin);
                                 if (inicioX != -1 && inicioY != -1) {
-                                    DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                    DibujarFlecha(inicioX, inicioY, x + 50, y - 25);
                                     inicioFin.setInicioFlechaX(inicioX);
                                     inicioFin.setInicioFlechaY(inicioY);
                                     inicioFin.setFinFlechaX(x + 50);
-                                    inicioFin.setFinFlechaY(y);
+                                    inicioFin.setFinFlechaY(y - 25);
                                 }
                                 inicioX = x + 50;
                                 i=figurasarreglo.size();
-                                inicioY = y + 50;
+                                inicioY = y + 25;
                                 InsercionActiva = false;
                                 break;
                             case "boton2":
@@ -368,11 +369,11 @@ public class HelloController {
                                     figurasarreglo.add(i,inicioFin);
                                     decisionX.Verdadero.add(inicioFin);
                                     if (inicioX != -1 && inicioY != -1) {
-                                        DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                        DibujarFlecha(inicioX, inicioY, x + 50, y - 25);
                                         inicioFin.setInicioFlechaX(inicioX);
                                         inicioFin.setInicioFlechaY(inicioY);
                                         inicioFin.setFinFlechaX(x + 50);
-                                        inicioFin.setFinFlechaY(y);
+                                        inicioFin.setFinFlechaY(y - 25);
                                     }
                                     inicioX = x + 50;
                                     i=figurasarreglo.size();
@@ -515,11 +516,11 @@ public class HelloController {
                                     figurasarreglo.add(i,inicioFin);
                                     decisionX.Falso.add(inicioFin);
                                     if (inicioX != -1 && inicioY != -1) {
-                                        DibujarFlecha(inicioX, inicioY, x + 50, y);
+                                        DibujarFlecha(inicioX, inicioY, x + 50, y - 25);
                                         inicioFin.setInicioFlechaX(inicioX);
                                         inicioFin.setInicioFlechaY(inicioY);
                                         inicioFin.setFinFlechaX(x + 50);
-                                        inicioFin.setFinFlechaY(y);
+                                        inicioFin.setFinFlechaY(y - 25);
                                     }
                                     inicioX = x + 50;
                                     i=figurasarreglo.size();
@@ -654,6 +655,53 @@ public class HelloController {
             gc.strokeLine(finalX, finalY, finalX - TamañoFlecha * Math.cos(angulo + Math.PI / 6), finalY - TamañoFlecha * Math.sin(angulo + Math.PI / 6));
         }
     }
+
+
+    private void iniciarDiagramaConInicioFin() {
+        // Coordenadas iniciales para la figura de "Inicio/Fin"
+        int x = 300;
+        int y = 100;
+
+        // Crear la figura de "Inicio/Fin"
+        InicioFin inicioFin = new InicioFin(x, y);
+        inicioFin.setTexto("Inicio");
+
+        // Agregar la figura al arreglo de figuras
+        figurasarreglo.add(inicioFin);
+
+        // Dibujar la figura de "Inicio/Fin"
+        GraphicsContext gc = DibujoCanvas.getGraphicsContext2D();
+        inicioFin.DibujarInicioFin_Denuevo(gc, x, y);
+
+        // Ajustar las coordenadas de inicio para las siguientes figuras
+        inicioX = x + 50;
+        inicioY = y + 25;
+    }
+
+    private boolean existeFiguraInicioFin() {
+        int contadorInicioFin = 0;
+
+        for (Figura figura : figurasarreglo) {
+            if (figura instanceof InicioFin) {
+                contadorInicioFin++;
+            }
+        }
+
+        // Si hay dos o más figuras InicioFin, muestra un mensaje de error y devuelve true.
+        if (contadorInicioFin >= 2) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText("Ya hay un Fin, no se pueden crear más figuras.");
+            alert.showAndWait();
+            return true;
+        }
+
+        // Si hay menos de dos figuras InicioFin, devuelve false.
+        return false;
+    }
+
+
 
     public class InicioFin extends Figura {
         public String textoo;
@@ -1920,6 +1968,7 @@ public class HelloController {
         inicioX = -1;
         inicioY = -1;
         figurasarreglo.clear();
+        iniciarDiagramaConInicioFin();
     }
 
     private Figura obtenerFiguraClicada(double x, double y) {
@@ -2847,40 +2896,63 @@ public class HelloController {
 
     @FXML
     private void handleButton1Click() {
+        if(existeFiguraInicioFin()){
+            return;
+        }
         figura = "boton6";
     }
 
     @FXML
     private void handleButton2Click() {
+        if(existeFiguraInicioFin()){
+            return;
+        }
         figura = "boton1";
     }
 
     @FXML
     private void handleButton3Click() {
+        if(existeFiguraInicioFin()){
+            return;
+        }
         figura = "boton2";
     }
 
     @FXML
     private void handleButton4Click() {
+        if(existeFiguraInicioFin()){
+            return;
+        }
         figura = "boton3";
     }
 
     @FXML
     private void handleButton5Click() {
+        if(existeFiguraInicioFin()){
+            return;
+        }
         figura = "boton4";
     }
 
-
     @FXML
     private void handleButton6Click() {
+        if(existeFiguraInicioFin()){
+            return;
+        }
         figura = "boton5";
     }
 
     @FXML
     public void handleButton7Click() {
+        if(existeFiguraInicioFin()){
+            return;
+        }
         figura = "boton7";
     }
     public void handleButton8Click() {
+        if(existeFiguraInicioFin()){
+            return;
+        }
         figura = "boton8";
     }
 
