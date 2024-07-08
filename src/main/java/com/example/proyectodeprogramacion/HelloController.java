@@ -1531,67 +1531,85 @@ public class HelloController {
 
 
         public void DibujarProceso(GraphicsContext gc, double x, double y) {
-            TextInputDialog dialog = new TextInputDialog();
-            dialog.setTitle("Texto Proceso");
-            dialog.setHeaderText(null);
-            dialog.setContentText("Texto Proceso:");
+            boolean entradaValida = false;
+            String texto = "";
 
-            dialog.showAndWait().ifPresent(texto -> {
-                boolean textoValido = false;
+            while (!entradaValida) {
+                TextInputDialog dialog = new TextInputDialog();
+                dialog.setTitle("Texto Proceso");
+                dialog.setHeaderText(null);
+                dialog.setContentText("Texto Proceso:");
 
-                // Lista de operadores válidos
-                String[] operadores = {" + ", " - ", " * ", " / ", " % "};
+                Optional<String> result = dialog.showAndWait();
 
-                // Verifica si el formato del texto es correcto
-                for (String operador : operadores) {
-                    if (texto.contains(" = ") && texto.contains(operador)) {
-                        String[] partes1 = texto.split(" = ");
-                        if (partes1.length == 2) {
-                            String parte1 = partes1[0].trim();
-                            String[] partes2 = partes1[1].split(Pattern.quote(operador));
-                            if (partes2.length == 2) {
-                                String parte2 = partes2[0].trim();
-                                String parte3 = partes2[1].trim();
+                if (result.isPresent()) {
+                    texto = result.get();
+                    entradaValida = validarTexto(texto);
 
-                                // Verifica que parte1 esté en el arreglo de validación
-                                if (validacion.contains(parte1)) {
-                                    // Verifica que parte2 o parte3 estén en el arreglo de validación o sean números
-                                    if ((validacion.contains(parte2) || isNumeric(parte2)) &&
-                                            (validacion.contains(parte3) || isNumeric(parte3))) {
-                                        textoValido = true;
-                                        break;
-                                    }
+                    if (!entradaValida) {
+                        // Mostrar un mensaje de error si el formato no es correcto o las partes no están en validación
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error de formato/validación");
+                        alert.setHeaderText(null);
+                        alert.setContentText("El texto del proceso debe estar en el formato 'a = a + b', 'a = b + 50', 'b = a * 30 + b', etc., y 'a' y 'b' deben estar en la lista de validación.");
+                        alert.showAndWait();
+                    }
+                } else {
+                    // El usuario cerró el diálogo sin ingresar texto
+                    return;
+                }
+            }
+
+            // Procesar el texto válido
+            textoo = texto;
+            double tamanotexto = gc.getFont().getSize();
+            while (tamanotexto * texto.length() > 140) {
+                tamanotexto -= 1;
+            }
+            setTexto(texto);
+            gc.beginPath();
+            gc.moveTo(x, y);
+            gc.lineTo(x + 100, y);
+            gc.lineTo(x + 100, y + 50);
+            gc.lineTo(x, y + 50);
+            gc.closePath();
+            gc.setFont(new Font(tamanotexto));
+            gc.strokeText(texto, x + 20, y + 30);
+            gc.stroke();
+        }
+
+        private boolean validarTexto(String texto) {
+            boolean textoValido = false;
+            String[] operadores = {"+", "-", "*", "/", "%"};
+
+            // Intenta eliminar espacios innecesarios para la validación
+            texto = texto.replaceAll("\\s+", "");
+
+            // Verifica si el formato del texto es correcto
+            for (String operador : operadores) {
+                if (texto.contains("=") && texto.contains(operador)) {
+                    String[] partes1 = texto.split("=");
+                    if (partes1.length == 2) {
+                        String parte1 = partes1[0].trim();
+                        String[] partes2 = partes1[1].split(Pattern.quote(operador));
+                        if (partes2.length == 2) {
+                            String parte2 = partes2[0].trim();
+                            String parte3 = partes2[1].trim();
+
+                            // Verifica que parte1 esté en el arreglo de validación
+                            if (validacion.contains(parte1)) {
+                                // Verifica que parte2 o parte3 estén en el arreglo de validación o sean números
+                                if ((validacion.contains(parte2) || isNumeric(parte2)) &&
+                                        (validacion.contains(parte3) || isNumeric(parte3))) {
+                                    textoValido = true;
+                                    break;
                                 }
                             }
                         }
                     }
                 }
-
-                if (textoValido) {
-                    textoo = texto;
-                    double tamanotexto = gc.getFont().getSize();
-                    while (tamanotexto * texto.length() > 140) {
-                        tamanotexto -= 1;
-                    }
-                    setTexto(texto);
-                    gc.beginPath();
-                    gc.moveTo(x, y);
-                    gc.lineTo(x + 100, y);
-                    gc.lineTo(x + 100, y + 50);
-                    gc.lineTo(x, y + 50);
-                    gc.closePath();
-                    gc.setFont(new Font(tamanotexto));
-                    gc.strokeText(texto, x + 20, y + 30);
-                    gc.stroke();
-                } else {
-                    // Mostrar un mensaje de error si el formato no es correcto o las partes no están en validación
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Error de formato/validación");
-                    alert.setHeaderText(null);
-                    alert.setContentText("El texto del proceso debe estar en el formato 'a = a + b', 'a = b + 50', 'b = a * 30 + b', etc., y 'a' y 'b' deben estar en la lista de validación.");
-                    alert.showAndWait();
-                }
-            });
+            }
+            return textoValido;
         }
 
         private boolean isNumeric(String str) {
