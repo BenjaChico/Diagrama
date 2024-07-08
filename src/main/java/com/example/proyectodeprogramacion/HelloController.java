@@ -11,7 +11,7 @@ import javafx.scene.shape.ArcType;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import org.controlsfx.control.tableview2.filter.filtereditor.SouthFilter;
-
+import java.util.regex.Pattern;
 import java.util.Optional;
 import java.util.ArrayList;
 import java.util.List;
@@ -892,49 +892,71 @@ public class HelloController {
         }
 
         public void DibujarDecision(GraphicsContext gc, GraphicsContext gc2, double x, double y) {
-            TextInputDialog dialog = new TextInputDialog();
-            dialog.setTitle("Texto Decisión");
-            dialog.setHeaderText(null);
-            dialog.setContentText("Texto Decisión:");
+            String texto = null;
+            boolean textoValido = false;
 
-            Optional<String> result = dialog.showAndWait();
-            if (result.isPresent()) {
-                String texto = result.get();
-                if (validacion.contains(texto)) {
-                    double tamanotexto = gc.getFont().getSize();
-                    while (tamanotexto * texto.length() > 140) {
-                        tamanotexto -= 1;
+            while (!textoValido) {
+                TextInputDialog dialog = new TextInputDialog();
+                dialog.setTitle("Texto Decisión");
+                dialog.setHeaderText(null);
+                dialog.setContentText("Texto Decisión:");
+
+                Optional<String> result = dialog.showAndWait();
+                if (result.isPresent()) {
+                    texto = result.get();
+                    if (texto.length() == 5 && texto.charAt(1) == ' ' && texto.charAt(3) == ' ' &&
+                            (texto.charAt(2) == '>' || texto.charAt(2) == '<' || texto.charAt(2) == '=')) {
+
+                        String[] partes = texto.split(" ");
+                        String parte1 = partes[0];
+                        String parte2 = partes[2];
+                        if (validacion.contains(parte1) && validacion.contains(parte2)) {
+                            textoValido = true;
+                        } else {
+                            // Mostrar un mensaje de error si las partes no están en validacion
+                            Alert alert = new Alert(Alert.AlertType.ERROR);
+                            alert.setTitle("Error de validación");
+                            alert.setHeaderText(null);
+                            alert.setContentText("El texto de decisión debe contener elementos válidos en la lista.");
+                            alert.showAndWait();
+                        }
+                    } else {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error de formato");
+                        alert.setHeaderText(null);
+                        alert.setContentText("El texto de decisión debe estar en el formato 'a > b', 'b < a' o 'a = b'.");
+                        alert.showAndWait();
                     }
-                    setTexto(texto);
-                    gc.beginPath();
-                    gc.moveTo(x, y);
-                    gc.lineTo(x + 70, y + 50);
-                    gc.lineTo(x, y + 100);
-                    gc.lineTo(x - 70, y + 50);
-                    gc.closePath();
-                    gc.moveTo(x - 70, y + 50);
-                    gc.lineTo(x - 150, y + 50);
-                    gc.moveTo(x + 70, y + 50);
-                    gc.lineTo(x + 150, y + 50);
-
-                    gc2.setFont(new Font(15));
-                    gc2.strokeText("V", x - 130, y + 45);
-                    gc2.strokeText("F", x + 120, y + 45);
-
-                    gc.setFont(new Font(tamanotexto + 5));
-                    gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) - 10, y + 55);
-                    gc.stroke();
                 } else {
-                    // Mostrar un mensaje de error si el texto no está en validacion
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Error de validación");
-                    alert.setHeaderText(null);
-                    alert.setContentText("El texto de decisión debe ser uno de los elementos válidos en la lista.");
-                    alert.showAndWait();
+                    break;
                 }
             }
 
+            if (textoValido) {
+                double tamanotexto = gc.getFont().getSize();
+                while (tamanotexto * texto.length() > 140) {
+                    tamanotexto -= 1;
+                }
+                setTexto(texto);
+                gc.beginPath();
+                gc.moveTo(x, y);
+                gc.lineTo(x + 70, y + 50);
+                gc.lineTo(x, y + 100);
+                gc.lineTo(x - 70, y + 50);
+                gc.closePath();
+                gc.moveTo(x - 70, y + 50);
+                gc.lineTo(x - 150, y + 50);
+                gc.moveTo(x + 70, y + 50);
+                gc.lineTo(x + 150, y + 50);
+                gc2.setFont(new Font(15));
+                gc2.strokeText("V", x - 130, y + 45);
+                gc2.strokeText("F", x + 120, y + 45);
+                gc.setFont(new Font(tamanotexto + 5));
+                gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) - 10, y + 55);
+                gc.stroke();
+            }
         }
+
 
         public void DibujarDecision_Denuevo(GraphicsContext gc, GraphicsContext gc2, double x, double y) {
             // Obtener el texto del objeto directamente
@@ -1295,6 +1317,30 @@ public class HelloController {
                 gc.stroke();
             });
         }
+        public void DibujarMientras_Denuevo(GraphicsContext gc, GraphicsContext gc2, double x, double y) {
+                String texto = getTexto();
+                double tamanotexto = gc.getFont().getSize();
+                while (tamanotexto * texto.length() > 140) {
+                    tamanotexto -= 1;
+
+                }
+                setTexto(texto);
+                gc.beginPath();
+                gc.moveTo(x, y);
+                gc.lineTo(x + 70, y + 50);
+                gc.lineTo(x, y + 100);
+                gc.lineTo(x - 70, y + 50);
+                gc.closePath();
+
+                //Flecha derecha
+                gc.moveTo(x + 70, y + 50);
+                gc.lineTo(x + 120, y + 50);
+                gc2.strokeText("F", x + 100, y + 45);
+
+                gc.setFont(new Font(tamanotexto + 5));
+                gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) - 10, y + 55);
+                gc.stroke();
+            };
 
 
         public void DibujarMientras_Pseudo(GraphicsContext gc, GraphicsContext gc2, double x, double y, String texto) {
@@ -1335,8 +1381,7 @@ public class HelloController {
 
         @Override
         public Repetir clone() {
-            Repetir clone = (Repetir) super.clone();
-            return clone;
+            return (Repetir) super.clone();
         }
 
         public Repetir() {
@@ -1389,6 +1434,30 @@ public class HelloController {
                 gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) - 10, y + 55);
                 gc.stroke();
             });
+        }
+
+        public void DibujarRepetir_Denuevo(GraphicsContext gc, double x, double y) {
+                String texto = getTexto();
+                double tamanotexto = gc.getFont().getSize();
+                while (tamanotexto * texto.length() > 140) {
+                    tamanotexto -= 1;
+
+                }
+                setTexto(texto);
+                gc.beginPath();
+                gc.moveTo(x, y);
+                gc.lineTo(x + 70, y + 50);
+                gc.lineTo(x, y + 100);
+                gc.lineTo(x - 70, y + 50);
+                gc.closePath();
+                //Flecha izquierda
+                gc.moveTo(x - 70, y + 50);
+                gc.lineTo(x - 100, y + 50);
+
+
+                gc.setFont(new Font(tamanotexto + 5));
+                gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) - 10, y + 55);
+                gc.stroke();
         }
 
         public void DibujarRepetir_Pseudo(GraphicsContext gc, double x, double y, String texto) {
@@ -1468,22 +1537,73 @@ public class HelloController {
             dialog.setContentText("Texto Proceso:");
 
             dialog.showAndWait().ifPresent(texto -> {
-                textoo = texto;
-                double tamanotexto = gc.getFont().getSize();
-                while (tamanotexto * texto.length() > 140) {
-                    tamanotexto -= 1;
+                boolean textoValido = false;
+
+                // Lista de operadores válidos
+                String[] operadores = {" + ", " - ", " * ", " / ", " % "};
+
+                // Verifica si el formato del texto es correcto
+                for (String operador : operadores) {
+                    if (texto.contains(" = ") && texto.contains(operador)) {
+                        String[] partes1 = texto.split(" = ");
+                        if (partes1.length == 2) {
+                            String parte1 = partes1[0].trim();
+                            String[] partes2 = partes1[1].split(Pattern.quote(operador));
+                            if (partes2.length == 2) {
+                                String parte2 = partes2[0].trim();
+                                String parte3 = partes2[1].trim();
+
+                                // Verifica que parte1 esté en el arreglo de validación
+                                if (validacion.contains(parte1)) {
+                                    // Verifica que parte2 o parte3 estén en el arreglo de validación o sean números
+                                    if ((validacion.contains(parte2) || isNumeric(parte2)) &&
+                                            (validacion.contains(parte3) || isNumeric(parte3))) {
+                                        textoValido = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
-                setTexto(texto);
-                gc.beginPath();
-                gc.moveTo(x, y);
-                gc.lineTo(x + 100, y);
-                gc.lineTo(x + 100, y + 50);
-                gc.lineTo(x, y + 50);
-                gc.closePath();
-                gc.setFont(new Font(20));
-                gc.strokeText(texto, x + 20, y + 30);
-                gc.stroke();
+
+                if (textoValido) {
+                    textoo = texto;
+                    double tamanotexto = gc.getFont().getSize();
+                    while (tamanotexto * texto.length() > 140) {
+                        tamanotexto -= 1;
+                    }
+                    setTexto(texto);
+                    gc.beginPath();
+                    gc.moveTo(x, y);
+                    gc.lineTo(x + 100, y);
+                    gc.lineTo(x + 100, y + 50);
+                    gc.lineTo(x, y + 50);
+                    gc.closePath();
+                    gc.setFont(new Font(tamanotexto));
+                    gc.strokeText(texto, x + 20, y + 30);
+                    gc.stroke();
+                } else {
+                    // Mostrar un mensaje de error si el formato no es correcto o las partes no están en validación
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error de formato/validación");
+                    alert.setHeaderText(null);
+                    alert.setContentText("El texto del proceso debe estar en el formato 'a = a + b', 'a = b + 50', 'b = a * 30 + b', etc., y 'a' y 'b' deben estar en la lista de validación.");
+                    alert.showAndWait();
+                }
             });
+        }
+
+        private boolean isNumeric(String str) {
+            if (str == null) {
+                return false;
+            }
+            try {
+                Double.parseDouble(str);
+            } catch (NumberFormatException e) {
+                return false;
+            }
+            return true;
         }
 
         public void DibujarProceso_Pseudo(GraphicsContext gc, double x, double y, String texto){
@@ -1593,6 +1713,78 @@ public class HelloController {
         public String generarPseudocodigo() {
             return null;
         }
+
+        public void Dibujar_Para_Denuevo(GraphicsContext gc) {
+            int size = figurasarreglo.size();
+
+            String texto = getTexto1();
+            String texto2 = getTexto2();
+            String texto3 = getTexto3();
+            String texto4 = getTexto4();
+
+            int posicion = Integer.parseInt(texto);
+            if (posicion > 0 && posicion <= size) {
+                int index = posicion - 1;
+
+                Figura figuraCierre = figurasarreglo.get(index);
+                double xCerrar = figuraCierre.getX();
+                double yCerrar = figuraCierre.getY();
+                Figura ultimaFigura = figurasarreglo.get(figurasarreglo.size() - 1);
+                double xUltima = ultimaFigura.getX();
+                double yUltima = ultimaFigura.getY();
+
+                // Calcular el punto medio entre xCerrar, yCerrar y xUltima, yUltima
+                double xMedio = (xCerrar + xUltima) / 2;
+                double yMedio = (yCerrar + yUltima) / 2;
+                double tamanoFlecha = 10.0;
+
+                double tamanotexto = gc.getFont().getSize();
+                while (tamanotexto * texto.length() > 140) {
+                    tamanotexto -= 1;
+                }
+
+                // Dibujar el círculo en el punto medio y flechas de cierre
+                gc.beginPath();
+                gc.strokeOval(xMedio - 200, yMedio - 30, 150, 150); // Ajusta para que el círculo esté centrado
+                //Dibujo Linea de abajo
+                gc.moveTo(xUltima + 50, yUltima + 70);
+                gc.lineTo(xUltima - 143, yUltima + 70);
+                gc.moveTo(xUltima - 143, yUltima + 70);
+                gc.lineTo(xUltima - 143, yMedio + 115);
+
+                //Dibujo Linea de arriba
+                gc.moveTo(xMedio - 143, yMedio - 30);
+                gc.lineTo(xMedio - 143, yCerrar - 20);
+                gc.moveTo(xMedio - 143, yCerrar - 20);
+                gc.lineTo(xCerrar + 10, yCerrar - 20);
+
+                //Dibujo de la flecha superior
+                gc.strokeLine(xCerrar + 10, yCerrar - 20, xCerrar - tamanoFlecha * Math.cos(Math.PI / 6), yCerrar - 20 + tamanoFlecha * Math.sin(Math.PI / 6));
+                gc.strokeLine(xCerrar + 10, yCerrar - 20, xCerrar - tamanoFlecha * Math.cos(Math.PI / 6), yCerrar - 20 - tamanoFlecha * Math.sin(Math.PI / 6));
+
+                //Dibujo de Lineas dentro de figura ciclo for
+                //Linea horizontal
+                gc.moveTo(xMedio - 50, yMedio + 30);
+                gc.lineTo(xMedio - 200, yMedio + 30);
+                //Primera linea vertical
+                gc.moveTo(xMedio - 150, yMedio + 30);
+                gc.lineTo(xMedio - 150, yMedio + 115);
+                //Segunda Linea Vertical
+                gc.moveTo(xMedio - 100, yMedio + 30);
+                gc.lineTo(xMedio - 100, yMedio + 115);
+                gc.closePath();
+
+                // Dibujar los textos adicionales y el texto principal
+                gc.setFont(new Font(20));
+                gc.strokeText(texto1, xMedio - 130 - (texto1.length() * tamanotexto / 4), yMedio + 10);
+                gc.strokeText(texto2, xMedio - 180 - (texto2.length() * tamanotexto / 4), yMedio + 60);
+                gc.strokeText(texto3, xMedio - 130 - (texto3.length() * tamanotexto / 4), yMedio + 60);
+                gc.strokeText(texto, xMedio - 80 - (texto.length() * tamanotexto / 4), yMedio + 60);
+                gc.stroke();
+            }
+        }
+
+
 
         public void DibujarPara(GraphicsContext gc) {
             int size = figurasarreglo.size();
@@ -1775,6 +1967,24 @@ public class HelloController {
                 inicioFin.DibujarInicioFin_Denuevo(gc, figura.getX(), figura.getY());
                 if (inicioFin.getInicioFlechaX() != -1 && inicioFin.getInicioFlechaY() != -1) {
                     DibujarFlecha(inicioFin.getInicioFlechaX(), inicioFin.getInicioFlechaY(), inicioFin.getFinFlechaX(), inicioFin.getFinFlechaY());
+                }
+            }else if (figura instanceof Repetir) {
+                Repetir repetir = (Repetir) figura;
+                repetir.DibujarRepetir_Denuevo(gc, figura.getX(), figura.getY());
+                if (repetir.getInicioFlechaX() != -1 && repetir.getInicioFlechaY() != -1) {
+                    DibujarFlecha(repetir.getInicioFlechaX(), repetir.getInicioFlechaY(), repetir.getFinFlechaX(), repetir.getFinFlechaY());
+                }
+            }else if (figura instanceof Mientras) {
+                Mientras mientras = (Mientras) figura;
+                mientras.DibujarMientras_Denuevo(gc,gc, figura.getX(), figura.getY());
+                if (mientras.getInicioFlechaX() != -1 && mientras.getInicioFlechaY() != -1) {
+                DibujarFlecha(mientras.getInicioFlechaX(), mientras.getInicioFlechaY(), mientras.getFinFlechaX(), mientras.getFinFlechaY());
+            }
+        }else if (figura instanceof Para){
+                Para para = (Para) figura;
+                para.Dibujar_Para_Denuevo(gc);
+                if (para.getInicioFlechaX() != -1 && para.getInicioFlechaY() != -1) {
+                    DibujarFlecha(para.getInicioFlechaX(), para.getInicioFlechaY(), para.getFinFlechaX(), para.getFinFlechaY());
                 }
             }
         }
