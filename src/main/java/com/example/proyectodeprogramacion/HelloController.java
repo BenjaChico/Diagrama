@@ -169,7 +169,6 @@ public class HelloController {
             for (Figura figura : figurasarreglo) {
                 System.out.println("Texto de la figura en posicion: " + figura.getTexto());
             }
-
             boolean inicioFinExists = figurasarreglo.stream().anyMatch(figura -> figura instanceof InicioFin);
             long inicioFinCount = figurasarreglo.stream().filter(figura -> figura instanceof InicioFin).count();
 
