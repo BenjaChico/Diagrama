@@ -1339,6 +1339,31 @@ public class HelloController {
 
         }
 
+        public void DibujarMientras_Denuevo(GraphicsContext gc, GraphicsContext gc2, double x, double y) {
+            String texto = getTexto();
+            double tamanotexto = gc.getFont().getSize();
+            while (tamanotexto * texto.length() > 140) {
+                tamanotexto -= 1;
+
+            }
+            setTexto(texto);
+            gc.beginPath();
+            gc.moveTo(x, y);
+            gc.lineTo(x + 70, y + 50);
+            gc.lineTo(x, y + 100);
+            gc.lineTo(x - 70, y + 50);
+            gc.closePath();
+
+            //Flecha derecha
+            gc.moveTo(x + 70, y + 50);
+            gc.lineTo(x + 120, y + 50);
+            gc2.strokeText("F", x + 100, y + 45);
+
+            gc.setFont(new Font(tamanotexto + 5));
+            gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) - 10, y + 55);
+            gc.stroke();
+        };
+
         public void DibujarMientras(GraphicsContext gc, GraphicsContext gc2, double x, double y) {
             TextInputDialog dialog = new TextInputDialog();
             dialog.setTitle("Texto Mientras");
@@ -1534,6 +1559,30 @@ public class HelloController {
                 gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) - 10, y + 55);
                 gc.stroke();
             }
+        }
+
+        public void DibujarRepetir_Denuevo(GraphicsContext gc, double x, double y) {
+            String texto = getTexto();
+            double tamanotexto = gc.getFont().getSize();
+            while (tamanotexto * texto.length() > 140) {
+                tamanotexto -= 1;
+
+            }
+            setTexto(texto);
+            gc.beginPath();
+            gc.moveTo(x, y);
+            gc.lineTo(x + 70, y + 50);
+            gc.lineTo(x, y + 100);
+            gc.lineTo(x - 70, y + 50);
+            gc.closePath();
+            //Flecha izquierda
+            gc.moveTo(x - 70, y + 50);
+            gc.lineTo(x - 100, y + 50);
+
+
+            gc.setFont(new Font(tamanotexto + 5));
+            gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) - 10, y + 55);
+            gc.stroke();
         }
 
         @Override
@@ -2178,6 +2227,51 @@ public class HelloController {
                 DibujarFlecha(inicioFin.getInicioFlechaX() * resize, inicioFin.getInicioFlechaY() * resize, inicioFin.getFinFlechaX() * resize, inicioFin.getFinFlechaY() * resize);
                 inicioFin.setX(x);
                 inicioFin.setY(y);
+            }
+            else if (figura instanceof Mientras){
+                String texto = figura.getTexto();
+                double tamanotexto = gc.getFont().getSize();
+                while (tamanotexto * texto.length() > 140) {
+                    tamanotexto -= 1;
+
+                }
+                gc.beginPath();
+                gc.moveTo(x, y);
+                gc.lineTo((x + 70) * resize, (y + 50) * resize);
+                gc.lineTo(x* resize, (y + 100)* resize);
+                gc.lineTo((x - 70)* resize, (y + 50)* resize);
+                gc.closePath();
+
+                //Flecha derecha
+                gc.moveTo((x + 70)* resize, (y + 50)* resize);
+                gc.lineTo((x + 120)* resize, (y + 50)* resize);
+                gc.strokeText("F", (x + 100)* resize, (y + 45)* resize);
+
+                gc.setFont(new Font(tamanotexto + 5));
+                gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) - 10, y + 55);
+                gc.stroke();
+
+            } else if (figura instanceof Repetir) {
+                String texto = figura.getTexto();
+                double tamanotexto = gc.getFont().getSize();
+                while (tamanotexto * texto.length() > 140) {
+                    tamanotexto -= 1;
+
+                }
+                gc.beginPath();
+                gc.moveTo(x, y);
+                gc.lineTo((x + 70)* resize, (y + 50)* resize);
+                gc.lineTo(x * resize, (y + 100)* resize);
+                gc.lineTo((x - 70)* resize, (y + 50)* resize);
+                gc.closePath();
+                //Flecha izquierda
+                gc.moveTo((x - 70)* resize, (y + 50)* resize);
+                gc.lineTo((x - 100)* resize, (y + 50)* resize);
+
+
+                gc.setFont(new Font(tamanotexto + 5));
+                gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) - 10, y + 55);
+                gc.stroke();
             }
         }
     }
