@@ -1270,7 +1270,6 @@ public class HelloController {
                 gc.strokeText(texto, x + 20, y + 30);
                 gc.stroke();
                 validacion.add(textoo);
-                System.out.println(validacion.get(i));
             });
         }
 
@@ -1372,29 +1371,29 @@ public class HelloController {
             });
         }
         public void DibujarMientras_Denuevo(GraphicsContext gc, GraphicsContext gc2, double x, double y) {
-                String texto = getTexto();
-                double tamanotexto = gc.getFont().getSize();
-                while (tamanotexto * texto.length() > 140) {
-                    tamanotexto -= 1;
+            String texto = getTexto();
+            double tamanotexto = gc.getFont().getSize();
+            while (tamanotexto * texto.length() > 140) {
+                tamanotexto -= 1;
 
-                }
-                setTexto(texto);
-                gc.beginPath();
-                gc.moveTo(x, y);
-                gc.lineTo(x + 70, y + 50);
-                gc.lineTo(x, y + 100);
-                gc.lineTo(x - 70, y + 50);
-                gc.closePath();
+            }
+            setTexto(texto);
+            gc.beginPath();
+            gc.moveTo(x, y);
+            gc.lineTo(x + 70, y + 50);
+            gc.lineTo(x, y + 100);
+            gc.lineTo(x - 70, y + 50);
+            gc.closePath();
 
-                //Flecha derecha
-                gc.moveTo(x + 70, y + 50);
-                gc.lineTo(x + 120, y + 50);
-                gc2.strokeText("F", x + 100, y + 45);
+            //Flecha derecha
+            gc.moveTo(x + 70, y + 50);
+            gc.lineTo(x + 120, y + 50);
+            gc2.strokeText("F", x + 100, y + 45);
 
-                gc.setFont(new Font(tamanotexto + 5));
-                gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) - 10, y + 55);
-                gc.stroke();
-            };
+            gc.setFont(new Font(tamanotexto + 5));
+            gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) - 10, y + 55);
+            gc.stroke();
+        };
 
 
         public void DibujarMientras_Pseudo(GraphicsContext gc, GraphicsContext gc2, double x, double y, String texto) {
@@ -1491,27 +1490,27 @@ public class HelloController {
         }
 
         public void DibujarRepetir_Denuevo(GraphicsContext gc, double x, double y) {
-                String texto = getTexto();
-                double tamanotexto = gc.getFont().getSize();
-                while (tamanotexto * texto.length() > 140) {
-                    tamanotexto -= 1;
+            String texto = getTexto();
+            double tamanotexto = gc.getFont().getSize();
+            while (tamanotexto * texto.length() > 140) {
+                tamanotexto -= 1;
 
-                }
-                setTexto(texto);
-                gc.beginPath();
-                gc.moveTo(x, y);
-                gc.lineTo(x + 70, y + 50);
-                gc.lineTo(x, y + 100);
-                gc.lineTo(x - 70, y + 50);
-                gc.closePath();
-                //Flecha izquierda
-                gc.moveTo(x - 70, y + 50);
-                gc.lineTo(x - 100, y + 50);
+            }
+            setTexto(texto);
+            gc.beginPath();
+            gc.moveTo(x, y);
+            gc.lineTo(x + 70, y + 50);
+            gc.lineTo(x, y + 100);
+            gc.lineTo(x - 70, y + 50);
+            gc.closePath();
+            //Flecha izquierda
+            gc.moveTo(x - 70, y + 50);
+            gc.lineTo(x - 100, y + 50);
 
 
-                gc.setFont(new Font(tamanotexto + 5));
-                gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) - 10, y + 55);
-                gc.stroke();
+            gc.setFont(new Font(tamanotexto + 5));
+            gc.strokeText(texto, x - (texto.length() * tamanotexto / 4) - 10, y + 55);
+            gc.stroke();
         }
 
         public void DibujarRepetir_Pseudo(GraphicsContext gc, double x, double y, String texto) {
@@ -2051,9 +2050,9 @@ public class HelloController {
                 Mientras mientras = (Mientras) figura;
                 mientras.DibujarMientras_Denuevo(gc,gc, figura.getX(), figura.getY());
                 if (mientras.getInicioFlechaX() != -1 && mientras.getInicioFlechaY() != -1) {
-                DibujarFlecha(mientras.getInicioFlechaX(), mientras.getInicioFlechaY(), mientras.getFinFlechaX(), mientras.getFinFlechaY());
-            }
-        }else if (figura instanceof Para){
+                    DibujarFlecha(mientras.getInicioFlechaX(), mientras.getInicioFlechaY(), mientras.getFinFlechaX(), mientras.getFinFlechaY());
+                }
+            }else if (figura instanceof Para){
                 Para para = (Para) figura;
                 para.Dibujar_Para_Denuevo(gc);
                 if (para.getInicioFlechaX() != -1 && para.getInicioFlechaY() != -1) {
